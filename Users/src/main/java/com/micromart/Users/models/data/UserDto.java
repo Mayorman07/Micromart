@@ -1,4 +1,4 @@
-package com.micromart.Users.data;
+package com.micromart.Users.models.data;
 
 import com.micromart.Users.constants.Status;
 import lombok.AllArgsConstructor;
@@ -17,6 +17,8 @@ public class UserDto implements Serializable {
     private String lastName;
     private String email;
     private String password;
+    private String address;
+    private int mobileNumber;
     private String userId;
     private String encryptedPassword;
     private String gender;
