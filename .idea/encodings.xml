@@ -6,6 +6,8 @@
     <file url="file://$PROJECT_DIR$/EurekaServer/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/JwtAuthorities/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/JwtAuthorities/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Users/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Users/src/main/resources" charset="UTF-8" />
   </component>

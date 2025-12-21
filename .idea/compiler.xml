@@ -8,8 +8,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="EurekaServer" />
-        <module name="Gateway" />
+        <module name="JwtAuthorities" />
         <module name="ConfigServer" />
+        <module name="Gateway" />
       </profile>
       <profile name="Annotation profile for Users" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -27,6 +28,7 @@
       <module name="ConfigServer" options="-parameters" />
       <module name="EurekaServer" options="-parameters" />
       <module name="Gateway" options="-parameters" />
+      <module name="JwtAuthorities" options="-parameters" />
       <module name="Users" options="-parameters" />
     </option>
   </component>
