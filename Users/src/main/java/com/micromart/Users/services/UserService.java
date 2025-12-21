@@ -1,9 +1,9 @@
-package com.micromart.Users;
+package com.micromart.Users.services;
 
-import java.util.List;
+import com.micromart.Users.models.data.UserDto;
 
-public interface UserService {
-    void createUser();
+public interface UserService{
+    UserDto createUser(UserDto userDetails);
     void updateUser();
     void  viewProfile();
     void updateLastLoggedIn();
