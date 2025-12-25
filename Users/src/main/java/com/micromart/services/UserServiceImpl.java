@@ -38,7 +38,6 @@ public class UserServiceImpl implements UserService{
         }
         userDetails.setUserId(UUID.randomUUID().toString());
         userDetails.setEncryptedPassword(passwordEncoder.encode(userDetails.getPassword()));
-        userDetails.setEncryptedPassword(passwordEncoder.encode(userDetails.getPassword()));
         userDetails.setStatus(Status.INACTIVE);
         User userToBeCreated = modelMapper.map(userDetails, User.class);
         String verificationToken = UUID.randomUUID().toString();

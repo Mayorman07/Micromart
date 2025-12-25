@@ -45,6 +45,8 @@ public class WebSecurity {
     @Bean
     protected SecurityFilterChain configure (HttpSecurity http) throws Exception{
 
+        //Use http object to work with config settings
+
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
 
         authenticationManagerBuilder.userDetailsService(userService)
@@ -56,8 +58,7 @@ public class WebSecurity {
 
         authenticationFilter.setFilterProcessesUrl(environment.getProperty("login.url.path"));
 
-        http
-                .csrf(AbstractHttpConfigurer::disable);
+        http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(authorize ->
                         authorize
