@@ -40,8 +40,6 @@ public class UsersController{
         CreateUserResponse returnValue = modelMapper.map(createdUserDto,CreateUserResponse.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
 
-
-
     }
 
 }
