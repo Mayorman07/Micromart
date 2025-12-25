@@ -25,7 +25,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurity {
-
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Environment environment;

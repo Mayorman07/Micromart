@@ -32,14 +32,13 @@ public class UsersController{
      return "Just testing as usual";
     }
 
-    public void createUser(CreateUserRequest userRequest, BindingResult bindingResult){
+    public ResponseEntity<CreateUserResponse> createUser(CreateUserRequest userRequest, BindingResult bindingResult){
         logger.info("The incoming create employee request {} " , userRequest);
         InputValidator.validate(bindingResult);
         UserDto userDto = modelMapper.map(userRequest, UserDto.class);
         UserDto createdUserDto = userService.createUser(userDto);
         CreateUserResponse returnValue = modelMapper.map(createdUserDto,CreateUserResponse.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
-
     }
 
 }
