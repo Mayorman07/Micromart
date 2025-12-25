@@ -31,7 +31,6 @@ import java.util.Date;
 
 @Component
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
     private final UserService userService;
     private final Environment environment;
     private final ObjectMapper objectMapper;
@@ -44,7 +43,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         this.userService = userService;
         this.objectMapper = objectMapper;
     }
-
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
             throws AuthenticationException {

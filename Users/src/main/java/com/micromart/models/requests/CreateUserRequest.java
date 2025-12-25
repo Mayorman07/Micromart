@@ -26,7 +26,6 @@ public class CreateUserRequest {
     @NotNull(message = "Password cannot be null")
     @Size(min = 3, max = 12, message = "Password must be between 3 and 12 characters!")
     private String password;
-    private String status;
     @NotNull(message = "Gender field cannot be null")
     @NotEmpty(message = "Gender field cannot be empty")
     private String gender;
@@ -35,5 +34,5 @@ public class CreateUserRequest {
     private String address;
     @NotNull(message = "mobileNumber cannot be null")
     @Size(min = 11,max = 15, message = "mobileNumber must be between 11 and 15 numbers")
-    private int mobileNumber;
+    private String mobileNumber;
 }
