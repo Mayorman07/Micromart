@@ -5,15 +5,19 @@ import com.micromart.models.requests.CreateUserRequest;
 import com.micromart.models.responses.CreateUserResponse;
 import com.micromart.services.UserService;
 import com.micromart.validations.InputValidator;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,13 +35,14 @@ public class UsersController{
     public String status(){
      return "Just testing as usual";
     }
-
-    public ResponseEntity<CreateUserResponse> createUser(CreateUserRequest userRequest, BindingResult bindingResult){
+    @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest userRequest, BindingResult bindingResult){
         logger.info("The incoming create employee request {} " , userRequest);
         InputValidator.validate(bindingResult);
         UserDto userDto = modelMapper.map(userRequest, UserDto.class);
         UserDto createdUserDto = userService.createUser(userDto);
         CreateUserResponse returnValue = modelMapper.map(createdUserDto,CreateUserResponse.class);
+        logger.info("The outgoing create employee response {} " , returnValue);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
 
