@@ -28,9 +28,9 @@ public class SecurityConfig {
                 .build();
 
         UserDetails client = User
-                .withUsername(environment.getProperty("micro-spring.security.user.name"))
-                .password(passwordEncoder.encode(environment.getProperty("micro-spring.security.user.password")))
-                .roles(environment.getProperty("micro-spring.security.user.roles"))
+                .withUsername(environment.getProperty("micro_mart-spring.security.user.name"))
+                .password(passwordEncoder.encode(environment.getProperty("micro_mart-spring.security.user.password")))
+                .roles(environment.getProperty("micro_mart-spring.security.user.roles"))
                 .build();
         return new InMemoryUserDetailsManager(admin,client);
     }
