@@ -16,12 +16,11 @@ public class CreateUserResponse {
     private String email;
     private String status;
     private List<String> roles;
-    private String employeeId;
+    private String userId;
     private String username;
 //    private Date lastLoggedIn;
     private String createdAt;
     private String updatedAt;
-    private String department;
 
     public CreateUserResponse(String message) {
     }

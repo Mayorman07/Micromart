@@ -1,8 +1,6 @@
 package com.micromart.services;
 
 import com.micromart.constants.Status;
-import com.micromart.entities.Authority;
-import com.micromart.entities.Role;
 import com.micromart.entities.User;
 import com.micromart.exceptions.ConflictException;
 import com.micromart.models.data.CustomUserDetails;
