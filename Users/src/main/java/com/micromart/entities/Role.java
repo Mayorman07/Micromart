@@ -1,4 +1,4 @@
-package com.micromart.entities;
-
-public class Role {
-}
+//package com.micromart.entities;
+//
+//public class Role {
+//}
