@@ -1,6 +1,7 @@
 package com.micromart.services;
 
 import com.micromart.constants.Status;
+import com.micromart.entities.Role;
 import com.micromart.entities.User;
 import com.micromart.exceptions.ConflictException;
 import com.micromart.models.data.CustomUserDetails;
@@ -18,12 +19,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.micromart.repositories.RoleRepository;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,11 +38,13 @@ public class UserServiceImpl implements UserService {
 
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
     @Override
+    @Transactional
     public UserDto createUser(UserDto userDetails) {
 
         if (userRepository.findByEmail(userDetails.getEmail()).isPresent()) {
@@ -84,8 +92,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createInitialAdmin() {
-
+    @Transactional
+    public UserDto createInitialAdmin(UserDto request) {
+        if (userRepository.count() > 0) {
+            throw new IllegalStateException("An initial admin user already exists. This endpoint cannot be used again.");
+        }
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN");
+        if (adminRole == null) {
+            throw new RuntimeException("Error: ROLE_ADMIN not found in the database.");
+        }
+        User adminEntity = modelMapper.map(request, User.class);
+        adminEntity.setUserId(UUID.randomUUID().toString());
+        adminEntity.setEncryptedPassword(passwordEncoder.encode(request.getPassword()));
+        adminEntity.setVerificationToken(UUID.randomUUID().toString());
+        adminEntity.setStatus(Status.ACTIVE);
+        adminEntity.setRoles(Arrays.asList(adminRole));
+//        adminEntity.setUsername(usernameGeneration.generateUsername(request.getFirstName(), request.getLastName()));
+        User savedAdmin = userRepository.save(adminEntity);
+        UserDto returnDto = modelMapper.map(savedAdmin, UserDto.class);
+        List<String> roleNames = savedAdmin.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+        returnDto.setRoles(roleNames);
+        return returnDto;
     }
 
     @Override

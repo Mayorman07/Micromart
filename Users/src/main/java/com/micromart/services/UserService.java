@@ -13,7 +13,7 @@ public interface UserService extends UserDetailsService {
     UserDto getUserDetailsByEmail(String email);
 
     void assignManagerRole();
-    void createInitialAdmin();
+    UserDto createInitialAdmin(UserDto request);
     boolean requestPasswordReset(String email);
     boolean performPasswordReset(String token, String newPassword);
     boolean verifyUser(String token);
