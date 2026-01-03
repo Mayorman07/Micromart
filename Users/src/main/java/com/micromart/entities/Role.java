@@ -35,4 +35,7 @@ public class Role implements Serializable {
     @JoinTable(name="roles_authorities", joinColumns =@JoinColumn(name = "roles_id", referencedColumnName = "id"),inverseJoinColumns
             = @JoinColumn(name = "authorities_id", referencedColumnName = "id"))
     private Collection<Authority> authorities;
+
+    public Role(String name, Collection<Authority> authorities) {
+    }
 }

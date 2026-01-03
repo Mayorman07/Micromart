@@ -7,7 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -26,4 +28,6 @@ public class Authority implements Serializable {
     @ManyToMany(mappedBy = "authorities")
     private Collection<Role> roles;
 
+    public Authority(String name) {
+    }
 }
