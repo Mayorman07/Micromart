@@ -45,8 +45,6 @@ public class WebSecurity {
     @Bean
     protected SecurityFilterChain configure (HttpSecurity http) throws Exception{
 
-        //Use http object to work with config settings
-
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
 
         authenticationManagerBuilder.userDetailsService(userService)

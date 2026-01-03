@@ -1,13 +1,18 @@
 package com.micromart.entities;
 
 import com.micromart.constants.Status;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -15,6 +20,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Date;
 
 @Entity
@@ -51,6 +57,11 @@ public class User implements Serializable {
     private String passwordResetToken;
     @Column(name = "password_reset_token_expiry_date")
     private Date passwordResetTokenExpiryDate;
+
+    @ManyToMany(cascade = CascadeType.PERSIST ,fetch = FetchType.EAGER )
+    @JoinTable(name="users_roles", joinColumns =@JoinColumn(name = "users_id", referencedColumnName = "id"),inverseJoinColumns
+            = @JoinColumn(name = "roles_id", referencedColumnName = "id"))
+    Collection<Role> roles;
 
     @PrePersist
     public void beforeSave() {

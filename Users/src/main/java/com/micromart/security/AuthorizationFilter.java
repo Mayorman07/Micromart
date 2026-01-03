@@ -56,8 +56,6 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
         String token = authorizationHeader.replace(Objects.requireNonNull(environment.getProperty("authorization.token.header.prefix")), "").trim();
         String tokenSecret = environment.getProperty("token.secret.key");
 
-        System.out.println("DEBUG: token.secret.key retrieved: " + tokenSecret);
-
         if(tokenSecret==null) return null;
 
         JwtClaimsParser jwtClaimsParser = new JwtClaimsParser(token, tokenSecret);
