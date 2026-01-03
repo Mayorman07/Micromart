@@ -7,12 +7,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "authorities")
+@Data
 public class Authority implements Serializable {
 
     private static final long serialVersionUID = 1618156374241833700L;
