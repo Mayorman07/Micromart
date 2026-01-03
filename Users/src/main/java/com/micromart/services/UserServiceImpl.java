@@ -91,31 +91,6 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    @Override
-    @Transactional
-    public UserDto createInitialAdmin(UserDto request) {
-        if (userRepository.count() > 0) {
-            throw new IllegalStateException("An initial admin user already exists. This endpoint cannot be used again.");
-        }
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN");
-        if (adminRole == null) {
-            throw new RuntimeException("Error: ROLE_ADMIN not found in the database.");
-        }
-        User adminEntity = modelMapper.map(request, User.class);
-        adminEntity.setUserId(UUID.randomUUID().toString());
-        adminEntity.setEncryptedPassword(passwordEncoder.encode(request.getPassword()));
-        adminEntity.setVerificationToken(UUID.randomUUID().toString());
-        adminEntity.setStatus(Status.ACTIVE);
-        adminEntity.setRoles(Arrays.asList(adminRole));
-//        adminEntity.setUsername(usernameGeneration.generateUsername(request.getFirstName(), request.getLastName()));
-        User savedAdmin = userRepository.save(adminEntity);
-        UserDto returnDto = modelMapper.map(savedAdmin, UserDto.class);
-        List<String> roleNames = savedAdmin.getRoles().stream()
-                .map(Role::getName)
-                .collect(Collectors.toList());
-        returnDto.setRoles(roleNames);
-        return returnDto;
-    }
 
     @Override
     public boolean requestPasswordReset(String email) {

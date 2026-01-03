@@ -11,9 +11,7 @@ public interface UserService extends UserDetailsService {
     void viewUserDetails();
     //should take this out, useless method violated Interface segreattion
     UserDto getUserDetailsByEmail(String email);
-
     void assignManagerRole();
-    UserDto createInitialAdmin(UserDto request);
     boolean requestPasswordReset(String email);
     boolean performPasswordReset(String token, String newPassword);
     boolean verifyUser(String token);
