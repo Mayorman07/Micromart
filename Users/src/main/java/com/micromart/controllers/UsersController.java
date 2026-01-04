@@ -14,9 +14,12 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,6 +47,13 @@ public class UsersController{
         CreateUserResponse returnValue = modelMapper.map(createdUserDto,CreateUserResponse.class);
         logger.info("The outgoing create employee response {} " , returnValue);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
+    }
+
+    @PutMapping("/{userId}/roles/manager")
+//    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> assignManagerRole(@PathVariable String userId) {
+        userService.assignManagerRole(userId);
+        return ResponseEntity.ok("Employee has been promoted to manager successfully.");
     }
 
 }

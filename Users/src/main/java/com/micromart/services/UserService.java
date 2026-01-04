@@ -8,6 +8,7 @@ public interface UserService extends UserDetailsService {
     void updateUser();
     void  viewProfile();
     void updateLastLoggedIn(String userId);
+    void assignManagerRole(String employeeId);
     void viewUserDetails();
     //should take this out, useless method violated Interface segreattion
     UserDto getUserDetailsByEmail(String email);

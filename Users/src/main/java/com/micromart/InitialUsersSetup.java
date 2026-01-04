@@ -32,9 +32,9 @@ public class InitialUsersSetup {
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository usersRepository;
-    @Value("${admin.email:mayowa.hyde@gmail.com}")
+    @Value("${admin.email}")
     private String adminEmail;
-    @Value("${admin.password:zagathat}")
+    @Value("${admin.password}")
     private String adminPassword;
 
     @Transactional
@@ -62,7 +62,6 @@ public class InitialUsersSetup {
             adminUser.setLastName("Olajide");
             adminUser.setEmail(adminEmail);
             adminUser.setUserId(String.valueOf(UUID.randomUUID()));
-            // Encode the injected password
             adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode(adminPassword));
             adminUser.setRoles(Collections.singletonList(roleAdmin));
 

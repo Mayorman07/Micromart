@@ -4,6 +4,7 @@ import com.micromart.constants.Status;
 import com.micromart.entities.Role;
 import com.micromart.entities.User;
 import com.micromart.exceptions.ConflictException;
+import com.micromart.exceptions.NotFoundException;
 import com.micromart.models.data.CustomUserDetails;
 import com.micromart.models.data.UserDto;
 import com.micromart.repositories.UserRepository;
@@ -87,8 +88,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void assignManagerRole() {
-
+    @Transactional
+    public void assignManagerRole(String userId) {
+        User employee = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("Employee not found with ID: " + userId));
+        Role managerRole = roleRepository.findByName("ROLE_MANAGER");
+        if (managerRole == null) {
+            throw new RuntimeException("Error: ROLE_MANAGER not found.");
+        }
+        Collection<Role> userRoles = employee.getRoles();
+        if (!userRoles.contains(managerRole)) {
+            userRoles.add(managerRole);
+            employee.setRoles(userRoles);
+            userRepository.save(employee);
+        }
     }
 
 
