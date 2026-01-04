@@ -11,13 +11,18 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name="roles")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 6929482536229723029L;
@@ -32,10 +37,12 @@ public class Role implements Serializable {
     private Collection<User> users;
 
     @ManyToMany(cascade = CascadeType.PERSIST ,fetch = FetchType.EAGER )
-    @JoinTable(name="roles_authorities", joinColumns =@JoinColumn(name = "roles_id", referencedColumnName = "id"),inverseJoinColumns
-            = @JoinColumn(name = "authorities_id", referencedColumnName = "id"))
+    @JoinTable(name="roles_authorities", joinColumns =@JoinColumn(name = "role_id", referencedColumnName = "id"),inverseJoinColumns
+            = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
     private Collection<Authority> authorities;
 
     public Role(String name, Collection<Authority> authorities) {
+        this.name = name;
+        this.authorities = authorities;
     }
 }

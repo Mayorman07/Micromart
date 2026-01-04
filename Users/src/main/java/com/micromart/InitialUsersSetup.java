@@ -1,6 +1,7 @@
 package com.micromart;
 
 import com.micromart.constants.Roles;
+import com.micromart.constants.Status;
 import com.micromart.entities.Authority;
 import com.micromart.entities.Role;
 import com.micromart.entities.User;
@@ -64,7 +65,7 @@ public class InitialUsersSetup {
             adminUser.setUserId(String.valueOf(UUID.randomUUID()));
             adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode(adminPassword));
             adminUser.setRoles(Collections.singletonList(roleAdmin));
-
+            adminUser.setStatus(Status.ACTIVE);
             usersRepository.save(adminUser);
             logger.info("✅ Admin User Created Successfully!");
         } else {

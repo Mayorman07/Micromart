@@ -16,7 +16,9 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -26,6 +28,8 @@ import java.util.Date;
 @Entity
 @Table(name="users")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements Serializable {
 
     private static final long serialVersionUID = -273145678149216053L;
@@ -59,8 +63,8 @@ public class User implements Serializable {
     private Date passwordResetTokenExpiryDate;
 
     @ManyToMany(cascade = CascadeType.PERSIST ,fetch = FetchType.EAGER )
-    @JoinTable(name="users_roles", joinColumns =@JoinColumn(name = "users_id", referencedColumnName = "id"),inverseJoinColumns
-            = @JoinColumn(name = "roles_id", referencedColumnName = "id"))
+    @JoinTable(name="users_roles", joinColumns =@JoinColumn(name = "user_id", referencedColumnName = "id"),inverseJoinColumns
+            = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     Collection<Role> roles;
 
     @PrePersist
