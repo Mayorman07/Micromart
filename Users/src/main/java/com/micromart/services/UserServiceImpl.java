@@ -26,12 +26,11 @@ import com.micromart.repositories.RoleRepository;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -74,7 +73,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateLastLoggedIn(String userId) {
-
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("User not found with ID: " + userId));
+        user.setLastLoggedIn(new Date());
+        userRepository.save(user);
     }
 
     @Override
@@ -84,7 +86,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserDetailsByEmail(String email) {
-        return null;
+
+        User employee = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(email));
+
+        return modelMapper.map(employee, UserDto.class);
     }
 
     @Override
@@ -130,10 +136,6 @@ public class UserServiceImpl implements UserService {
         if (userToBeLoggedIn.isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
-
-//        return new CustomUserDetails(userToBeLoggedIn.get().getEmail(), userToBeLoggedIn.get().getEncryptedPassword(),
-//                true, true, true, true, new ArrayList<>());
-
         if (userToBeLoggedIn.get().getStatus() != Status.ACTIVE) {
             throw new DisabledException("User account is not active. Status: " + userToBeLoggedIn.get().getStatus());
         }
@@ -148,12 +150,10 @@ public class UserServiceImpl implements UserService {
                 authorities.add(new SimpleGrantedAuthority(authorityEntity.getName()));
             }));
         });
-//
-//        //enabled after password can be false until the user successfully verifys their email
+//        //enabled after password can be false until the user successfully verifies their email
         return new CustomUserDetails(userToBeLoggedIn.get().getEmail(), userToBeLoggedIn.get().getEncryptedPassword(),
                 true, true, true,true,
                 authorities,userToBeLoggedIn.get().getUserId(),
                 userToBeLoggedIn.get().getEmail());
     }
     }
-}

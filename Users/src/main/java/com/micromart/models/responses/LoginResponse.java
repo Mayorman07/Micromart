@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class LoginResponse {
 
     private String token;
-    private String employeeId;
-    private Long expirationMillis;
+    private String userId;
+    private Long expirationTime;
 
 }

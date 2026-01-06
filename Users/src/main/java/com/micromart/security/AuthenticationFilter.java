@@ -64,6 +64,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             Authentication auth) throws IOException, ServletException {
 
         String username = ((User)auth.getPrincipal()).getUsername();
+        System.out.println("DEBUG: Mayor Authenticated Principal: " + auth.getPrincipal());
+        System.out.println("DEBUG: Mayor Extracted Username: '" + username + "'");
         UserDto userDetails = userService.getUserDetailsByEmail(username);
         userService.updateLastLoggedIn(userDetails.getUserId());
         String tokenSecret = environment.getProperty("token.secret.key");
@@ -76,9 +78,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         Instant now = Instant.now();
 
-        long expirationMillis = Long.parseLong(environment.getProperty("token.expiration.time"));
+        long expirationTime = Long.parseLong(environment.getProperty("token.expiration.time"));
 
-        Date expirationDate = Date.from(now.plusMillis(expirationMillis));
+        Date expirationDate = Date.from(now.plusMillis(expirationTime));
         // Use the SecretKey to sign a JWT
         String token = Jwts.builder()
                 .claim("scope", auth.getAuthorities())
@@ -88,7 +90,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .signWith(secretKey)
                 .compact();
 
-        LoginResponse loginResponse = new LoginResponse(token, userDetails.getUserId(), expirationMillis);
+        LoginResponse loginResponse = new LoginResponse(token, userDetails.getUserId(), expirationTime);
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
         res.setStatus(HttpStatus.OK.value());
         res.getWriter().write(objectMapper.writeValueAsString(loginResponse));
