@@ -1,6 +1,7 @@
 package com.micromart.services;
 
 import com.micromart.constants.Status;
+import com.micromart.entities.Authority;
 import com.micromart.entities.Role;
 import com.micromart.entities.User;
 import com.micromart.exceptions.ConflictException;
@@ -130,23 +131,23 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException(username);
         }
 
-        return new CustomUserDetails(userToBeLoggedIn.get().getEmail(), userToBeLoggedIn.get().getEncryptedPassword(),
-                true, true, true, true, new ArrayList<>());
-//
-//        if (userToBeLoggedIn.get().getStatus() != Status.ACTIVE) {
-//            throw new DisabledException("User account is not active. Status: " + userToBeLoggedIn.get().getStatus());
-//        }
-//        Collection<GrantedAuthority> authorities = new ArrayList<>();
-//        Collection<Role> roles = userToBeLoggedIn.get().getRoles();
-//
-//        roles.forEach((role) ->{
-//            authorities.add(new SimpleGrantedAuthority((role.getName())));
-//            Collection<Authority> authorityEntities = role.getAuthorities();
-//
-//            authorityEntities.forEach((authorityEntity -> {
-//                authorities.add(new SimpleGrantedAuthority(authorityEntity.getName()));
-//            }));
-//        });
+//        return new CustomUserDetails(userToBeLoggedIn.get().getEmail(), userToBeLoggedIn.get().getEncryptedPassword(),
+//                true, true, true, true, new ArrayList<>());
+
+        if (userToBeLoggedIn.get().getStatus() != Status.ACTIVE) {
+            throw new DisabledException("User account is not active. Status: " + userToBeLoggedIn.get().getStatus());
+        }
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        Collection<Role> roles = userToBeLoggedIn.get().getRoles();
+
+        roles.forEach((role) ->{
+            authorities.add(new SimpleGrantedAuthority((role.getName())));
+            Collection<Authority> authorityEntities = role.getAuthorities();
+
+            authorityEntities.forEach((authorityEntity -> {
+                authorities.add(new SimpleGrantedAuthority(authorityEntity.getName()));
+            }));
+        });
 //
 //        //enabled after password can be false until the user successfully verifys their email
 //        return new CustomUserDetails(employeeToBeLoggedIn.get().getEmail(), employeeToBeLoggedIn.get().getEncryptedPassword(),
