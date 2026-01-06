@@ -12,23 +12,13 @@ public class CustomUserDetails extends User {
     private final String userId;
     private final String email;
 
-//    public CustomUserDetails(String username, String password, boolean enabled,
-//                             boolean accountNonExpired, boolean credentialsNonExpired,
-//                             boolean accountNonLocked,
-//                             Collection<? extends GrantedAuthority> authorities,
-//                             String employeeId, String department) {
-//        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-//        this.employeeId = employeeId;
-//        this.department = department;
-//    }
-
-    //not sure there should be String department though
-
     public CustomUserDetails(String username, String password, boolean enabled,
                              boolean accountNonExpired, boolean credentialsNonExpired,
                              boolean accountNonLocked,
-                             Collection<? extends GrantedAuthority> authorities) {
+                             Collection<? extends GrantedAuthority> authorities,String userId, String email ) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+        this.userId = userId;
+        this.email = email;
     }
 
 }

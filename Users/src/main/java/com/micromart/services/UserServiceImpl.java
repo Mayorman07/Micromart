@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
         return new CustomUserDetails(userToBeLoggedIn.get().getEmail(), userToBeLoggedIn.get().getEncryptedPassword(),
                 true, true, true,true,
                 authorities,userToBeLoggedIn.get().getUserId(),
-                userToBeLoggedIn.get().getDepartment());
+                userToBeLoggedIn.get().getEmail());
     }
     }
 }
