@@ -89,13 +89,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .compact();
 
         LoginResponse loginResponse = new LoginResponse(token, userDetails.getUserId(), expirationMillis);
-        // Set the response content type to JSON
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        // Set the HTTP status code to 200 OK
         res.setStatus(HttpStatus.OK.value());
-
-        // Write the JSON response to the response body
         res.getWriter().write(objectMapper.writeValueAsString(loginResponse));
-        res.getWriter().flush(); // Ensure the data is sent immediately
+        res.getWriter().flush();
     }
 }
