@@ -43,7 +43,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-
     @Override
     @Transactional
     public UserDto createUser(UserDto userDetails) {
