@@ -9,8 +9,8 @@ import java.util.Collection;
 @Getter
 public class CustomUserDetails extends User {
 
-//    private final String employeeId;
-//    private final String department;
+    private final String userId;
+    private final String email;
 
 //    public CustomUserDetails(String username, String password, boolean enabled,
 //                             boolean accountNonExpired, boolean credentialsNonExpired,

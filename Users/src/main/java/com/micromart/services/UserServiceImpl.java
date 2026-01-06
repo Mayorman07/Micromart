@@ -150,10 +150,10 @@ public class UserServiceImpl implements UserService {
         });
 //
 //        //enabled after password can be false until the user successfully verifys their email
-//        return new CustomUserDetails(employeeToBeLoggedIn.get().getEmail(), employeeToBeLoggedIn.get().getEncryptedPassword(),
-//                true, true, true,true,
-//                authorities,employeeToBeLoggedIn.get().getUserId(),
-//                employeeToBeLoggedIn.get().getDepartment());
-//    }
+        return new CustomUserDetails(userToBeLoggedIn.get().getEmail(), userToBeLoggedIn.get().getEncryptedPassword(),
+                true, true, true,true,
+                authorities,userToBeLoggedIn.get().getUserId(),
+                userToBeLoggedIn.get().getDepartment());
+    }
     }
 }
