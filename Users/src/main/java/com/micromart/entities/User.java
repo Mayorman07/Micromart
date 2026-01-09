@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -32,6 +33,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class User implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -273145678149216053L;
 
     @Id
