@@ -21,4 +21,8 @@ public class CustomUserDetails extends User {
         this.email = email;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
 }
