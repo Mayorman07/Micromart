@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -25,6 +26,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class Role implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6929482536229723029L;
 
     @Id
