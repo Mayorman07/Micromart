@@ -1,6 +1,7 @@
 package com.micromart.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.micromart.models.data.CustomUserDetails;
 import com.micromart.models.data.UserDto;
 import com.micromart.models.requests.LoginRequest;
 import com.micromart.models.responses.LoginResponse;
@@ -63,11 +64,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             HttpServletResponse res, FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
 
-        String username = ((User)auth.getPrincipal()).getUsername();
-        System.out.println("DEBUG: Mayor Authenticated Principal: " + auth.getPrincipal());
-        System.out.println("DEBUG: Mayor Extracted Username: '" + username + "'");
-        UserDto userDetails = userService.getUserDetailsByEmail(username);
-        userService.updateLastLoggedIn(userDetails.getUserId());
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        String userId = userDetails.getUserId();
+        userService.updateLastLoggedIn(userId);
         String tokenSecret = environment.getProperty("token.secret.key");
         if (tokenSecret == null) {
             throw new RuntimeException("Token secret key is missing in the configuration!");
