@@ -1,8 +1,10 @@
 package com.micromart.controllers;
 
 import com.micromart.models.data.UserDto;
+import com.micromart.models.data.UserProfileDto;
 import com.micromart.models.requests.CreateUserRequest;
 import com.micromart.models.responses.CreateUserResponse;
+import com.micromart.models.responses.UserProfileResponse;
 import com.micromart.services.UserService;
 import com.micromart.validations.InputValidator;
 import jakarta.validation.Valid;
@@ -36,9 +38,11 @@ public class UsersController{
 
     @GetMapping(path = "/test/status")
     public String status(){
-     return "Just testing as usual";
+
+        return "Just testing as usual";
     }
     @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest userRequest, BindingResult bindingResult){
         logger.info("The incoming create employee request {} " , userRequest);
         InputValidator.validate(bindingResult);
@@ -49,11 +53,35 @@ public class UsersController{
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
 
+    @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('product:READ')")
+    public ResponseEntity<CreateUserResponse> updateUser(@Valid @RequestBody CreateUserRequest updateUserRequest){
+        logger.info("The incoming update user request {} " , updateUserRequest);
+    UserDto userDto = modelMapper.map(updateUserRequest, UserDto.class);
+    UserDto userToBeUpdated = userService.updateUser(userDto);
+    CreateUserResponse returnValue = modelMapper.map(userToBeUpdated, CreateUserResponse.class);
+        logger.info("The outgoing update employee response {} " , returnValue);
+        return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
+    }
+
     @PutMapping("/{userId}/roles/manager")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> assignManagerRole(@PathVariable String userId) {
         userService.assignManagerRole(userId);
         return ResponseEntity.ok("Employee has been promoted to manager successfully.");
+    }
+
+    public void deleteUser(){
+
+    }
+
+    @GetMapping(path ="/view/{email}")
+    @PreAuthorize("hasAuthority('product:READ')")
+    public ResponseEntity<UserProfileResponse> viewProfile(@PathVariable("email") String email){
+        logger.info("Received request to view personal employee with email: {}", email);
+        UserProfileDto requestedUserDetails = userService.viewProfile(email);
+        UserProfileResponse returnValue = modelMapper.map(requestedUserDetails,UserProfileResponse.class);
+        return ResponseEntity.ok(returnValue);
     }
 
 }

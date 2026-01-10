@@ -41,7 +41,7 @@ public class InitialUsersSetup {
     @Transactional
     @EventListener
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        logger.info("🚦 Application Ready - Checking/Seeding Admin User...");
+        logger.info("🚦 Application Ready - Seeding Admin User...");
 
         // Products
         Authority productRead = createAuthority("product:READ");

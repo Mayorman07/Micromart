@@ -8,6 +8,7 @@ import com.micromart.exceptions.ConflictException;
 import com.micromart.exceptions.NotFoundException;
 import com.micromart.models.data.CustomUserDetails;
 import com.micromart.models.data.UserDto;
+import com.micromart.models.data.UserProfileDto;
 import com.micromart.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,13 +63,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser() {
-
+    public UserDto updateUser(UserDto userDetails) {
+        User existingUser = userRepository.findByEmail(userDetails.getEmail())
+                .orElseThrow(() -> {
+                    logger.info("User with email {} not found for update!", userDetails.getEmail());
+                    return new NotFoundException("User not found!");
+                });
+        modelMapper.map(userDetails,existingUser);
+        User userToBeUpdated = userRepository.save(existingUser);
+        return modelMapper.map(userToBeUpdated,UserDto.class);
     }
 
     @Override
-    public void viewProfile() {
+    public UserProfileDto viewProfile(String email) {
+        User existingEmployee = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    logger.info("Employee with email {} not found for viewing!", email);
+                    return new NotFoundException("Employee not found!");
+                });
 
+        return modelMapper.map(existingEmployee, UserProfileDto.class);
     }
 
     @Override
@@ -80,13 +94,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void viewUserDetails() {
-
-    }
-
-    @Override
     public UserDto getUserDetailsByEmail(String email) {
-
         User employee = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email));
 
