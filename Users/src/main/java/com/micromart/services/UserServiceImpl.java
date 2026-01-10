@@ -6,7 +6,9 @@ import com.micromart.entities.Role;
 import com.micromart.entities.User;
 import com.micromart.exceptions.ConflictException;
 import com.micromart.exceptions.NotFoundException;
+import com.micromart.messaging.MessagePublisher;
 import com.micromart.models.data.CustomUserDetails;
+import com.micromart.models.data.UserCreatedEventDto;
 import com.micromart.models.data.UserDto;
 import com.micromart.models.data.UserProfileDto;
 import com.micromart.repositories.UserRepository;
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final MessagePublisher messagePublisher;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Override
@@ -49,7 +52,9 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDetails) {
 
         if (userRepository.findByEmail(userDetails.getEmail()).isPresent()) {
-            logger.info("User with email {} already exists!", userDetails.getEmail());
+            logger.info("User with email {} already exists!, " +
+                    "click the link below to login to your account or forgot password" +
+                    " if you don't remember your password", userDetails.getEmail());
             throw new ConflictException("Existing user!");
         }
         userDetails.setUserId(UUID.randomUUID().toString());
@@ -59,6 +64,7 @@ public class UserServiceImpl implements UserService {
         String verificationToken = UUID.randomUUID().toString();
         userToBeCreated.setVerificationToken(verificationToken);
         User savedUser = userRepository.save(userToBeCreated);
+        publishUserCreatedEvent(savedUser, verificationToken);
         return modelMapper.map(savedUser, UserDto.class);
     }
 
@@ -129,6 +135,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean performPasswordReset(String token, String newPassword) {
+        return false;
+    }
+
+    @Override
     public void deactivateUser(String email) {
         User existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
@@ -140,13 +151,17 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userToBeDeactivate);
     }
 
-    @Override
-    public boolean performPasswordReset(String token, String newPassword) {
-        return false;
-    }
 
     @Override
     public boolean verifyUser(String token) {
+        Optional<User> userWithVerificationToken = userRepository.findByVerificationToken(token);
+        if (userWithVerificationToken.isPresent()) {
+            User employee = userWithVerificationToken.get();
+            employee.setStatus(Status.ACTIVE);
+            employee.setVerificationToken(null); // Clear the token so it can't be used again
+            userRepository.save(employee);
+            return true;
+        }
         return false;
     }
 
@@ -154,7 +169,6 @@ public class UserServiceImpl implements UserService {
     public int sendWeMissedYouEmails() {
         return 0;
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -183,4 +197,15 @@ public class UserServiceImpl implements UserService {
                 authorities,userToBeLoggedIn.get().getUserId(),
                 userToBeLoggedIn.get().getEmail());
     }
+
+    private void publishUserCreatedEvent(User savedEmployee, String verificationToken) {
+        UserCreatedEventDto eventDto = new UserCreatedEventDto(
+                savedEmployee.getFirstName(),
+                savedEmployee.getEmail(),
+                verificationToken,
+                "USER_CREATED"
+        );
+        messagePublisher.sendUserCreatedEvent(eventDto);
+        logger.info("Published User Created event for email: {}", savedEmployee.getEmail());
     }
+}
