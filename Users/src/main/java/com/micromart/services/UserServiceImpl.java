@@ -76,13 +76,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfileDto viewProfile(String email) {
-        User existingEmployee = userRepository.findByEmail(email)
+        User existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    logger.info("Employee with email {} not found for viewing!", email);
-                    return new NotFoundException("Employee not found!");
+                    logger.info("User with email {} not found for viewing!", email);
+                    return new NotFoundException("User not found!");
                 });
 
-        return modelMapper.map(existingEmployee, UserProfileDto.class);
+        return modelMapper.map(existingUser, UserProfileDto.class);
     }
 
     @Override
@@ -117,6 +117,18 @@ public class UserServiceImpl implements UserService {
             userRepository.save(employee);
         }
     }
+
+    @Override
+    @Transactional
+    public void deleteUser(String email) {
+        User existingUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    logger.info("User with email {} not found for deleting!", email);
+                    return new NotFoundException("User not found!");
+                });
+
+    }
+
     @Override
     public boolean requestPasswordReset(String email) {
         return false;
@@ -136,6 +148,7 @@ public class UserServiceImpl implements UserService {
     public int sendWeMissedYouEmails() {
         return 0;
     }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

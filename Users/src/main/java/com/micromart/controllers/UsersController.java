@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,9 +71,13 @@ public class UsersController{
         userService.assignManagerRole(userId);
         return ResponseEntity.ok("Employee has been promoted to manager successfully.");
     }
-
-    public void deleteUser(){
-
+    @DeleteMapping(path ="/{email}")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_DELETE')")
+    public ResponseEntity<Void> deleteUser(@PathVariable("email") String email){
+        logger.info("The incoming request to delete a user {}", email);
+        userService.deleteUser(email);
+        logger.info("Employee with email {} deleted successfully.", email);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(path ="/view/{email}")
