@@ -126,7 +126,8 @@ public class UserServiceImpl implements UserService {
                     logger.info("User with email {} not found for deleting!", email);
                     return new NotFoundException("User not found!");
                 });
-
+        userRepository.delete(existingUser);
+        logger.info("The user with the email has been deleted");
     }
 
     @Override
