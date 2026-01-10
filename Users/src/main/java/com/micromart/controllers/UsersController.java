@@ -40,7 +40,7 @@ public class UsersController{
     @GetMapping(path = "/test/status")
     public String status(){
 
-        return "Just testing as usual";
+        return "Just testing as usual, normal normal";
     }
     @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
@@ -61,7 +61,7 @@ public class UsersController{
     UserDto userDto = modelMapper.map(updateUserRequest, UserDto.class);
     UserDto userToBeUpdated = userService.updateUser(userDto);
     CreateUserResponse returnValue = modelMapper.map(userToBeUpdated, CreateUserResponse.class);
-        logger.info("The outgoing update employee response {} " , returnValue);
+        logger.info("The outgoing update user response {} " , returnValue);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
 
@@ -79,8 +79,9 @@ public class UsersController{
         logger.info("Employee with email {} deleted successfully.", email);
         return ResponseEntity.noContent().build();
     }
-
-    public void deactivateUsers( @PathVariable String email){
+    @PostMapping(path ="/{email}")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_DELETE')")
+    public void deactivateUser(@PathVariable String email){
         logger.info("The incoming deactivate user request {} " , email);
         userService.deactivateUser(email);
         logger.info("User with email {} has been deactivated successfully.", email);
