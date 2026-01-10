@@ -10,8 +10,8 @@ public interface UserService extends UserDetailsService {
     UserProfileDto viewProfile(String email);
     void updateLastLoggedIn(String userId);
     void assignManagerRole(String userId);
-    UserDto getUserDetailsByEmail(String email);
     boolean requestPasswordReset(String email);
+    void deactivateUser(String email);
     boolean performPasswordReset(String token, String newPassword);
     boolean verifyUser(String token);
     int sendWeMissedYouEmails();

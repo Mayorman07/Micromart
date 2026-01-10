@@ -93,13 +93,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    @Override
-    public UserDto getUserDetailsByEmail(String email) {
-        User employee = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email));
-
-        return modelMapper.map(employee, UserDto.class);
-    }
 
     @Override
     @Transactional
@@ -133,6 +126,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean requestPasswordReset(String email) {
         return false;
+    }
+
+    @Override
+    public void deactivateUser(String email) {
+        User existingUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    logger.info("User with email {} not found for deactivating!", email);
+                    return new NotFoundException("User not found!");
+                });
+        existingUser.setStatus(Status.DEACTIVATED);
+        User userToBeDeactivate = modelMapper.map(existingUser,User.class);
+        userRepository.save(userToBeDeactivate);
     }
 
     @Override

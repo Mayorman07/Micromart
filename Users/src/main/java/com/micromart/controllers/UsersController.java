@@ -80,6 +80,12 @@ public class UsersController{
         return ResponseEntity.noContent().build();
     }
 
+    public void deactivateUsers( @PathVariable String email){
+        logger.info("The incoming deactivate user request {} " , email);
+        userService.deactivateUser(email);
+        logger.info("User with email {} has been deactivated successfully.", email);
+    }
+
     @GetMapping(path ="/view/{email}")
     @PreAuthorize("hasAuthority('product:READ')")
     public ResponseEntity<UserProfileResponse> viewProfile(@PathVariable("email") String email){
