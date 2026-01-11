@@ -21,6 +21,15 @@
         </processorPath>
         <module name="Users" />
       </profile>
+      <profile name="Annotation profile for notification" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="notification" />
+      </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
@@ -30,6 +39,7 @@
       <module name="Gateway" options="-parameters" />
       <module name="JwtAuthorities" options="-parameters" />
       <module name="Users" options="-parameters" />
+      <module name="notification" options="-parameters" />
     </option>
   </component>
 </project>
