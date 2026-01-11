@@ -22,7 +22,6 @@ public class NotificationListener {
     public void handleUserCreatedEvent(UserCreatedEventDto event) {
         log.info("📨 Received event for: {}", event.getEmail());
 
-        // 1. Construct the Email Content
         String subject = "Welcome to Micromart! Verify your Email";
         String verificationLink = environment.getProperty("app.gateway.url") + "/users/verify?token="
                 + event.getVerificationToken();
@@ -32,10 +31,9 @@ public class NotificationListener {
                 verificationLink + "\n\n" +
                 "See you soon!";
 
-        // 2. Use the Factory to get the right sender
         NotificationChannel channel = notificationFactory.getChannel("EMAIL");
+        NotificationChannel channelTwo = notificationFactory.getChannel("SMS");
 
-        // 3. Send it!
         channel.sendNotification(event.getEmail(), subject, body);
     }
 }
