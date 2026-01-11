@@ -21,7 +21,7 @@ public class EmailNotificationChannel implements NotificationChannel {
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(environment.getProperty("spring.mail.from")); // Or your configured email
+            message.setFrom(environment.getProperty("spring.mail.from"));
             message.setTo(to);
             message.setSubject(subject);
             message.setText(content);
@@ -31,7 +31,6 @@ public class EmailNotificationChannel implements NotificationChannel {
 
         } catch (Exception e) {
             logger.error("❌ Failed to send email to {}: {}", to, e.getMessage());
-            // In a real app, you might throw this so RabbitMQ retries the message!
         }
     }
 }

@@ -4,11 +4,16 @@ import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SmsNotificationChannel implements NotificationChannel {
+
+    private static final Logger logger = LoggerFactory.getLogger(SmsNotificationChannel.class);
+
 
     @Value("${twilio.account.sid}")
     private String accountSid;
@@ -23,9 +28,9 @@ public class SmsNotificationChannel implements NotificationChannel {
     public void initTwilio() {
         try {
             Twilio.init(accountSid, authToken);
-            System.out.println("Twilio Initialized");
+            logger.info("Twilio Initialized");
         } catch (Exception e) {
-            System.err.println("Twilio Init Failed: " + e.getMessage());
+            logger.error("Twilio Init Failed: " + e.getMessage());
         }
     }
 
@@ -39,10 +44,10 @@ public class SmsNotificationChannel implements NotificationChannel {
                     content
             ).create();
 
-            System.out.println("SMS Sent! SID: " + message.getSid());
+            logger.info("SMS Sent! SID: " + message.getSid());
 
         } catch (Exception e) {
-            System.err.println("Failed to send SMS: " + e.getMessage());
+            logger.error("Failed to send SMS: " + e.getMessage());
         }
     }
 }
