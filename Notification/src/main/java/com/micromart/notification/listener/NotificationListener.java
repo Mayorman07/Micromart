@@ -41,7 +41,7 @@ public class NotificationListener {
         if (event.getMobileNumber() != null && !event.getMobileNumber().isEmpty()) {
             try {
                 String smsBody = "Welcome to Micromart, " + event.getFirstName() + "! " +
-                        "Verify here: " + verificationLink;
+                        "Verify here: " + event.getVerificationToken();
 
                 NotificationChannel smsChannel = notificationFactory.getChannel("SMS");
                 smsChannel.sendNotification(event.getMobileNumber(), "", smsBody);
@@ -53,5 +53,5 @@ public class NotificationListener {
             log.warn("No phone number found for user {}. Skipping SMS.", event.getEmail());
         }
     }
-    }
 }
+
