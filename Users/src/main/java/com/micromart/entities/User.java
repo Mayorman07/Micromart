@@ -63,6 +63,7 @@ public class User implements Serializable {
     private String passwordResetToken;
     @Column(name = "password_reset_token_expiry_date")
     private Date passwordResetTokenExpiryDate;
+    private String mobileNumber;
 
     @ManyToMany(cascade = CascadeType.PERSIST ,fetch = FetchType.EAGER )
     @JoinTable(name="users_roles", joinColumns =@JoinColumn(name = "user_id", referencedColumnName = "id"),inverseJoinColumns
