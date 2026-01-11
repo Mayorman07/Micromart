@@ -13,5 +13,6 @@ public class UserCreatedEventDto implements Serializable {
     private String firstName;
     private String email;
     private String verificationToken;
+    private String mobileNumber;
     private String type;
 }
