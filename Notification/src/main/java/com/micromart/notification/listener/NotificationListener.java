@@ -1,12 +1,10 @@
 package com.micromart.notification.listener;
 
-import com.micromart.notification.channels.EmailNotificationChannel;
 import com.micromart.notification.channels.NotificationChannel;
 import com.micromart.notification.factory.NotificationFactory;
 import com.micromart.notification.model.UserCreatedEventDto;
 import configuration.RabbitMQConfig;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
