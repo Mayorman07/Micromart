@@ -11,7 +11,7 @@ import com.micromart.notification.channels.EmailNotificationChannel;
 public class NotificationFactory {
 
     private final EmailNotificationChannel emailChannel;
-    private final SmsNotificationChannel smsChannel; // Future use
+    private final SmsNotificationChannel smsChannel;
 
     public NotificationChannel getChannel(String type) {
         if ("USER_CREATED".equalsIgnoreCase(type) || "EMAIL".equalsIgnoreCase(type)) {
