@@ -18,7 +18,6 @@ public class SmsNotificationChannel implements NotificationChannel {
 
     @Value("${twilio.auth.token}")
     private String authToken;
-
     @Value("${twilio.phone.number}")
     private String fromPhoneNumber;
 
