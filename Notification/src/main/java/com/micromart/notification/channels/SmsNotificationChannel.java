@@ -15,7 +15,6 @@ public class SmsNotificationChannel implements NotificationChannel {
     private static final Logger logger = LoggerFactory.getLogger(SmsNotificationChannel.class);
     @Value("${twilio.account.sid}")
     private String accountSid;
-
     @Value("${twilio.auth.token}")
     private String authToken;
     @Value("${twilio.phone.number}")
