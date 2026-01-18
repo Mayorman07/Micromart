@@ -27,6 +27,7 @@ public class NotificationListener {
     @RabbitListener(queues = RabbitMQConfig.USER_CREATED_QUEUE)
     public void handleUserCreatedEvent(UserCreatedEventDto event) {
         logger.info("📨 Received event for: {}", event.getEmail());
+        logger.info("📨 Received token for: {}", event.getVerificationToken());
         String verificationLink = environment.getProperty("app.gateway.url") + "/users/verify?token="
                 + event.getVerificationToken();
 

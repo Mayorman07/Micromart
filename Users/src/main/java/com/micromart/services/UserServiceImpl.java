@@ -202,11 +202,12 @@ public class UserServiceImpl implements UserService {
         UserCreatedEventDto eventDto = new UserCreatedEventDto(
                 savedEmployee.getFirstName(),
                 savedEmployee.getEmail(),
-                savedEmployee.getMobileNumber(),
                 verificationToken,
+                savedEmployee.getMobileNumber(),
                 "USER_CREATED"
         );
         messagePublisher.sendUserCreatedEvent(eventDto);
+        logger.info("Published User Created event for token: {}", verificationToken);
         logger.info("Published User Created event for email: {}", savedEmployee.getEmail());
     }
 }
