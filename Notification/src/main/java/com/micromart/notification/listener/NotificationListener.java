@@ -12,13 +12,18 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class NotificationListener {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationListener.class);
 
     private final NotificationFactory notificationFactory;
     private final Environment environment;
+
+   public NotificationListener(NotificationFactory notificationFactory,Environment environment){
+       this.notificationFactory = notificationFactory;
+       this.environment = environment;
+   }
 
     @RabbitListener(queues = RabbitMQConfig.USER_CREATED_QUEUE)
     public void handleUserCreatedEvent(UserCreatedEventDto event) {

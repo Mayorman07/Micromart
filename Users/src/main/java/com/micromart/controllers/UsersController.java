@@ -43,7 +43,6 @@ public class UsersController{
         return "Just testing as usual, normal normal";
     }
     @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest userRequest, BindingResult bindingResult){
         logger.info("The incoming create employee request {} " , userRequest);
         InputValidator.validate(bindingResult);
@@ -54,7 +53,7 @@ public class UsersController{
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
 
-    @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path ="/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('product:READ')")
     public ResponseEntity<CreateUserResponse> updateUser(@Valid @RequestBody CreateUserRequest updateUserRequest){
         logger.info("The incoming update user request {} " , updateUserRequest);

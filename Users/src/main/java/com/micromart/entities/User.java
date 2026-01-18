@@ -16,6 +16,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -63,6 +64,7 @@ public class User implements Serializable {
     private String passwordResetToken;
     @Column(name = "password_reset_token_expiry_date")
     private Date passwordResetTokenExpiryDate;
+    @NotBlank(message = "Mobile number is required")
     private String mobileNumber;
 
     @ManyToMany(cascade = CascadeType.PERSIST ,fetch = FetchType.EAGER )
