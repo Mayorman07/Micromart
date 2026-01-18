@@ -1,5 +1,4 @@
-package configuration;
-
+package com.micromart.notification.configuration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -54,6 +53,11 @@ public class RabbitMQConfig {
 
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {
+//
+//        Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
+//
+//        converter.setTypePrecedence(Jackson2JsonMessageConverter.TypePrecedence.INFERRED);
+//        return converter;
         return new Jackson2JsonMessageConverter();
     }
 }
