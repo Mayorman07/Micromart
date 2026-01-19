@@ -33,5 +33,4 @@ public class CreateUserRequest {
     @Size(min = 11,max = 15, message = "mobileNumber must be between 11 and 15 numbers")
     private String mobileNumber;
     private AddressRequest address;
-
 }
