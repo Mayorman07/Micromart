@@ -1,6 +1,7 @@
 package com.micromart.entities;
 
 import com.micromart.constants.AddressType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -24,6 +25,9 @@ public class Address {
     private String city;
     private String state;
     private String zipCode;
+    private String addressId;
+    @Column(length = 100, nullable = false)
+    private String country;
     @Enumerated(EnumType.STRING)
     private AddressType type;
     @ManyToOne
@@ -60,6 +64,22 @@ public class Address {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(String addressId) {
+        this.addressId = addressId;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getZipCode() {

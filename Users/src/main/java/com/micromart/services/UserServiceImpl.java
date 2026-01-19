@@ -65,6 +65,7 @@ public class UserServiceImpl implements UserService {
         if (userDetails.getAddress() != null) {
             Address addressEntity = modelMapper.map(userDetails.getAddress(), Address.class);
             addressEntity.setUser(userToBeCreated);
+            addressEntity.setAddressId(UUID.randomUUID().toString());
             addressEntity.setType(AddressType.SHIPPING);
             userToBeCreated.setAddresses(List.of(addressEntity));
         }
@@ -165,7 +166,7 @@ public class UserServiceImpl implements UserService {
         if (userWithVerificationToken.isPresent()) {
             User employee = userWithVerificationToken.get();
             employee.setStatus(Status.ACTIVE);
-            employee.setVerificationToken(null); // Clear the token so it can't be used again
+            employee.setVerificationToken(null);
             userRepository.save(employee);
             return true;
         }
