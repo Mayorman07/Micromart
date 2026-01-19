@@ -29,10 +29,9 @@ public class CreateUserRequest {
     @NotNull(message = "Gender field cannot be null")
     @NotEmpty(message = "Gender field cannot be empty")
     private String gender;
-    @NotNull(message = "Address field cannot be null")
-    @NotEmpty(message = "Address field cannot be empty")
-    private String address;
     @NotNull(message = "mobileNumber cannot be null")
     @Size(min = 11,max = 15, message = "mobileNumber must be between 11 and 15 numbers")
     private String mobileNumber;
+    private AddressRequest address;
+
 }
