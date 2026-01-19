@@ -21,7 +21,6 @@ public class AddressDto implements Serializable {
     private String street;
     private String city;
     private String state;
-    private String country;
     private String zipCode;
-    private String type;       // e.g., "SHIPPING", "BILLING"
+    private String type;
 }
