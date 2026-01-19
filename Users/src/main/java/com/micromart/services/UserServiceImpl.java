@@ -1,6 +1,7 @@
 package com.micromart.services;
 
 import com.micromart.constants.Status;
+import com.micromart.entities.Address;
 import com.micromart.entities.Authority;
 import com.micromart.entities.Role;
 import com.micromart.entities.User;
@@ -31,6 +32,7 @@ import com.micromart.repositories.RoleRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -61,6 +63,12 @@ public class UserServiceImpl implements UserService {
         userDetails.setEncryptedPassword(passwordEncoder.encode(userDetails.getPassword()));
         userDetails.setStatus(Status.INACTIVE);
         User userToBeCreated = modelMapper.map(userDetails, User.class);
+        if (userDetails.getAddress() != null) {
+            Address addressEntity = modelMapper.map(userDetails.getAddress(), Address.class);
+            addressEntity.setUser(userToBeCreated);
+            addressEntity.setType("SHIPPING");
+            userToBeCreated.setAddresses(List.of(addressEntity));
+        }
         String verificationToken = UUID.randomUUID().toString();
         userToBeCreated.setVerificationToken(verificationToken);
         User savedUser = userRepository.save(userToBeCreated);
