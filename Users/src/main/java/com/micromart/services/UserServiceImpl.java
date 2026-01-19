@@ -1,5 +1,6 @@
 package com.micromart.services;
 
+import com.micromart.constants.AddressType;
 import com.micromart.constants.Status;
 import com.micromart.entities.Address;
 import com.micromart.entities.Authority;
@@ -54,9 +55,7 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDetails) {
 
         if (userRepository.findByEmail(userDetails.getEmail()).isPresent()) {
-            logger.info("User with email {} already exists!, " +
-                    "click the link below to login to your account or forgot password" +
-                    " if you don't remember your password", userDetails.getEmail());
+            logger.info("User with email {} already exists!, ", userDetails.getEmail());
             throw new ConflictException("Existing user!");
         }
         userDetails.setUserId(UUID.randomUUID().toString());
@@ -66,7 +65,7 @@ public class UserServiceImpl implements UserService {
         if (userDetails.getAddress() != null) {
             Address addressEntity = modelMapper.map(userDetails.getAddress(), Address.class);
             addressEntity.setUser(userToBeCreated);
-            addressEntity.setType("SHIPPING");
+            addressEntity.setType(AddressType.SHIPPING);
             userToBeCreated.setAddresses(List.of(addressEntity));
         }
         String verificationToken = UUID.randomUUID().toString();
