@@ -17,7 +17,6 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
 
-        // Check if the reason for failure was a disabled account
         if (exception instanceof DisabledException) {
             // If so, redirect to the custom "deactivated" page
             getRedirectStrategy().sendRedirect(request, response, "/account-deactivated.html");
