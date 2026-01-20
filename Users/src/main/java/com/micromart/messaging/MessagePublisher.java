@@ -12,7 +12,6 @@ public class MessagePublisher {
     private final RabbitTemplate rabbitTemplate;
 
     public void sendUserCreatedEvent(UserCreatedEventDto eventDto) {
-        // "Exchange", "Routing Key", "Data"
         rabbitTemplate.convertAndSend(
                 RabbitMQConfig.EXCHANGE_NAME,
                 RabbitMQConfig.ROUTING_KEY,
