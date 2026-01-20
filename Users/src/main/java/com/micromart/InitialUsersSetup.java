@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,7 +38,6 @@ public class InitialUsersSetup {
     private String adminEmail;
     @Value("${admin.password}")
     private String adminPassword;
-
     @Transactional
     @EventListener
     public void onApplicationEvent(ApplicationReadyEvent event) {
@@ -51,7 +51,7 @@ public class InitialUsersSetup {
         Authority userRead = createAuthority("user:READ");
         Authority userWrite = createAuthority("user:WRITE");
 
-        createRole(Roles.ROLE_USER.name(), Arrays.asList(productRead));
+        createRole(Roles.ROLE_USER.name(), List.of(productRead));
         createRole(Roles.ROLE_MANAGER.name(), Arrays.asList(productRead, productWrite, userRead));
         Role roleAdmin = createRole(Roles.ROLE_ADMIN.name(), Arrays.asList(productRead, productWrite, userRead, userWrite));
 
