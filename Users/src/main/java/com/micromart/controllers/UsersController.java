@@ -54,7 +54,6 @@ public class UsersController{
     }
 
     @PutMapping(path ="/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('product:READ')")
     public ResponseEntity<CreateUserResponse> updateUser(@Valid @RequestBody CreateUserRequest updateUserRequest){
         logger.info("The incoming update user request {} " , updateUserRequest);
     UserDto userDto = modelMapper.map(updateUserRequest, UserDto.class);
