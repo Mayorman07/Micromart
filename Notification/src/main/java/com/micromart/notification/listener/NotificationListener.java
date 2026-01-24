@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 public class NotificationListener {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationListener.class);
-
     private final NotificationFactory notificationFactory;
     private final Environment environment;
 
@@ -42,7 +41,6 @@ public class NotificationListener {
                 );
 
             } else {
-                // Fallback: If for some reason the factory gave us the wrong channel type
                 logger.warn("⚠️ Channel is not EmailNotificationChannel, sending plain text.");
                 channel.sendNotification(event.getEmail(), "Welcome", "Please verify your account.");
             }
@@ -51,7 +49,7 @@ public class NotificationListener {
             logger.error("❌ Failed to send Welcome Email", e);
         }
 
-        // --- SMS SECTION (Unchanged) ---
+        // --- SMS SECTION  ---
         if (event.getMobileNumber() != null && !event.getMobileNumber().isEmpty()) {
             try {
                 String smsBody = "Welcome to Micromart, " + event.getFirstName() + "! " +
