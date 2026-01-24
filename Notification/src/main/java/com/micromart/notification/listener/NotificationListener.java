@@ -28,7 +28,7 @@ public class NotificationListener {
     public void handleUserCreatedEvent(UserCreatedEventDto event) {
         logger.info("📨 Received event for: {}", event.getEmail());
         logger.info("📨 Received token for: {}", event.getVerificationToken());
-        String verificationLink = environment.getProperty("app.gateway.url") + "/users/verify?token="
+        String verificationLink = environment.getProperty("app.frontend.url") + "/verify?token="
                 + event.getVerificationToken();
 
        try{
