@@ -15,11 +15,9 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.nio.charset.StandardCharsets;
 
 @Component
-@RequiredArgsConstructor
 public class EmailNotificationChannel implements NotificationChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailNotificationChannel.class);
-
     private final JavaMailSender javaMailSender;
     private final Environment environment;
     private final SpringTemplateEngine templateEngine;
@@ -31,13 +29,21 @@ public class EmailNotificationChannel implements NotificationChannel {
         sendSimpleHtmlEmail(to, subject, content);
     }
 
+    public EmailNotificationChannel(JavaMailSender javaMailSender,
+                                    Environment environment,
+                                    SpringTemplateEngine templateEngine) {
+        this.javaMailSender = javaMailSender;
+        this.environment = environment;
+        this.templateEngine = templateEngine;
+    }
+
     public void sendHtmlVerificationEmail(String to, String userName, String token) {
         logger.info("📧 Preparing Verification Email for: {}", to);
 
         try {
             Context context = new Context();
 
-            String safeName = (userName != null && !userName.isEmpty()) ? userName : "Friend";
+            String safeName = (userName != null && !userName.isEmpty()) ? userName : "Partner";
             context.setVariable("userName", safeName);
             String link = frontendUrl + "/verify?token=" + token;
             context.setVariable("verificationLink", link);
