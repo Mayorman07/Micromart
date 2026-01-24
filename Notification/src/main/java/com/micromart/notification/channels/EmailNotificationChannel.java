@@ -1,57 +1,71 @@
 package com.micromart.notification.channels;
+
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.nio.charset.StandardCharsets;
 
 @Component
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class EmailNotificationChannel implements NotificationChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailNotificationChannel.class);
+
     private final JavaMailSender javaMailSender;
     private final Environment environment;
-
-    public EmailNotificationChannel(JavaMailSender javaMailSender, Environment environment) {
-        this.javaMailSender = javaMailSender;
-        this.environment = environment;
-    }
+    private final SpringTemplateEngine templateEngine;
+    @Value("${app.frontend.url:http://127.0.0.1:5173}")
+    private String frontendUrl;
 
     @Override
     public void sendNotification(String to, String subject, String content) {
-        logger.info("📧 Preparing to send email to: {}", to);
+        sendSimpleHtmlEmail(to, subject, content);
+    }
+
+    public void sendHtmlVerificationEmail(String to, String userName, String token) {
+        logger.info("📧 Preparing Verification Email for: {}", to);
 
         try {
-            // 1. Create a MimeMessage
-            MimeMessage message = javaMailSender.createMimeMessage();
+            Context context = new Context();
 
-            // 2. Use the Helper (true = multipart, StandardCharsets.UTF_8 = encoding)
+            String safeName = (userName != null && !userName.isEmpty()) ? userName : "Friend";
+            context.setVariable("userName", safeName);
+            String link = frontendUrl + "/verify?token=" + token;
+            context.setVariable("verificationLink", link);
+            String htmlBody = templateEngine.process("verification-email", context);
+            sendSimpleHtmlEmail(to, "🚀 Verify your Micromart Account", htmlBody);
+            logger.info("✅ Verification Email sent to {} (User: {})", to, safeName);
+
+        } catch (Exception e) {
+            logger.error("❌ Failed to create verification email: {}", e.getMessage());
+        }
+    }
+    private void sendSimpleHtmlEmail(String to, String subject, String htmlContent) {
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
 
-            // 3. Set the Sender with a DISPLAY NAME
             String fromEmail = environment.getProperty("spring.mail.username");
-            String displayName = "Micromart"; // 👈 This is the text users will see!
-
+            String displayName = "Micromart";
             helper.setFrom(fromEmail, displayName);
             helper.setTo(to);
             helper.setSubject(subject);
+            helper.setText(htmlContent, true);
 
-            // 4. Set Content (true = send as HTML if you want, false = plain text)
-            helper.setText(content, false);
-
-            // 5. Send
             javaMailSender.send(message);
-            logger.info("✅ Email sent successfully to {}", to);
 
         } catch (Exception e) {
             logger.error("❌ Failed to send email to {}: {}", to, e.getMessage());
+            throw new RuntimeException("Email sending failed", e);
         }
     }
 }
