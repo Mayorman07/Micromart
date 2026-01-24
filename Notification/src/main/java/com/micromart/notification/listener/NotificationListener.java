@@ -4,8 +4,8 @@ import com.micromart.notification.channels.EmailNotificationChannel;
 import com.micromart.notification.channels.NotificationChannel;
 import com.micromart.notification.configuration.RabbitMQConfig;
 import com.micromart.notification.factory.NotificationFactory;
+import com.micromart.notification.model.PasswordResetEventDto;
 import com.micromart.notification.model.UserCreatedEventDto;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -31,9 +31,8 @@ public class NotificationListener {
         // --- EMAIL SECTION ---
         try {
             NotificationChannel channel = notificationFactory.getChannel("EMAIL");
-            if (channel instanceof EmailNotificationChannel) {
+            if (channel instanceof EmailNotificationChannel emailChannel) {
 
-                EmailNotificationChannel emailChannel = (EmailNotificationChannel) channel;
                 emailChannel.sendHtmlVerificationEmail(
                         event.getEmail(),
                         event.getFirstName(),
@@ -65,5 +64,28 @@ public class NotificationListener {
             logger.warn("No phone number found for user {}. Skipping SMS.", event.getEmail());
         }
     }
+    @RabbitListener(queues = RabbitMQConfig.PASSWORD_RESET_QUEUE)
+    public void handlePasswordResetEvent(PasswordResetEventDto event) {
+        logger.info("🔑 Received Password Reset request for: {}", event.getEmail());
+
+        try {
+            NotificationChannel channel = notificationFactory.getChannel("EMAIL");
+            if (channel instanceof EmailNotificationChannel emailChannel) {
+                emailChannel.sendHtmlPasswordResetEmail(
+                        event.getEmail(),
+                        event.getFirstName(),
+                        event.getPasswordResetToken()
+                );
+
+            } else {
+                channel.sendNotification(event.getEmail(), "Reset Password", "Your token is: " + event.getPasswordResetToken());
+            }
+
+        } catch (Exception e) {
+            logger.error("❌ Failed to send Password Reset Email", e);
+        }
+    }
+
+
 }
 

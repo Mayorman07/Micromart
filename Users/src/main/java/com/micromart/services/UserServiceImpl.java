@@ -159,8 +159,6 @@ public class UserServiceImpl implements UserService {
         user.setPasswordResetToken(token);
         user.setPasswordResetTokenExpiryDate(cal.getTime());
         userRepository.save(user);
-
-        // Publish the event to RabbitMQ
         PasswordResetEventDto eventDto = new PasswordResetEventDto(
                 user.getEmail(),
                 user.getFirstName(),
@@ -174,7 +172,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean performPasswordReset(String token, String newPassword) {
-        return false;
+        Optional<User> employeeOptional = userRepository.findByPasswordResetToken(token);
+
+        if (employeeOptional.isEmpty()) {
+            logger.warn("Password reset attempted with an invalid token.");
+            return false; // Token was not found
+        }
+        User user = employeeOptional.get();
+        // 2. Check if the token has expired
+        if (user.getPasswordResetTokenExpiryDate().before(new Date())) {
+            logger.warn("Expired password reset token used for user: {}", user.getEmail());
+            user.setPasswordResetToken(null);
+            user.setPasswordResetTokenExpiryDate(null);
+            userRepository.save(user);
+            return false;
+        }
+        // 3. If the token is valid, update the password
+        user.setEncryptedPassword(passwordEncoder.encode(newPassword));
+
+        // 4. CRITICAL: Invalidate the token so it cannot be used again
+        user.setPasswordResetToken(null);
+        user.setPasswordResetTokenExpiryDate(null);
+
+        userRepository.save(user);
+
+        logger.info("Password successfully reset for user: {}", user.getEmail());
+        return true;
     }
 
     @Override

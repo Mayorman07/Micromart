@@ -53,11 +53,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {
-//
-//        Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
-//
-//        converter.setTypePrecedence(Jackson2JsonMessageConverter.TypePrecedence.INFERRED);
-//        return converter;
+
         return new Jackson2JsonMessageConverter();
     }
 }

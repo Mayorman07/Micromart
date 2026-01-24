@@ -74,4 +74,28 @@ public class EmailNotificationChannel implements NotificationChannel {
             throw new RuntimeException("Email sending failed", e);
         }
     }
+
+    public void sendHtmlPasswordResetEmail(String to, String userName, String token) {
+        logger.info("🔑 Preparing Password Reset Email for: {}", to);
+
+        try {
+            Context context = new Context();
+            context.setVariable("userName", userName);
+
+            // Build the frontend reset link: e.g., http://localhost:5173/reset-password?token=xyz
+            String link = frontendUrl + "/reset-password?token=" + token;
+            context.setVariable("resetLink", link);
+
+            // Process the new template
+            String htmlBody = templateEngine.process("password-reset", context);
+
+            // Send
+            sendSimpleHtmlEmail(to, "🔒 Reset Your Micromart Password", htmlBody);
+
+            logger.info("✅ Password Reset Email sent to {}", to);
+
+        } catch (Exception e) {
+            logger.error("❌ Failed to create password reset email: {}", e.getMessage());
+        }
+    }
 }
