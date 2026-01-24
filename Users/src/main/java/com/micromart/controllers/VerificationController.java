@@ -24,14 +24,9 @@ public class VerificationController {
         boolean isVerified = userService.verifyUser(token);
         if (isVerified) {
             return ResponseEntity.ok("Email verified successfully");
-//            return ResponseEntity.status(HttpStatus.FOUND)
-//                    .location(URI.create("/users/verification_success.html"))
-//                    .build();
+
         } else {
             return ResponseEntity.badRequest().body("Invalid or expired token");
-//            return ResponseEntity.status(HttpStatus.FOUND)
-//                    .location(URI.create("/employees/verification_failure.html"))
-//                    .build();
         }
     }
 }

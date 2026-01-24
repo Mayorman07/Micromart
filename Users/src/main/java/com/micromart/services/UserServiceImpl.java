@@ -10,6 +10,7 @@ import com.micromart.exceptions.ConflictException;
 import com.micromart.exceptions.NotFoundException;
 import com.micromart.messaging.MessagePublisher;
 import com.micromart.models.data.CustomUserDetails;
+import com.micromart.models.data.PasswordResetEventDto;
 import com.micromart.models.data.UserCreatedEventDto;
 import com.micromart.models.data.UserDto;
 import com.micromart.models.data.UserProfileDto;
@@ -31,6 +32,7 @@ import com.micromart.repositories.RoleRepository;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -139,7 +141,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean requestPasswordReset(String email) {
-        return false;
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        logger.info("See the employee returned {} ", userOptional);
+
+        if (userOptional.isEmpty()) {
+            // We return true but do nothing to prevent email enumeration attacks.
+            logger.warn("Password reset requested for non-existent email: {}", email);
+            return true;
+        }
+
+        User user = userOptional.get();
+        String token = UUID.randomUUID().toString();
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, 15);
+
+        user.setPasswordResetToken(token);
+        user.setPasswordResetTokenExpiryDate(cal.getTime());
+        userRepository.save(user);
+
+        // Publish the event to RabbitMQ
+        PasswordResetEventDto eventDto = new PasswordResetEventDto(
+                user.getEmail(),
+                user.getFirstName(),
+                token
+        );
+        messagePublisher.sendPasswordResetEvent( eventDto);
+
+        logger.info("Published password reset event for email: {}", email);
+        return true;
     }
 
     @Override

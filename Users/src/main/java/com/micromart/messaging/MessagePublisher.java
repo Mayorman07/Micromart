@@ -1,6 +1,7 @@
 package com.micromart.messaging;
 
 import com.micromart.configuration.RabbitMQConfig;
+import com.micromart.models.data.PasswordResetEventDto;
 import com.micromart.models.data.UserCreatedEventDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -18,5 +19,14 @@ public class MessagePublisher {
                 eventDto
         );
         System.out.println("🐇 Message sent to RabbitMQ: " + eventDto.getEmail());
+    }
+
+    public void sendPasswordResetEvent(PasswordResetEventDto eventDto) {
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.EXCHANGE_NAME,
+                RabbitMQConfig.PASSWORD_RESET_ROUTING_KEY, // 👈 Use the new constant here!
+                eventDto
+        );
+        System.out.println("🐇 Password Reset Event sent to RabbitMQ: " + eventDto.getEmail());
     }
 }
