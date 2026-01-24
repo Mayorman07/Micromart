@@ -61,7 +61,7 @@ public class WebSecurity {
                         authorize
                                 .requestMatchers("/api/setup/create-admin").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/status/check").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/verify").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/auth/**").permitAll()
                                 .requestMatchers("/password-reset/**").permitAll()
                                 .requestMatchers("/verification_success.html", "/verification_failure.html").permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()

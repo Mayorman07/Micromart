@@ -4,13 +4,16 @@ import com.micromart.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 
 @RestController
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class VerificationController {
 
@@ -20,13 +23,15 @@ public class VerificationController {
         System.out.println("✅ VerificationController called with token: " + token);
         boolean isVerified = userService.verifyUser(token);
         if (isVerified) {
-            return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create("/employees/verification_success.html"))
-                    .build();
+            return ResponseEntity.ok("Email verified successfully");
+//            return ResponseEntity.status(HttpStatus.FOUND)
+//                    .location(URI.create("/users/verification_success.html"))
+//                    .build();
         } else {
-            return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create("/employees/verification_failure.html"))
-                    .build();
+            return ResponseEntity.badRequest().body("Invalid or expired token");
+//            return ResponseEntity.status(HttpStatus.FOUND)
+//                    .location(URI.create("/employees/verification_failure.html"))
+//                    .build();
         }
     }
 }

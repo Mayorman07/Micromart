@@ -2,9 +2,107 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Verified!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Added the same animated background effect, but with blue/indigo colors for success */
+            background-color: #eef2ff; /* indigo-50 */
+            background-image:
+                radial-gradient(circle at 1px 1px, #dbeafe 1px, transparent 0); /* blue-200 */
+            background-size: 2rem 2rem;
+            animation: move-background 40s linear infinite;
+        }
+
+        /* Keyframes for the moving background */
+        @keyframes move-background {
+            from { background-position: 0 0; }
+            to { background-position: 200% 200%; }
+        }
+
+        /* Keyframes for the card and icon animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animation for the checkmark icon */
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.3s forwards;
+        }
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        @keyframes stroke {
+            100% { stroke-dashoffset: 0; }
+        }
+
+        .animate-all {
+            animation: fadeIn 0.6s ease-out 0.1s forwards;
+            opacity: 0;
+        }
+    </style>
 </head>
-<body>
+<body class="flex items-center justify-center h-screen p-4">
+
+<!-- Main content card -->
+<div id="success-card" class="bg-white/70 backdrop-blur-xl p-12 rounded-2xl shadow-lg text-center max-w-md w-full mx-auto border border-white/30 animate-all">
+
+    <!-- Animated SVG Checkmark -->
+    <div class="mb-6">
+        <svg class="w-20 h-20 mx-auto" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" stroke="#22c55e" stroke-width="3"/>
+            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" stroke="#22c55e" stroke-width="4"/>
+        </svg>
+    </div>
+
+    <!-- Refined typography -->
+    <h1 class="text-3xl font-bold text-gray-800 mb-3">Verification Successful</h1>
+    <p class="text-gray-600 mb-8 text-lg">Your account is now active. Welcome to Micromart!</p>
+
+    <!-- Button with a subtle gradient and shadow -->
+    <a href="/login" id="login-button" class="inline-flex items-center justify-center bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-indigo-300">
+        Proceed to Dashboard
+        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+    </a>
+</div>
+
+<!-- Added a loading overlay that is hidden by default -->
+<div id="loading-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex-col items-center justify-center hidden transition-opacity duration-300">
+    <svg class="animate-spin h-10 w-10 text-white mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    <p class="text-white text-lg">Redirecting to login...</p>
+</div>
+
+<!-- JavaScript to handle the button click effect -->
+<script>
+    const loginButton = document.getElementById('login-button');
+    const loadingOverlay = document.getElementById('loading-overlay');
+
+    loginButton.addEventListener('click', function(event) {
+        // 1. Prevent the link from immediately navigating
+        event.preventDefault();
+
+        // 2. Show the loading overlay
+        loadingOverlay.classList.remove('hidden');
+        loadingOverlay.classList.add('flex');
+
+        // 3. Wait for 1.5 seconds, then proceed to the login page
+        setTimeout(function() {
+            window.location.href = loginButton.href;
+        }, 1500); // 1.5 second delay
+    });
+</script>
 
 </body>
 </html>
