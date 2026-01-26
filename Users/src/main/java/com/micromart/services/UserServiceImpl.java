@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -141,33 +142,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean requestPasswordReset(String email) {
+        processPasswordResetAsync(email);
+        return true;
+    }
+
+    @Async
+    protected void processPasswordResetAsync(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
-        logger.info("See the employee returned {} ", userOptional);
 
         if (userOptional.isEmpty()) {
-            // We return true but do nothing to prevent email enumeration attacks.
             logger.warn("Password reset requested for non-existent email: {}", email);
-            return true;
+            return;
         }
 
         User user = userOptional.get();
         String token = UUID.randomUUID().toString();
-
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, 15);
-
         user.setPasswordResetToken(token);
         user.setPasswordResetTokenExpiryDate(cal.getTime());
+
         userRepository.save(user);
+
         PasswordResetEventDto eventDto = new PasswordResetEventDto(
                 user.getEmail(),
                 user.getFirstName(),
                 token
         );
-        messagePublisher.sendPasswordResetEvent( eventDto);
+        messagePublisher.sendPasswordResetEvent(eventDto);
 
         logger.info("Published password reset event for email: {}", email);
-        return true;
     }
 
     @Override
