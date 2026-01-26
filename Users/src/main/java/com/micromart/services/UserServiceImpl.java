@@ -149,33 +149,6 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
-    @Async
-    protected void processPasswordResetAsync(String email) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-
-        if (userOptional.isEmpty()) {
-            logger.warn("Password reset requested for non-existent email: {}", email);
-            return;
-        }
-
-        User user = userOptional.get();
-        String token = UUID.randomUUID().toString();
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, 15);
-        user.setPasswordResetToken(token);
-        user.setPasswordResetTokenExpiryDate(cal.getTime());
-
-        userRepository.save(user);
-
-        PasswordResetEventDto eventDto = new PasswordResetEventDto(
-                user.getEmail(),
-                user.getFirstName(),
-                token
-        );
-        messagePublisher.sendPasswordResetEvent(eventDto);
-
-        logger.info("Published password reset event for email: {}", email);
-    }
 
     @Override
     public boolean performPasswordReset(String token, String newPassword) {
@@ -183,7 +156,7 @@ public class UserServiceImpl implements UserService {
 
         if (employeeOptional.isEmpty()) {
             logger.warn("Password reset attempted with an invalid token.");
-            return false; // Token was not found
+            return false;
         }
         User user = employeeOptional.get();
         // 2. Check if the token has expired

@@ -18,6 +18,7 @@ public class RabbitMQConfig {
 
     // --- 2. Password Reset Constants (NEW) ---
     public static final String PASSWORD_RESET_QUEUE = "password.reset.queue";
+    public static final String ATTEMPT_QUEUE = "password-reset-attempt-queue";
     public static final String PASSWORD_RESET_ROUTING_KEY = "password_reset_routing_key";
     public static final String PASSWORD_RESET_ATTEMPT_ROUTING_KEY = "password.reset.attempt";
 
@@ -34,8 +35,21 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue attemptQueue() {
+        // This creates the physical "mailbox"
+        return new Queue(ATTEMPT_QUEUE, true);
+    }
+
+    @Bean
     public Binding binding(Queue queue, TopicExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingAttempt(Queue attemptQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(attemptQueue)
+                .to(exchange)
+                .with(PASSWORD_RESET_ATTEMPT_ROUTING_KEY);
     }
 
     // --- Password Reset Queue & Binding (NEW) ---
