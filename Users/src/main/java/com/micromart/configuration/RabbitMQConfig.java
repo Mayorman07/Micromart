@@ -19,6 +19,7 @@ public class RabbitMQConfig {
     // --- 2. Password Reset Constants (NEW) ---
     public static final String PASSWORD_RESET_QUEUE = "password.reset.queue";
     public static final String PASSWORD_RESET_ROUTING_KEY = "password_reset_routing_key";
+    public static final String PASSWORD_RESET_ATTEMPT_ROUTING_KEY = "password.reset.attempt";
 
     // --- Exchange (Shared) ---
     @Bean

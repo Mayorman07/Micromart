@@ -9,6 +9,7 @@ import com.micromart.entities.User;
 import com.micromart.exceptions.ConflictException;
 import com.micromart.exceptions.NotFoundException;
 import com.micromart.messaging.MessagePublisher;
+import com.micromart.messaging.PasswordResetRequestEvent;
 import com.micromart.models.data.CustomUserDetails;
 import com.micromart.models.data.PasswordResetEventDto;
 import com.micromart.models.data.UserCreatedEventDto;
@@ -142,7 +143,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean requestPasswordReset(String email) {
-        processPasswordResetAsync(email);
+        PasswordResetRequestEvent event = new PasswordResetRequestEvent(email);
+        messagePublisher.sendPasswordResetAttempt(event);
+        logger.info("Queued password reset attempt for potential user: {}", email);
         return true;
     }
 
