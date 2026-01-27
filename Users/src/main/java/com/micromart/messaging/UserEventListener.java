@@ -3,6 +3,7 @@ package com.micromart.messaging;
 import com.micromart.entities.User;
 import com.micromart.repositories.UserRepository;
 import com.micromart.utils.TokenService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,13 +13,12 @@ import java.util.Date;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class UserEventListener {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired private MessagePublisher messagePublisher;
-    @Autowired private TokenService tokenService;
-
+    private final  UserRepository userRepository;
+    private final MessagePublisher messagePublisher;
+    private final TokenService tokenService;
     @RabbitListener(queues = "password-reset-attempt-queue")
     public void handlePasswordResetAttempt(PasswordResetRequestEvent event) {
         String email = event.getEmail();
