@@ -2,6 +2,7 @@ package com.micromart.scheduler;
 
 import com.micromart.entities.User;
 import com.micromart.messaging.MessagePublisher;
+import com.micromart.messaging.ReactivationEvent;
 import com.micromart.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,10 +42,10 @@ public class ReactivationScheduler {
             userRepository.save(user);
 
             // Create event (Reuse your existing pattern!)
-            ReactivationEvent event = new ReactivationEvent(user.getEmail(), user.getFirstName());
+            ReactivationEvent reactivationEvent = new ReactivationEvent(user.getEmail(), user.getFirstName());
 
             // Push to RabbitMQ
-            messagePublisher.sendReactivationEvent(event);
+            messagePublisher.sendReactivationEvent(reactivationEvent);
         }
     }
 }

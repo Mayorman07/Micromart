@@ -22,6 +22,11 @@ public class RabbitMQConfig {
     public static final String PASSWORD_RESET_ROUTING_KEY = "password_reset_routing_key";
     public static final String PASSWORD_RESET_ATTEMPT_ROUTING_KEY = "password.reset.attempt";
 
+    // ---- Reactivation Emails ---
+
+    public static final String REACTIVATION_QUEUE = "user.reactivation.queue";
+    public static final String SEND_REACTIVATION_EMAILS_ROUTING_KEY = "user.reactivation";
+
     // --- Exchange (Shared) ---
     @Bean
     public TopicExchange exchange() {
@@ -36,8 +41,12 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue attemptQueue() {
-        // This creates the physical "mailbox"
         return new Queue(ATTEMPT_QUEUE, true);
+    }
+
+    @Bean
+    public Queue reactivationQueue() {
+        return new Queue(SEND_REACTIVATION_EMAILS_ROUTING_KEY, true);
     }
 
     @Bean
@@ -50,6 +59,11 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(attemptQueue)
                 .to(exchange)
                 .with(PASSWORD_RESET_ATTEMPT_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingForReactivation(Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(SEND_REACTIVATION_EMAILS_ROUTING_KEY);
     }
 
     // --- Password Reset Queue & Binding (NEW) ---

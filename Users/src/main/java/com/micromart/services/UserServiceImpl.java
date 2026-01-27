@@ -16,8 +16,10 @@ import com.micromart.models.data.UserCreatedEventDto;
 import com.micromart.models.data.UserDto;
 import com.micromart.models.data.UserProfileDto;
 import com.micromart.repositories.UserRepository;
+import com.micromart.utils.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.antlr.v4.runtime.Token;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +55,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final MessagePublisher messagePublisher;
+    private final TokenService tokenService;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Override
@@ -74,7 +77,7 @@ public class UserServiceImpl implements UserService {
             addressEntity.setType(AddressType.SHIPPING);
             userToBeCreated.setAddresses(List.of(addressEntity));
         }
-        String verificationToken = UUID.randomUUID().toString();
+        String verificationToken = tokenService.generateToken();
         userToBeCreated.setVerificationToken(verificationToken);
         User savedUser = userRepository.save(userToBeCreated);
         publishUserCreatedEvent(savedUser, verificationToken);

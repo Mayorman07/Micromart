@@ -38,4 +38,14 @@ public class MessagePublisher {
         );
         System.out.println("🐇 Password Reset ATTEMPT sent: " + event.getEmail());
     }
+
+    public void sendReactivationEvent(ReactivationEvent reactivationEvent){
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.EXCHANGE_NAME,
+                RabbitMQConfig.SEND_REACTIVATION_EMAILS_ROUTING_KEY,
+                reactivationEvent
+        );
+        System.out.println("🐇 Reactivation  ATTEMPT sent: " + reactivationEvent.getEmail());
+
+    }
 }
