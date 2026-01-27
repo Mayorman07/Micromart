@@ -159,7 +159,6 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         User user = employeeOptional.get();
-        // 2. Check if the token has expired
         if (user.getPasswordResetTokenExpiryDate().before(new Date())) {
             logger.warn("Expired password reset token used for user: {}", user.getEmail());
             user.setPasswordResetToken(null);
@@ -167,10 +166,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
             return false;
         }
-        // 3. If the token is valid, update the password
         user.setEncryptedPassword(passwordEncoder.encode(newPassword));
-
-        // 4. CRITICAL: Invalidate the token so it cannot be used again
         user.setPasswordResetToken(null);
         user.setPasswordResetTokenExpiryDate(null);
 
