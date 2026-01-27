@@ -69,6 +69,8 @@ public class User implements Serializable {
     private String mobileNumber;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> addresses;
+    @Column(name = "last_reactivation_email_sent_date")
+    private Date lastReactivationEmailSentDate;
 
     @ManyToMany(cascade = CascadeType.PERSIST ,fetch = FetchType.EAGER )
     @JoinTable(name="users_roles", joinColumns =@JoinColumn(name = "user_id", referencedColumnName = "id"),inverseJoinColumns
