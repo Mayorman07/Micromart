@@ -1,5 +1,6 @@
 package com.micromart.notification.channels;
 
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -82,14 +83,10 @@ public class EmailNotificationChannel implements NotificationChannel {
             Context context = new Context();
             context.setVariable("userName", userName);
 
-            // Build the frontend reset link: e.g., http://localhost:5173/reset-password?token=xyz
             String link = frontendUrl + "/reset-password?token=" + token;
             context.setVariable("resetLink", link);
 
-            // Process the new template
             String htmlBody = templateEngine.process("password-reset", context);
-
-            // Send
             sendSimpleHtmlEmail(to, "🔒 Reset Your Micromart Password", htmlBody);
 
             logger.info("✅ Password Reset Email sent to {}", to);
@@ -98,4 +95,21 @@ public class EmailNotificationChannel implements NotificationChannel {
             logger.error("❌ Failed to create password reset email: {}", e.getMessage());
         }
     }
+
+    public void sendHtmlEmail(String to, String subject, String templateName, Context context) {
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            String htmlContent = templateEngine.process(templateName, context);
+
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlContent, true);
+            javaMailSender.send(mimeMessage);
+            logger.info("✅ Generic HTML Email sent to {}", to);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send email", e);
+        }
+   }
 }

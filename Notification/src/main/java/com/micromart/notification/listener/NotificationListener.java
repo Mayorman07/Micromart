@@ -94,24 +94,35 @@ public class NotificationListener {
 
     @RabbitListener(queues = "send-reactivation-email-queue")
     public void handleReactivationEvent(ReactivationEvent event) {
+        logger.info("💌 Received reactivation request for: {}", event.getEmail());
 
-        // 1. Log it
-        System.out.println("💌 Received request to email: " + event.getEmail());
+        try {
+            // 1. Get the Channel from your Factory (Pattern Consistency)
+            NotificationChannel channel = notificationFactory.getChannel("EMAIL");
 
-        // 2. Prepare Context (Variables for the HTML)
-        Context context = new Context();
-        context.setVariable("firstName", event.getFirstName());
-        // You can add more variables here (e.g., a discount code!)
-        String loginLink = frontendBaseUrl + "/login";
-        context.setVariable("loginUrl", loginLink);
+            // 2. Check and Cast (Just like you did above)
+            if (channel instanceof EmailNotificationChannel emailChannel) {
 
-        // 3. Send the Email using Thymeleaf template
-        emailService.sendHtmlEmail(
-                event.getEmail(),           // To
-                "We Miss You at MicroMart!", // Subject
-                "reactivation-email",       // Template Name (matches .html file)
-                context                     // Variables
-        );
+                // 3. Prepare Variables
+                Context context = new Context();
+                context.setVariable("firstName", event.getFirstName());
+                context.setVariable("loginUrl", frontendBaseUrl + "/login");
+
+                // 4. Send using the Channel's method
+                // Note: You likely need to add a generic 'sendHtmlEmail' method to your EmailNotificationChannel class
+                emailChannel.sendHtmlEmail(
+                        event.getEmail(),
+                        "We Miss You at MicroMart!",
+                        "reactivation-email",
+                        context
+                );
+
+            } else {
+                logger.warn("⚠️ Channel is not EmailNotificationChannel");
+            }
+        } catch (Exception e) {
+            logger.error("❌ Failed to send Reactivation Email", e);
+        }
     }
 
 }
