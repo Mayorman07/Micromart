@@ -23,7 +23,6 @@ public class RabbitMQConfig {
     public static final String PASSWORD_RESET_ATTEMPT_ROUTING_KEY = "password.reset.attempt";
 
     // ---- Reactivation Emails ---
-
     public static final String REACTIVATION_QUEUE = "user.reactivation.queue";
     public static final String SEND_REACTIVATION_EMAILS_ROUTING_KEY = "user.reactivation";
 
@@ -46,7 +45,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue reactivationQueue() {
-        return new Queue(SEND_REACTIVATION_EMAILS_ROUTING_KEY, true);
+        return new Queue(REACTIVATION_QUEUE, true);
     }
 
     @Bean
@@ -62,8 +61,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding bindingForReactivation(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(SEND_REACTIVATION_EMAILS_ROUTING_KEY);
+    public Binding bindingForReactivation(Queue reactivationQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(reactivationQueue).to(exchange).with(SEND_REACTIVATION_EMAILS_ROUTING_KEY);
     }
 
     // --- Password Reset Queue & Binding (NEW) ---
