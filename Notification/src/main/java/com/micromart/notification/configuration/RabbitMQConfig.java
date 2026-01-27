@@ -12,8 +12,6 @@ public class RabbitMQConfig {
     public static final String USER_EVENTS_EXCHANGE = "user.exchange";
     public static final String USER_CREATED_QUEUE = "user.notification.queue";
     public static final String ROUTING_KEY_CREATED = "user.created";
-
-    // 2. New queue for future use (Good idea!)
     public static final String PASSWORD_RESET_QUEUE = "password.reset.queue";
     public static final String ROUTING_KEY_RESET = "password.reset";
 
