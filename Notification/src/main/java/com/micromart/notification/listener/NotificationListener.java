@@ -5,12 +5,15 @@ import com.micromart.notification.channels.NotificationChannel;
 import com.micromart.notification.configuration.RabbitMQConfig;
 import com.micromart.notification.factory.NotificationFactory;
 import com.micromart.notification.model.PasswordResetEventDto;
+import com.micromart.notification.model.ReactivationEvent;
 import com.micromart.notification.model.UserCreatedEventDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.context.Context;
 
 @Component
 public class NotificationListener {
@@ -18,6 +21,9 @@ public class NotificationListener {
     private static final Logger logger = LoggerFactory.getLogger(NotificationListener.class);
     private final NotificationFactory notificationFactory;
     private final Environment environment;
+
+    @Value("${app.frontend.url}")
+    private String frontendBaseUrl;
 
    public NotificationListener(NotificationFactory notificationFactory,Environment environment){
        this.notificationFactory = notificationFactory;
@@ -84,6 +90,28 @@ public class NotificationListener {
         } catch (Exception e) {
             logger.error("❌ Failed to send Password Reset Email", e);
         }
+    }
+
+    @RabbitListener(queues = "send-reactivation-email-queue")
+    public void handleReactivationEvent(ReactivationEvent event) {
+
+        // 1. Log it
+        System.out.println("💌 Received request to email: " + event.getEmail());
+
+        // 2. Prepare Context (Variables for the HTML)
+        Context context = new Context();
+        context.setVariable("firstName", event.getFirstName());
+        // You can add more variables here (e.g., a discount code!)
+        String loginLink = frontendBaseUrl + "/login";
+        context.setVariable("loginUrl", loginLink);
+
+        // 3. Send the Email using Thymeleaf template
+        emailService.sendHtmlEmail(
+                event.getEmail(),           // To
+                "We Miss You at MicroMart!", // Subject
+                "reactivation-email",       // Template Name (matches .html file)
+                context                     // Variables
+        );
     }
 
 }

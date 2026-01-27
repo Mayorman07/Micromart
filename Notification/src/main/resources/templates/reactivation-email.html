@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We Miss You</title>
+    <style>
+        /* Reset & Base Styles */
+        body { margin: 0; padding: 0; background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333333; }
+        table { border-spacing: 0; width: 100%; }
+        td { padding: 0; }
+        img { border: 0; }
+
+        /* Container */
+        .wrapper { width: 100%; table-layout: fixed; background-color: #f4f7f6; padding-bottom: 40px; }
+        .main-content { background-color: #ffffff; margin: 0 auto; max-width: 600px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+        /* Header Section - AQUA GRADIENT */
+        .header-banner {
+            /* Vibrant Aqua Gradient */
+            background: linear-gradient(135deg, #00C9FF 0%, #92FE9D 100%);
+            height: 120px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .header-title { color: #ffffff; font-size: 26px; font-weight: bold; margin: 0; padding-top: 40px; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        /* Body Section */
+        .content-body { padding: 40px 40px 30px 40px; text-align: center; }
+        .greeting { font-size: 22px; font-weight: 700; color: #2d3748; margin-bottom: 15px; }
+        .message-text { font-size: 16px; line-height: 1.6; color: #718096; margin-bottom: 30px; }
+
+        /* CTA Button - AQUA */
+        .btn-container { margin-bottom: 35px; }
+        .btn-primary {
+            background-color: #00C9FF; /* Matching Aqua */
+            color: #ffffff;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(0, 201, 255, 0.3); /* Aqua Shadow */
+            transition: transform 0.2s ease;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0, 201, 255, 0.4); }
+
+        /* Footer */
+        .divider { height: 1px; background-color: #e2e8f0; margin: 20px 0; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #a0aec0; }
+        .footer a { color: #00C9FF; text-decoration: none; margin: 0 5px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <br><br>
+    <div class="main-content">
+
+        <div class="header-banner">
+            <h1 class="header-title">MicroMart</h1>
+        </div>
+
+        <div class="content-body">
+
+            <h2 class="greeting">We've missed you, <span th:text="${firstName}">Friend</span>! 👋</h2>
+
+            <p class="message-text">
+                It’s been a while since your last visit. We have added brand new collections and special offers just waiting for you.
+                <br><br>
+                Come check out what's new on the shelf.
+            </p>
+
+            <div class="btn-container">
+                <a href="${loginUrl}" class="btn-primary">Return to MicroMart</a>
+            </div>
+
+            <div class="divider"></div>
+
+            <p style="font-size: 14px; color: #718096; margin-top: 20px;">
+                <em>"MicroMart is better with you."</em>
+            </p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <p>Sent with 🩵 by the MicroMart Team</p>
+        <p>
+            <a href="#">Unsubscribe</a> •
+            <a href="#">Privacy Policy</a> •
+            <a href="#">Contact Support</a>
+        </p>
+        <p>Lagos, Nigeria</p>
+    </div>
+</div>
+
+</body>
+</html>

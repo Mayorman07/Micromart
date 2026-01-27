@@ -22,7 +22,6 @@ public class RabbitMQConfig {
 
     @Bean
     Queue userCreatedEmailQueue() {
-        // durable = true means queue survives broker restart
         return new Queue(USER_CREATED_QUEUE, true);
     }
 
