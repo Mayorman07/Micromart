@@ -14,6 +14,5 @@ public interface UserService extends UserDetailsService {
     void deactivateUser(String email);
     boolean performPasswordReset(String token, String newPassword);
     boolean verifyUser(String token);
-    int sendWeMissedYouEmails();
     void deleteUser(String email);
 }

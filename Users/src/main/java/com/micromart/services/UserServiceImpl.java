@@ -207,27 +207,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int sendWeMissedYouEmails() {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, -3);
-        Date cutoffDate = cal.getTime();
-        List<User> potentiallyInactiveUsers = userRepository.findAllByStatusAndLastLoggedInBefore(Status.ACTIVE, cutoffDate);
-        List<User> finalUsersToSendEmails = potentiallyInactiveUsers.stream()
-                .filter(user -> user.getRoles().stream()
-                        .noneMatch(role -> role.getName().equals("ROLE_ADMIN")))
-                .toList();
-        if (finalUsersToSendEmails.isEmpty()) {
-            return 0;
-        }
-        for (User user : finalUsersToSendEmails) {
-            user.setStatus(Status.INACTIVE);
-        }
-        userRepository.saveAll(finalUsersToSendEmails);
-        logger.info("SUCCESS: Users to reactivate {} users", finalUsersToSendEmails.size());
-        return finalUsersToSendEmails.size();
-    }
-
-    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Optional<User> userToBeLoggedIn = userRepository.findByEmail(username);

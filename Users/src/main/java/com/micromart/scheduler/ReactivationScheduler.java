@@ -4,48 +4,47 @@ import com.micromart.entities.User;
 import com.micromart.messaging.MessagePublisher;
 import com.micromart.messaging.ReactivationEvent;
 import com.micromart.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class ReactivationScheduler {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired private MessagePublisher messagePublisher;
+    private final UserRepository userRepository;
+    private final MessagePublisher messagePublisher;
 
     // Run every day at 10:00 AM
     @Scheduled(cron = "0 0 10 * * ?")
     public void sendWeMissYouEmails() {
 
         Calendar cal = Calendar.getInstance();
-
-        // 1. Calculate dates
         cal.add(Calendar.DAY_OF_MONTH, -30);
         Date thirtyDaysAgo = cal.getTime();
 
-        cal.add(Calendar.DAY_OF_MONTH, -60); // Go back another 60 (total 90)
+        cal.add(Calendar.DAY_OF_MONTH, -60);
         Date ninetyDaysAgo = cal.getTime();
-
-        // 2. Find the users
         List<User> inactiveUsers = userRepository.findUsersForReactivation(thirtyDaysAgo, ninetyDaysAgo);
 
-        // 3. Process them
+        if (inactiveUsers.isEmpty()) {
+            return;
+        }
+        List<ReactivationEvent> eventsToSend = new ArrayList<>();
+
         for (User user : inactiveUsers) {
-            // Update the "Last Sent" date immediately so we don't pick them up tomorrow
             user.setLastReactivationEmailSentDate(new Date());
-            userRepository.save(user);
+            eventsToSend.add(new ReactivationEvent(user.getEmail(), user.getFirstName()));
+        }
 
-            // Create event (Reuse your existing pattern!)
-            ReactivationEvent reactivationEvent = new ReactivationEvent(user.getEmail(), user.getFirstName());
-
-            // Push to RabbitMQ
-            messagePublisher.sendReactivationEvent(reactivationEvent);
+        userRepository.saveAll(inactiveUsers);
+        for (ReactivationEvent event : eventsToSend) {
+            messagePublisher.sendReactivationEvent(event);
         }
     }
 }
