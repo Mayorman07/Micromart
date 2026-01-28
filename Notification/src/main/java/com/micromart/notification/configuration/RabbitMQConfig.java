@@ -15,6 +15,10 @@ public class RabbitMQConfig {
     public static final String PASSWORD_RESET_QUEUE = "password.reset.queue";
     public static final String ROUTING_KEY_RESET = "password.reset";
 
+    public static final String USER_REACTIVATION_QUEUE = "user.reactivation.queue";
+    public static final String USER_REACTIVATION_CREATED = "user.reactivation";
+
+
     @Bean
     TopicExchange userEventsExchange() {
         return new TopicExchange(USER_EVENTS_EXCHANGE);
@@ -30,20 +34,30 @@ public class RabbitMQConfig {
         return new Queue(PASSWORD_RESET_QUEUE, true);
     }
 
-    // --- Bindings ---
+    @Bean
+    Queue userReactivationQueue() {
+        return new Queue(USER_REACTIVATION_QUEUE, true);
+    }
 
+    // --- Bindings ---
     @Bean
     Binding userCreatedBinding(Queue userCreatedEmailQueue, TopicExchange userEventsExchange) {
         return BindingBuilder.bind(userCreatedEmailQueue)
                 .to(userEventsExchange)
                 .with(ROUTING_KEY_CREATED);
     }
-
     @Bean
     Binding passwordResetBinding(Queue passwordResetEmailQueue, TopicExchange userEventsExchange) {
         return BindingBuilder.bind(passwordResetEmailQueue)
                 .to(userEventsExchange)
                 .with(ROUTING_KEY_RESET);
+    }
+
+    @Bean
+    Binding userReactivatedBinding(Queue userReactivationQueue, TopicExchange userEventsExchange) {
+        return BindingBuilder.bind(userReactivationQueue)
+                .to(userEventsExchange)
+                .with(USER_REACTIVATION_CREATED);
     }
 
     // --- Converter ---
