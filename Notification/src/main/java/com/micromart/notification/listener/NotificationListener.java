@@ -92,7 +92,7 @@ public class NotificationListener {
         }
     }
 
-    @RabbitListener(queues = "send-reactivation-email-queue")
+    @RabbitListener(queues = RabbitMQConfig.USER_REACTIVATION_QUEUE)
     public void handleReactivationEvent(ReactivationEvent event) {
         logger.info("💌 Received reactivation request for: {}", event.getEmail());
 
