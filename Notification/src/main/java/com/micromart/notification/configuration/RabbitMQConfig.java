@@ -16,6 +16,8 @@ public class RabbitMQConfig {
     public static final String ROUTING_KEY_RESET = "password.reset";
     public static final String USER_REACTIVATION_QUEUE = "user.reactivation.queue";
     public static final String USER_REACTIVATION_CREATED = "user.reactivation";
+    public static final String USER_EMAIL_REACTIVATION = "send-reactivation-email-queue";
+
 
 
     @Bean
