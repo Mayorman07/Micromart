@@ -11,7 +11,6 @@ import com.micromart.exceptions.NotFoundException;
 import com.micromart.messaging.MessagePublisher;
 import com.micromart.messaging.PasswordResetRequestEvent;
 import com.micromart.models.data.CustomUserDetails;
-import com.micromart.models.data.PasswordResetEventDto;
 import com.micromart.models.data.UserCreatedEventDto;
 import com.micromart.models.data.UserDto;
 import com.micromart.models.data.UserProfileDto;
@@ -19,11 +18,9 @@ import com.micromart.repositories.UserRepository;
 import com.micromart.utils.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.antlr.v4.runtime.Token;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -36,13 +33,11 @@ import com.micromart.repositories.RoleRepository;
 
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 
 @Slf4j
