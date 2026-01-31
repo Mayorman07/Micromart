@@ -97,19 +97,12 @@ public class NotificationListener {
         logger.info("💌 Received reactivation request for: {}", event.getEmail());
 
         try {
-            // 1. Get the Channel from your Factory (Pattern Consistency)
             NotificationChannel channel = notificationFactory.getChannel("EMAIL");
-
-            // 2. Check and Cast (Just like you did above)
             if (channel instanceof EmailNotificationChannel emailChannel) {
-
-                // 3. Prepare Variables
                 Context context = new Context();
                 context.setVariable("firstName", event.getFirstName());
-                context.setVariable("loginUrl", frontendBaseUrl + "/login");
+                context.setVariable("loginUrl", environment.getProperty("app.frontend.url") + "/login");
 
-                // 4. Send using the Channel's method
-                // Note: You likely need to add a generic 'sendHtmlEmail' method to your EmailNotificationChannel class
                 emailChannel.sendHtmlEmail(
                         event.getEmail(),
                         "We Miss You at MicroMart!",

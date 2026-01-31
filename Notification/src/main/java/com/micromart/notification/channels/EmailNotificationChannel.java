@@ -2,10 +2,8 @@ package com.micromart.notification.channels;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -22,8 +20,6 @@ public class EmailNotificationChannel implements NotificationChannel {
     private final JavaMailSender javaMailSender;
     private final Environment environment;
     private final SpringTemplateEngine templateEngine;
-    @Value("${app.frontend.url:http://127.0.0.1:5173}")
-    private String frontendUrl;
 
     @Override
     public void sendNotification(String to, String subject, String content) {
@@ -46,7 +42,7 @@ public class EmailNotificationChannel implements NotificationChannel {
 
             String safeName = (userName != null && !userName.isEmpty()) ? userName : "Partner";
             context.setVariable("userName", safeName);
-            String link = frontendUrl + "/verify?token=" + token;
+            String link = environment.getProperty("app.frontend.url") + "/verify?token=" + token;
             context.setVariable("verificationLink", link);
             String htmlBody = templateEngine.process("verification-email", context);
             sendSimpleHtmlEmail(to, "🚀 Verify your Micromart Account", htmlBody);
@@ -83,7 +79,7 @@ public class EmailNotificationChannel implements NotificationChannel {
             Context context = new Context();
             context.setVariable("userName", userName);
 
-            String link = frontendUrl + "/reset-password?token=" + token;
+            String link = environment.getProperty("app.frontend.url") + "/reset-password?token=" + token;
             context.setVariable("resetLink", link);
 
             String htmlBody = templateEngine.process("password-reset", context);
