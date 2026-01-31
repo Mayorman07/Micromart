@@ -1,4 +1,4 @@
-package com.micromart.Products.model.responses;
+package com.micromart.products.model.responses;
 
 import lombok.Data;
 

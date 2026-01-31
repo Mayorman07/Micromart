@@ -1,4 +1,4 @@
-package com.micromart.Products.model.requests;
+package com.micromart.products.model.requests;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
