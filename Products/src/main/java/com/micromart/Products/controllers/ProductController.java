@@ -2,7 +2,6 @@ package com.micromart.products.controllers;
 
 import com.micromart.products.model.data.ProductDto;
 import com.micromart.products.model.requests.CreateProductRequest;
-import com.micromart.products.model.requests.ProductRequest;
 import com.micromart.products.model.responses.CreateProductResponse;
 import com.micromart.products.services.ProductService;
 import jakarta.validation.Valid;
@@ -42,4 +41,5 @@ public class ProductController {
         logger.info("The out going create product response {} " , returnValue);
         return  ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
+
 }
