@@ -10,6 +10,7 @@
         <option value="$PROJECT_DIR$/ConfigServer/pom.xml" />
         <option value="$PROJECT_DIR$/JwtAuthorities/pom.xml" />
         <option value="$PROJECT_DIR$/Notification/pom.xml" />
+        <option value="$PROJECT_DIR$/Products/pom.xml" />
       </list>
     </option>
   </component>

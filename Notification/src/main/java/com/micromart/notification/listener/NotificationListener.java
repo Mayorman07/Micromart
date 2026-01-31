@@ -10,7 +10,6 @@ import com.micromart.notification.model.UserCreatedEventDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
@@ -21,9 +20,6 @@ public class NotificationListener {
     private static final Logger logger = LoggerFactory.getLogger(NotificationListener.class);
     private final NotificationFactory notificationFactory;
     private final Environment environment;
-
-    @Value("${app.frontend.url}")
-    private String frontendBaseUrl;
 
    public NotificationListener(NotificationFactory notificationFactory,Environment environment){
        this.notificationFactory = notificationFactory;
