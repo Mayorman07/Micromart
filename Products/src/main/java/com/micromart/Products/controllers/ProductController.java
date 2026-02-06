@@ -41,5 +41,9 @@ public class ProductController {
         logger.info("The out going create product response {} " , returnValue);
         return  ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
+    @PostMapping(path ="/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void updateProduct(@Valid @RequestBody CreateProductRequest productRequest){
+        logger.info("The incoming update product request {} " , productRequest);
+    }
 
 }
