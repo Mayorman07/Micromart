@@ -1,4 +1,4 @@
-package com.micromart.Products.utils;
+package com.micromart.products.utils;
 
 import java.text.Normalizer;
 import java.util.Locale;
@@ -9,7 +9,7 @@ public class SkuCodeGenerator {
      * Generates a human-readable SKU code.
      * Example: "Apple", "iPhone 15", "Black" -> "APP-IPH-BLA"
      */
-    public static String generateSku(String brand, String model, String variant) {
+    public String generateSku(String brand, String model, String variant) {
         return (shorten(brand) + "-" + shorten(model) + "-" + shorten(variant))
                 .toUpperCase(Locale.ROOT);
     }

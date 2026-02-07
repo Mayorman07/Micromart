@@ -20,5 +20,7 @@ public class ProductDto implements Serializable {
     private String description;
     private String imageUrl;
     private String categoryName;
+    private String brand;
+    private String variant;
     private String skuCode;
 }

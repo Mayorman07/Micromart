@@ -19,6 +19,8 @@ public class CreateProductRequest {
     private Integer stockQuantity;
     @NotNull(message = "Category ID is required")
     private String categoryId;
+    @NotNull(message = "Category Name is required")
+    private String categoryName;
     private String description;
     private String imageUrl;
 
