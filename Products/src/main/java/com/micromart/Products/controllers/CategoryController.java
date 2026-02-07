@@ -1,9 +1,7 @@
 package com.micromart.products.controllers;
 import com.micromart.products.model.data.CategoryDto;
 import com.micromart.products.model.requests.CreateCategoryRequest;
-import com.micromart.products.model.requests.CreateProductRequest;
 import com.micromart.products.model.responses.CategoryResponse;
-import com.micromart.products.model.responses.ProductResponse;
 import com.micromart.products.services.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,13 +51,25 @@ public class CategoryController {
         logger.info("The out going update category response {} " , returnValue);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping(path="/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_DELETE')")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id){
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
-
-
+    @GetMapping(path="/all")
+    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
+    }
+    @GetMapping(path="/category,{name}")
+    public ResponseEntity<CategoryResponse> getCategoryByName(@PathVariable String name){
+        CategoryDto category = categoryService.getCategoryByName(name);
+        return ResponseEntity.ok(modelMapper.map(category,CategoryResponse.class));
+    }
+    @GetMapping("/categoryId,{id}")
+    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long id){
+        CategoryDto category = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(modelMapper.map(category,CategoryResponse.class));
+    }
 
 }

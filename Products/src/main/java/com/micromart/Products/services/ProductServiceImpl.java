@@ -2,7 +2,6 @@ package com.micromart.products.services;
 
 import com.micromart.products.entity.Product;
 import com.micromart.products.exceptions.AlreadyExistsException;
-import com.micromart.products.exceptions.NotFoundException;
 import com.micromart.products.exceptions.ResourceNotFoundException;
 import com.micromart.products.model.data.ProductDto;
 import com.micromart.products.model.responses.ProductResponse;
