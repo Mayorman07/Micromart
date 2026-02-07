@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,13 +51,13 @@ public class ProductController {
         logger.info("The out going create product response {} " , returnValue);
         return  ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
-    @PostMapping(path ="/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path ="/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_UPDATE')")
-    public ResponseEntity<ProductResponse>  updateProduct(@Valid @RequestBody CreateProductRequest productRequest){
-        logger.info("The incoming update product request {} " , productRequest);
-        ProductDto productDto = modelMapper.map(productRequest,ProductDto.class);
-        ProductDto updateProductRequest = productService.updateProduct(productDto);
-        ProductResponse returnValue = modelMapper.map(updateProductRequest, ProductResponse.class);
+    public ResponseEntity<ProductResponse>  updateProduct(@PathVariable Long id,@Valid @RequestBody CreateProductRequest updateProductRequest){
+        logger.info("The incoming update product request {} " , updateProductRequest);
+        ProductDto productDto = modelMapper.map(updateProductRequest,ProductDto.class);
+        ProductDto updatedProductRequest = productService.updateProduct(id,productDto);
+        ProductResponse returnValue = modelMapper.map(updatedProductRequest, ProductResponse.class);
         logger.info("The out going update product response {} " , returnValue);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }

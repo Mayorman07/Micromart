@@ -44,13 +44,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto updateProduct(ProductDto updateProductDetails) {
-        Product existingProduct = productRepository.findBySku(updateProductDetails.getSkuCode())
-                .orElseThrow(()->{
-                    logger.info("Product with sku code {} not found for update!",
-                            updateProductDetails.getSkuCode());
-                    return new NotFoundException("Product not found!");
-                });
+    public ProductDto updateProduct(Long id, ProductDto updateProductDetails) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         modelMapper.map(updateProductDetails, existingProduct);
         Product productToBeUpdated = productRepository.save(existingProduct);
         return modelMapper.map(productToBeUpdated,ProductDto.class);

@@ -24,5 +24,4 @@ public class CreateProductRequest {
     private String description;
     private String imageUrl;
     private String skuCode;
-
 }

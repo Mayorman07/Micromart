@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface ProductService {
     ProductDto createProduct(ProductDto createProductDetails);
-    ProductDto updateProduct(ProductDto updateProductDetails);
+    ProductDto updateProduct(Long id,ProductDto updateProductDetails);
     void deleteProduct(Long id);
-   ProductResponse getProductById(Long id);
+    ProductResponse getProductById(Long id);
     Page<ProductResponse> getAllProducts(Pageable pageable);
     Page<ProductResponse> getProductsByCategory(Long categoryId, Pageable pageable);
     Page<ProductResponse> searchProducts(String keyword, Pageable pageable);

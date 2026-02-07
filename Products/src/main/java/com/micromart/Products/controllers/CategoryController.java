@@ -1,11 +1,29 @@
 package com.micromart.products.controllers;
+import com.micromart.products.model.data.CategoryDto;
+import com.micromart.products.model.requests.CreateCategoryRequest;
+import com.micromart.products.model.requests.CreateProductRequest;
+import com.micromart.products.model.responses.CategoryResponse;
+import com.micromart.products.model.responses.ProductResponse;
 import com.micromart.products.services.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 @RestController
@@ -15,12 +33,33 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(CategoryService.class);
-    public void getAllCategories(){
 
+    @PostMapping(path="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_CREATE')")
+    public ResponseEntity<CategoryResponse> createCategory (@Valid @RequestBody CreateCategoryRequest createCategoryRequest){
+        logger.info("The incoming create category request {} " , createCategoryRequest);
+        CategoryDto createCategory = modelMapper.map(createCategoryRequest,CategoryDto.class);
+        CategoryDto createdCategoryDto = categoryService.createCategory(createCategory);
+        CategoryResponse returnValue = modelMapper.map(createdCategoryDto,CategoryResponse.class);
+        logger.info("The out going create category response {} " , returnValue);
+        return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
+    }
+    @PutMapping(path="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_UPDATE')")
+    public ResponseEntity<CategoryResponse> updateCategory( @PathVariable Long id,@Valid @RequestBody CreateCategoryRequest updateCategoryRequest){
+        CategoryDto updateCategory = modelMapper.map(updateCategoryRequest,CategoryDto.class);
+        CategoryDto updatedCategory = categoryService.updateCategory(id,updateCategory);
+        CategoryResponse returnValue = modelMapper.map(updateCategory, CategoryResponse.class);
+        logger.info("The out going update category response {} " , returnValue);
+        return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
+    }
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_DELETE')")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id){
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
     }
 
-    public void createCategory (){
 
-    }
 
 }
