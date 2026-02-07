@@ -1,8 +1,10 @@
 package com.micromart.products.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.text.Normalizer;
 import java.util.Locale;
-
+@Component
 public class SkuCodeGenerator {
 
     /**

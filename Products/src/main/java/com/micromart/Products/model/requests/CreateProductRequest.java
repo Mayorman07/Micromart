@@ -23,5 +23,6 @@ public class CreateProductRequest {
     private String categoryName;
     private String description;
     private String imageUrl;
+    private String skuCode;
 
 }

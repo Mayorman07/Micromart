@@ -34,7 +34,6 @@ public class ProductController {
     private final ProductService productService;
     private final ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
-
     @GetMapping(path = "/test/status")
     public String status(){
 
