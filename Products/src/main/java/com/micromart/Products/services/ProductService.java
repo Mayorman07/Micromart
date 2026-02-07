@@ -12,6 +12,6 @@ public interface ProductService {
     void deleteProduct(Long id);
    ProductResponse getProductById(Long id);
     Page<ProductResponse> getAllProducts(Pageable pageable);
-    List<ProductResponse> getProductsByCategory(Long categoryId);
+    Page<ProductResponse> getProductsByCategory(Long categoryId, Pageable pageable);
     List<ProductResponse> searchProducts(String keyword);
 }

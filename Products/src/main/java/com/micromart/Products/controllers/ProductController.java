@@ -39,7 +39,7 @@ public class ProductController {
     @GetMapping(path = "/test/status")
     public String status(){
 
-        return "Just testing as usual, normal normal";
+        return "Just testing as usual";
     }
     @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_CREATE')")
@@ -76,5 +76,9 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<Page<ProductResponse>> getAllProducts(@PageableDefault(page = 0, size = 15) Pageable pageable) {
         return ResponseEntity.ok(productService.getAllProducts(pageable));
+    }
+    @GetMapping(path = "/category/{id}")
+    public ResponseEntity<Page<ProductResponse>> getProductsByCategory(@PathVariable Long categoryId, Pageable pageable){
+        return ResponseEntity.ok(productService.getProductsByCategory(categoryId, pageable));
     }
 }

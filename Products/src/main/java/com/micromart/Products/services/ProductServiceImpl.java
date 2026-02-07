@@ -36,11 +36,11 @@ public class ProductServiceImpl implements ProductService {
         return null;
     }
 
-
     @Override
-    public List<ProductResponse> getProductsByCategory(Long categoryId) {
+    public Page<ProductResponse> getProductsByCategory(Long categoryId, Pageable pageable) {
         return null;
     }
+
 
     @Override
     public List<ProductResponse> searchProducts(String keyword) {
