@@ -9,10 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest; // If you need to create a manual request
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -72,10 +73,12 @@ public class ProductController {
         return ResponseEntity.ok(productResponse);
     }
     @GetMapping
-    public ResponseEntity<Page<ProductResponse>> getAllProducts(@PageableDefault(page = 0, size = 15) Pageable pageable) {
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(@PageableDefault(page = 0, size = 15)
+                                                                    @SortDefault(sort = "price", direction = Sort.Direction.ASC)
+                                                                    Pageable pageable) {
         return ResponseEntity.ok(productService.getAllProducts(pageable));
     }
-    @GetMapping(path = "/category/{id}")
+    @GetMapping(path = "/category/{categoryId}")
     public ResponseEntity<Page<ProductResponse>> getProductsByCategory(@PathVariable Long categoryId, Pageable pageable){
         return ResponseEntity.ok(productService.getProductsByCategory(categoryId, pageable));
     }
