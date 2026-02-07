@@ -2,6 +2,8 @@ package com.micromart.products.services;
 
 import com.micromart.products.model.data.ProductDto;
 import com.micromart.products.model.responses.ProductResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,9 +32,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponse> getAllProducts() {
+    public Page<ProductResponse> getAllProducts(Pageable pageable) {
         return null;
     }
+
 
     @Override
     public List<ProductResponse> getProductsByCategory(Long categoryId) {

@@ -7,6 +7,10 @@ import com.micromart.products.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest; // If you need to create a manual request
+import org.springframework.data.web.PageableDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -64,8 +70,11 @@ public class ProductController {
     @GetMapping(path = "/view/{id}")
     @PreAuthorize("hasAuthority('product:READ')")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
-
         ProductResponse productResponse = productService.getProductById(id);
         return ResponseEntity.ok(productResponse);
+    }
+    @GetMapping
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(@PageableDefault(page = 0, size = 15) Pageable pageable) {
+        return ResponseEntity.ok(productService.getAllProducts(pageable));
     }
 }
