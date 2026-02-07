@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -81,4 +82,13 @@ public class ProductController {
     public ResponseEntity<Page<ProductResponse>> getProductsByCategory(@PathVariable Long categoryId, Pageable pageable){
         return ResponseEntity.ok(productService.getProductsByCategory(categoryId, pageable));
     }
+    @GetMapping("/search")
+    public ResponseEntity<Page<ProductResponse>> searchProducts( @RequestParam("keyword") String keyword,
+            @PageableDefault(size = 10) Pageable pageable) {
+        logger.info("The incoming search product request {} " , keyword);
+
+
+        return ResponseEntity.ok(productService.searchProducts(keyword, pageable));
+    }
 }
+

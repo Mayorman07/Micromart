@@ -41,9 +41,10 @@ public class ProductServiceImpl implements ProductService {
         return null;
     }
 
-
     @Override
-    public List<ProductResponse> searchProducts(String keyword) {
+    public Page<ProductResponse> searchProducts(String keyword, Pageable pageable) {
         return null;
     }
+
+
 }
