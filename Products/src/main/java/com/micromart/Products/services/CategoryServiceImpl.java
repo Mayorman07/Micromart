@@ -54,12 +54,12 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public CategoryResponse updateCategory(Long id, CategoryDto updateCategoryDetails) {
-        if(!categoryRepository.existsById(id)){
-            throw new NotFoundException("Category id is invalid");
-        }
-        Category categoryToBeUpdated = modelMapper.map(updateCategoryDetails,Category.class);
-        Category updatedCategory = categoryRepository.save(categoryToBeUpdated);
-        return modelMapper.map(updatedCategory,CategoryResponse.class);
+        Category existingCategory = categoryRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Category id is invalid"));
+        existingCategory.setName(updateCategoryDetails.getName());
+        existingCategory.setDescription(updateCategoryDetails.getDescription());
+        Category savedCategory = categoryRepository.save(existingCategory);
+        return modelMapper.map(savedCategory, CategoryResponse.class);
     }
 
     @Override

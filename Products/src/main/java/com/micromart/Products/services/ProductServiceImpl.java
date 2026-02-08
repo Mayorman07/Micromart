@@ -52,6 +52,7 @@ public class ProductServiceImpl implements ProductService {
         Product productToBeCreated = modelMapper.map(createProductDetails, Product.class);
         productToBeCreated.setSku(generatedSku);
         productToBeCreated.setCategory(category);
+        category.addProduct(productToBeCreated);
         Product createdProduct = productRepository.save(productToBeCreated);
         return modelMapper.map(createdProduct, ProductDto.class);
     }
