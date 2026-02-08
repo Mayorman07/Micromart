@@ -1,10 +1,13 @@
 package com.micromart.products.services;
 
+import com.micromart.products.entity.Category;
 import com.micromart.products.entity.Product;
 import com.micromart.products.exceptions.AlreadyExistsException;
+import com.micromart.products.exceptions.NotFoundException;
 import com.micromart.products.exceptions.ResourceNotFoundException;
 import com.micromart.products.model.data.ProductDto;
 import com.micromart.products.model.responses.ProductResponse;
+import com.micromart.products.repository.CategoryRepository;
 import com.micromart.products.repository.ProductRepository;
 import com.micromart.products.utils.SkuCodeGenerator;
 import lombok.RequiredArgsConstructor;
@@ -23,23 +26,34 @@ public class ProductServiceImpl implements ProductService {
 
     private final ModelMapper modelMapper;
     private final ProductRepository productRepository;
+
+    private final CategoryRepository categoryRepository;
     private final SkuCodeGenerator skuCodeGenerator;
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Override
     @Transactional
     public ProductDto createProduct(ProductDto createProductDetails) {
+
+        Category category = categoryRepository.findById(createProductDetails.getCategoryId())
+                .orElseThrow(() -> new NotFoundException(
+                        "Cannot create product. Category not found with ID: " + createProductDetails.getCategoryId() // FIX 1: variable name
+                ));
         String generatedSku = skuCodeGenerator.generateSku(
                 createProductDetails.getBrand(),
                 createProductDetails.getName(),
                 createProductDetails.getVariant()
         );
-        if(productRepository.existsBySku(generatedSku))
-            throw new AlreadyExistsException("Product with SKU " + createProductDetails.getSkuCode() + " already exists");
-       createProductDetails.setSkuCode(generatedSku);
-        Product productToBeCreated =modelMapper.map(createProductDetails, Product.class);
+
+        if(productRepository.existsBySku(generatedSku)) {
+            throw new AlreadyExistsException("Product with SKU " + generatedSku + " already exists");
+        }
+
+        Product productToBeCreated = modelMapper.map(createProductDetails, Product.class);
+        productToBeCreated.setSku(generatedSku);
+        productToBeCreated.setCategory(category);
         Product createdProduct = productRepository.save(productToBeCreated);
-        return modelMapper.map(createdProduct,ProductDto.class);
+        return modelMapper.map(createdProduct, ProductDto.class);
     }
 
     @Override

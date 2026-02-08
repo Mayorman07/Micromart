@@ -26,31 +26,22 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class Product extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false, length = 150)
     private String name;
-
     @Column(length = 1000)
     private String description;
-
     @Column(nullable = false, unique = true, updatable = false)
     private String sku;
-
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
-
     @Column(name = "stock_quantity", nullable = false)
     private Integer stockQuantity;
-
     @Column(nullable = false)
     @Builder.Default
     private Boolean active = true;
-
-    // Many Products belong to One Category
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     @ToString.Exclude
