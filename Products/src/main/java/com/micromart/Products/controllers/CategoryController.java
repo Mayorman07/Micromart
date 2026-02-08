@@ -63,12 +63,12 @@ public class CategoryController {
     }
     @GetMapping(path="/category,{name}")
     public ResponseEntity<CategoryResponse> getCategoryByName(@PathVariable String name){
-        CategoryDto category = categoryService.getCategoryByName(name);
+        CategoryResponse category = categoryService.getCategoryByName(name);
         return ResponseEntity.ok(modelMapper.map(category,CategoryResponse.class));
     }
     @GetMapping("/categoryId,{id}")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long id){
-        CategoryDto category = categoryService.getCategoryById(id);
+        CategoryResponse category = categoryService.getCategoryById(id);
         return ResponseEntity.ok(modelMapper.map(category,CategoryResponse.class));
     }
 
