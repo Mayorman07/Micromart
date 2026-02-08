@@ -2,6 +2,7 @@ package com.micromart.products.services;
 
 import com.micromart.products.entity.Category;
 import com.micromart.products.entity.Product;
+import com.micromart.products.exceptions.AlreadyExistsException;
 import com.micromart.products.exceptions.NotFoundException;
 import com.micromart.products.exceptions.ResourceNotFoundException;
 import com.micromart.products.model.data.CategoryDto;
@@ -13,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,23 +36,40 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public List<CategoryDto> getAllCategories() {
-        return null;
+    public List<CategoryResponse> getAllCategories() {
+        List<Category> allCategories = categoryRepository.findAll();
+        return allCategories.stream()
+                .map(category -> modelMapper.map(category, CategoryResponse.class))
+                .collect(Collectors.toList());    }
+
+    @Override
+    public CategoryResponse createCategory(CategoryDto createCategoryDetails) {
+        if (categoryRepository.existsByName(createCategoryDetails.getName())){
+            throw new AlreadyExistsException("Category already exists");
+        }
+        Category createdCategory = modelMapper.map(createCategoryDetails,Category.class);
+        Category savedCategory = categoryRepository.save(createdCategory);
+        return modelMapper.map(savedCategory, CategoryResponse.class);
     }
 
     @Override
-    public CategoryDto createCategory(CategoryDto categoryDto) {
-        return null;
-    }
-
-    @Override
-    public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
-        return null;
+    public CategoryResponse updateCategory(Long id, CategoryDto updateCategoryDetails) {
+        if(!categoryRepository.existsById(id)){
+            throw new NotFoundException("Category id is invalid");
+        }
+        Category categoryToBeUpdated = modelMapper.map(updateCategoryDetails,Category.class);
+        Category updatedCategory = categoryRepository.save(categoryToBeUpdated);
+        return modelMapper.map(updatedCategory,CategoryResponse.class);
     }
 
     @Override
     public void deleteCategory(Long id) {
-
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Category id is invalid"));
+        if (!category.getProducts().isEmpty()) {
+            throw new IllegalStateException("Cannot delete category with existing products. Please move them first.");
+        }
+        categoryRepository.delete(category);
     }
 
 }

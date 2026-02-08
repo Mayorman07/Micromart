@@ -37,8 +37,8 @@ public class CategoryController {
     public ResponseEntity<CategoryResponse> createCategory (@Valid @RequestBody CreateCategoryRequest createCategoryRequest){
         logger.info("The incoming create category request {} " , createCategoryRequest);
         CategoryDto createCategory = modelMapper.map(createCategoryRequest,CategoryDto.class);
-        CategoryDto createdCategoryDto = categoryService.createCategory(createCategory);
-        CategoryResponse returnValue = modelMapper.map(createdCategoryDto,CategoryResponse.class);
+        CategoryResponse createdCategory = categoryService.createCategory(createCategory);
+        CategoryResponse returnValue = modelMapper.map(createdCategory,CategoryResponse.class);
         logger.info("The out going create category response {} " , returnValue);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
@@ -46,7 +46,7 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_UPDATE')")
     public ResponseEntity<CategoryResponse> updateCategory( @PathVariable Long id,@Valid @RequestBody CreateCategoryRequest updateCategoryRequest){
         CategoryDto updateCategory = modelMapper.map(updateCategoryRequest,CategoryDto.class);
-        CategoryDto updatedCategory = categoryService.updateCategory(id,updateCategory);
+        CategoryResponse updatedCategory = categoryService.updateCategory(id,updateCategory);
         CategoryResponse returnValue = modelMapper.map(updateCategory, CategoryResponse.class);
         logger.info("The out going update category response {} " , returnValue);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
@@ -58,7 +58,7 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
     @GetMapping(path="/all")
-    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+    public ResponseEntity<List<CategoryResponse>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
     @GetMapping(path="/category,{name}")
