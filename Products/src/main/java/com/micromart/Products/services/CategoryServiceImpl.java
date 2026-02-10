@@ -18,10 +18,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService{
     private final ModelMapper modelMapper;
     private final CategoryRepository categoryRepository;
+
+    public CategoryServiceImpl(ModelMapper modelMapper, CategoryRepository categoryRepository) {
+        this.modelMapper = modelMapper;
+        this.categoryRepository = categoryRepository;
+    }
 
     @Override
     @Transactional
@@ -62,7 +66,8 @@ public class CategoryServiceImpl implements CategoryService{
         List<Category> allCategories = categoryRepository.findAll();
         return allCategories.stream()
                 .map(category -> modelMapper.map(category, CategoryResponse.class))
-                .collect(Collectors.toList());    }
+                .collect(Collectors.toList());
+    }
 
     @Override
     public void deleteCategory(Long id) {

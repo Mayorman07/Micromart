@@ -30,12 +30,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/products")
-@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
     private final ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
+
+    public ProductController(ProductService productService, ModelMapper modelMapper) {
+        this.productService = productService;
+        this.modelMapper = modelMapper;
+    }
     @GetMapping(path = "/test/status")
     public String status(){
 

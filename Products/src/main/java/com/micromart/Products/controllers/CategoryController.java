@@ -26,11 +26,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
-@RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
     private final ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(CategoryService.class);
+
+    public CategoryController(CategoryService categoryService, ModelMapper modelMapper) {
+        this.categoryService = categoryService;
+        this.modelMapper = modelMapper;
+    }
 
     @PostMapping(path="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_CREATE')")

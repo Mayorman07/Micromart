@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ModelMapper modelMapper;
@@ -31,27 +30,37 @@ public class ProductServiceImpl implements ProductService {
     private final SkuCodeGenerator skuCodeGenerator;
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
+    public ProductServiceImpl(ModelMapper modelMapper, ProductRepository productRepository,
+                              CategoryRepository categoryRepository, SkuCodeGenerator skuCodeGenerator) {
+        this.modelMapper = modelMapper;
+        this.productRepository = productRepository;
+        this.categoryRepository=categoryRepository;
+        this.skuCodeGenerator=skuCodeGenerator;
+    }
+
     @Override
     @Transactional
     public ProductDto createProduct(ProductDto createProductDetails) {
 
         Category category = categoryRepository.findById(createProductDetails.getCategoryId())
                 .orElseThrow(() -> new NotFoundException(
-                        "Cannot create product. Category not found with ID: " + createProductDetails.getCategoryId() // FIX 1: variable name
+                        "Cannot create product. Category not found with ID: " + createProductDetails.getCategoryId()
                 ));
+
         String generatedSku = skuCodeGenerator.generateSku(
                 createProductDetails.getBrand(),
                 createProductDetails.getName(),
                 createProductDetails.getVariant()
         );
 
-        if(productRepository.existsBySku(generatedSku)) {
+        if (productRepository.existsBySku(generatedSku)) {
             throw new AlreadyExistsException("Product with SKU " + generatedSku + " already exists");
         }
-
         Product productToBeCreated = modelMapper.map(createProductDetails, Product.class);
+        productToBeCreated.setId(null);
         productToBeCreated.setSku(generatedSku);
         productToBeCreated.setCategory(category);
+
         category.addProduct(productToBeCreated);
         Product createdProduct = productRepository.save(productToBeCreated);
         return modelMapper.map(createdProduct, ProductDto.class);
