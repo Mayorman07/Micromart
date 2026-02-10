@@ -1,4 +1,4 @@
-package com.micromart.security;
+package com.micromart.products.security;
 
 import com.parser.JwtAuthorities.JwtClaimsParser;
 import jakarta.servlet.FilterChain;
@@ -10,18 +10,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Objects;
 
-@Component
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
     private final Environment environment;
 
-    public AuthorizationFilter(AuthenticationManager authenticationManager,
-                               Environment environment) {
+    public AuthorizationFilter(AuthenticationManager authenticationManager, Environment environment) {
         super(authenticationManager);
         this.environment = environment;
     }
@@ -31,10 +27,11 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
 
-        String authorizationHeader = req.getHeader(environment.getProperty("authorization.token.header.name"));
+        String headerName = environment.getProperty("authorization.token.header.name");
+        String headerPrefix = environment.getProperty("authorization.token.header.prefix");
+        String authorizationHeader = req.getHeader(headerName);
 
-        if (authorizationHeader == null
-                || !authorizationHeader.startsWith(environment.getProperty("authorization.token.header.prefix"))) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith(headerPrefix)) {
             chain.doFilter(req, res);
             return;
         }
@@ -46,13 +43,14 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest req) {
-        String authorizationHeader = req.getHeader(environment.getProperty("authorization.token.header.name"));
+        String headerName = environment.getProperty("authorization.token.header.name");
+        String headerPrefix = environment.getProperty("authorization.token.header.prefix");
+        String authorizationHeader = req.getHeader(headerName);
 
         if (authorizationHeader == null) {
             return null;
         }
-
-        String token = authorizationHeader.replace(Objects.requireNonNull(environment.getProperty("authorization.token.header.prefix")), "").trim();
+        String token = authorizationHeader.replace(headerPrefix, "").trim();
         String tokenSecret = environment.getProperty("token.secret.key");
 
         JwtClaimsParser jwtClaimsParser = new JwtClaimsParser(token, tokenSecret);
@@ -62,8 +60,6 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
         if (userId == null) {
             return null;
         }
-
         return new UsernamePasswordAuthenticationToken(userId, null, jwtClaimsParser.getUserAuthorities());
-
     }
 }

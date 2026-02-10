@@ -51,7 +51,7 @@ public class ProductController {
         logger.info("The out going create product response {} " , returnValue);
         return  ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
-    @PutMapping(path ="/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path ="/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_UPDATE')")
     public ResponseEntity<ProductResponse>  updateProduct(@PathVariable Long id,@Valid @RequestBody CreateProductRequest updateProductRequest){
         logger.info("The incoming update product request {} " , updateProductRequest);

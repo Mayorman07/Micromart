@@ -46,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public CategoryResponse getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Categpory not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id));
         return modelMapper.map(category, CategoryResponse.class);
     }
 
