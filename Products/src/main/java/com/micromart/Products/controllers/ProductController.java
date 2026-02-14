@@ -5,7 +5,6 @@ import com.micromart.products.model.requests.CreateProductRequest;
 import com.micromart.products.model.responses.ProductResponse;
 import com.micromart.products.services.ProductService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
