@@ -1,15 +1,12 @@
 package com.micromart.products.services;
 
 import com.micromart.products.entity.Category;
-import com.micromart.products.entity.Product;
 import com.micromart.products.exceptions.AlreadyExistsException;
 import com.micromart.products.exceptions.NotFoundException;
 import com.micromart.products.exceptions.ResourceNotFoundException;
 import com.micromart.products.model.data.CategoryDto;
 import com.micromart.products.model.responses.CategoryResponse;
-import com.micromart.products.model.responses.ProductResponse;
 import com.micromart.products.repository.CategoryRepository;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

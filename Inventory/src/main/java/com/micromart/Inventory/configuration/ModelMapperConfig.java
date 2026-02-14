@@ -1,4 +1,4 @@
-package com.micromart.products.configuration;
+package com.micromart.Inventory.configuration;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
