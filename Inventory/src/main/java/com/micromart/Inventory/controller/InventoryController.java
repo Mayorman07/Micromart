@@ -47,8 +47,8 @@ public class InventoryController {
     }
     @PutMapping("/deduct")
     public ResponseEntity<InventoryResponse> deductStock(@RequestBody InventoryRequest inventoryRequest){
-        InventoryDto addStock = modelMapper.map(inventoryRequest, InventoryDto.class);
-        InventoryDto stockToBeDeducted = inventoryService.addStock(addStock);
+        InventoryDto deductStock = modelMapper.map(inventoryRequest, InventoryDto.class);
+        InventoryDto stockToBeDeducted = inventoryService.deductStock(deductStock);
         InventoryResponse returnValue = modelMapper.map(stockToBeDeducted, InventoryResponse.class);
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
