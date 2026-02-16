@@ -13,11 +13,10 @@ CREATE TABLE products (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     price DECIMAL(19, 2) NOT NULL,
-    stock_quantity INT,
     image_url VARCHAR(255),
-    sku VARCHAR(255) NOT NULL UNIQUE,  -- <--- CHANGED THIS from 'sku_code' to 'sku'
-    active BOOLEAN DEFAULT TRUE,       -- (Keep this from the previous fix)
-    category_id BIGINT,
+    sku_code VARCHAR(255) NOT NULL UNIQUE,
+    active BOOLEAN DEFAULT TRUE,
+    category_id BIGINT NOT NULL,
     created_at DATETIME(6),
     updated_at DATETIME(6),
 

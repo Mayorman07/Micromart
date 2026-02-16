@@ -10,9 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    boolean existsBySku(String sku);
+    boolean existsBySkuCode(String skuCode);
     boolean existsByNameIgnoreCase(String name);
-    Optional<Product> findBySku(String sku);
+    Optional<Product> findBySkuCode(String skuCode);
    Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
     Page<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
             String name,

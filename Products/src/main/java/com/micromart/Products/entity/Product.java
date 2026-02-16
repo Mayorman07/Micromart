@@ -29,19 +29,25 @@ public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false, length = 150)
     private String name;
+
     @Column(length = 1000)
     private String description;
-    @Column(nullable = false, unique = true, updatable = false)
-    private String sku;
+
+    @Column(name = "sku_code", nullable = false, unique = true, updatable = false)
+    private String skuCode;
+
+    private String imageUrl;
+
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
-    @Column(name = "stock_quantity", nullable = false)
-    private Integer stockQuantity;
+
     @Column(nullable = false)
     @Builder.Default
     private Boolean active = true;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     @ToString.Exclude
@@ -71,12 +77,20 @@ public class Product extends BaseEntity {
         this.description = description;
     }
 
-    public String getSku() {
-        return sku;
+    public String getSkuCode() {
+        return skuCode;
     }
 
-    public void setSku(String sku) {
-        this.sku = sku;
+    public void setSkuCode(String skuCode) {
+        this.skuCode = skuCode;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public BigDecimal getPrice() {
@@ -85,14 +99,6 @@ public class Product extends BaseEntity {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    public Integer getStockQuantity() {
-        return stockQuantity;
-    }
-
-    public void setStockQuantity(Integer stockQuantity) {
-        this.stockQuantity = stockQuantity;
     }
 
     public Boolean getActive() {

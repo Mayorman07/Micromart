@@ -30,6 +30,7 @@
         </processorPath>
         <module name="notification" />
         <module name="Products" />
+        <module name="Inventory" />
       </profile>
     </annotationProcessing>
   </component>
@@ -38,6 +39,7 @@
       <module name="ConfigServer" options="-parameters" />
       <module name="EurekaServer" options="-parameters" />
       <module name="Gateway" options="-parameters" />
+      <module name="Inventory" options="-parameters" />
       <module name="JwtAuthorities" options="-parameters" />
       <module name="Products" options="-parameters" />
       <module name="Users" options="-parameters" />
