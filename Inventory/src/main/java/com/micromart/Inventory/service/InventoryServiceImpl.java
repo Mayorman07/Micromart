@@ -1,6 +1,7 @@
 package com.micromart.Inventory.service;
 
 import com.micromart.Inventory.entity.Inventory;
+import com.micromart.Inventory.exceptions.NotFoundException;
 import com.micromart.Inventory.model.data.InventoryDto;
 import com.micromart.Inventory.model.responses.InventoryResponse;
 import com.micromart.Inventory.repository.InventoryRepository;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -74,10 +74,10 @@ public class InventoryServiceImpl implements InventoryService{
     )
     public InventoryDto deductStock(InventoryDto inventoryDto) {
         Inventory inventory = inventoryRepository.findBySkuCode(inventoryDto.getSkuCode())
-                .orElseThrow(() -> new RuntimeException("Product not found in inventory: " + inventoryDto.getSkuCode()));
+                .orElseThrow(() -> new NotFoundException("Product not found in inventory: " + inventoryDto.getSkuCode()));
 
         if (inventory.getQuantity() < inventoryDto.getQuantity()) {
-            throw new RuntimeException("Insufficient stock for SKU: " + inventoryDto.getSkuCode());
+            throw new NotFoundException("Insufficient stock for SKU: " + inventoryDto.getSkuCode());
         }
 
         inventory.setQuantity(inventory.getQuantity() - inventoryDto.getQuantity());
