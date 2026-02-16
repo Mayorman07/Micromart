@@ -10,4 +10,7 @@ public interface InventoryService {
     InventoryDto createInventory(InventoryDto inventoryDto);
     List<InventoryResponse> isInStock(List<String> skuCodes);
 
+    InventoryDto addStock(InventoryDto inventoryDto);
+    InventoryDto deductStock(InventoryDto inventoryDto);
+
 }

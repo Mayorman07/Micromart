@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,4 +53,37 @@ public class InventoryServiceImpl implements InventoryService{
                                 .build()
                 ).toList();
     }
+
+    @Override
+    public InventoryDto addStock(InventoryDto inventoryDto) {
+        Inventory inventory = inventoryRepository.findBySkuCode(inventoryDto.getSkuCode())
+                .orElseThrow(() -> new RuntimeException("Product not found in inventory: " + inventoryDto.getSkuCode()));
+
+        inventory.setQuantity(inventory.getQuantity() + inventoryDto.getQuantity());
+        inventoryRepository.save(inventory);
+        return modelMapper.map(inventory, InventoryDto.class);
+    }
+
+
+    @Override
+    @Transactional
+    @Retryable(
+            retryFor = { ObjectOptimisticLockingFailureException.class },
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 100)
+    )
+    public InventoryDto deductStock(InventoryDto inventoryDto) {
+        Inventory inventory = inventoryRepository.findBySkuCode(inventoryDto.getSkuCode())
+                .orElseThrow(() -> new RuntimeException("Product not found in inventory: " + inventoryDto.getSkuCode()));
+
+        if (inventory.getQuantity() < inventoryDto.getQuantity()) {
+            throw new RuntimeException("Insufficient stock for SKU: " + inventoryDto.getSkuCode());
+        }
+
+        inventory.setQuantity(inventory.getQuantity() - inventoryDto.getQuantity());
+        inventoryRepository.save(inventory);
+
+        return modelMapper.map(inventory, InventoryDto.class);
+    }
+
 }
