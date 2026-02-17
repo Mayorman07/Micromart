@@ -15,6 +15,9 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -88,7 +91,7 @@ public class UsersController{
     }
 
     @GetMapping(path ="/view/{email}")
-    @PreAuthorize("hasAuthority('product:READ')")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('user:READ')")
     public ResponseEntity<UserProfileResponse> viewProfile(@PathVariable("email") String email){
         logger.info("Received request to view personal employee with email: {}", email);
         UserProfileDto requestedUserDetails = userService.viewProfile(email);
@@ -103,4 +106,18 @@ public class UsersController{
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping(path = "/all")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('user:READ')")
+    public ResponseEntity<Page<UserProfileResponse>> getAllUsers(
+            @PageableDefault(page = 0, size = 15) Pageable pageable) {
+
+        logger.info("Admin accessing operative registry page: {}", pageable.getPageNumber());
+
+        Page<UserDto> userPage = userService.findAllUsers(pageable);
+        Page<UserProfileResponse> returnValue = userPage.map(userDto ->
+                modelMapper.map(userDto, UserProfileResponse.class)
+        );
+
+        return ResponseEntity.ok(returnValue);
+    }
 }

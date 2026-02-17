@@ -25,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -144,6 +146,13 @@ public class UserServiceImpl implements UserService {
                 });
         userRepository.delete(existingUser);
         logger.info("The user with the email has been deleted");
+    }
+
+    @Override
+    public Page<UserDto> findAllUsers(Pageable pageable) {
+        Page<User> usersPage = userRepository.findAll(pageable);
+
+        return usersPage.map(entity -> modelMapper.map(entity, UserDto.class));
     }
 
     @Override

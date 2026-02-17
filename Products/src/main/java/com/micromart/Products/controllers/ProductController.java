@@ -39,11 +39,6 @@ public class ProductController {
         this.productService = productService;
         this.modelMapper = modelMapper;
     }
-    @GetMapping(path = "/test/status")
-    public String status(){
-
-        return "Just testing as usual";
-    }
     @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_CREATE')")
     public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody CreateProductRequest productRequest){
