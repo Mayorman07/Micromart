@@ -23,6 +23,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     @Value("${token.refresh.expiration.time:1296000000}")
     private Long refreshTokenDurationMs;
     @Override
+    @Transactional
     public RefreshToken createRefreshToken(User user) {
         refreshTokenRepository.deleteByUser(user);
         RefreshToken refreshToken = RefreshToken.builder()
