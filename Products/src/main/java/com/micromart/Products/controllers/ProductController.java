@@ -1,6 +1,7 @@
 package com.micromart.products.controllers;
 
 import com.micromart.products.model.data.ProductDto;
+import com.micromart.products.model.meta.ProductMetadata;
 import com.micromart.products.model.requests.CreateProductRequest;
 import com.micromart.products.model.responses.ProductResponse;
 import com.micromart.products.services.ProductService;
@@ -86,6 +87,12 @@ public class ProductController {
             @PageableDefault(size = 10) Pageable pageable) {
         logger.info("The incoming search product request {} " , keyword);
         return ResponseEntity.ok(productService.searchProducts(keyword, pageable));
+    }
+
+    @GetMapping("/metadata/{sku}")
+    public ResponseEntity<ProductMetadata> getProductMetadata(@PathVariable String sku) {
+        ProductMetadata metadata = productService.getMetadataBySku(sku);
+        return ResponseEntity.ok(metadata);
     }
 }
 

@@ -6,15 +6,20 @@ import com.micromart.Inventory.model.responses.InventoryResponse;
 import com.micromart.Inventory.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -55,5 +60,14 @@ public class InventoryController {
         InventoryDto stockToBeDeducted = inventoryService.deductStock(deductStock);
         InventoryResponse returnValue = modelMapper.map(stockToBeDeducted, InventoryResponse.class);
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<InventoryResponse>> getFullInventory(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @PageableDefault(size = 15) Pageable pageable) {
+
+        return ResponseEntity.ok(inventoryService.getAggregatedInventory(pageable, keyword));
     }
 }

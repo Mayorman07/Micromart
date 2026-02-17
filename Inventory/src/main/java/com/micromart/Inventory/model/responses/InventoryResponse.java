@@ -5,18 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class InventoryResponse {
     private String skuCode;
+    private Integer quantity;
     private boolean isInStock;
 
-    public InventoryResponse(String skuCode, boolean isInStock) {
-        this.skuCode = skuCode;
-        this.isInStock = isInStock;
-    }
-
-    public InventoryResponse() {
-    }
+    private String name;
+    private BigDecimal price;
+    private String category;
 
     public String getSkuCode() {
         return skuCode;
@@ -26,11 +28,43 @@ public class InventoryResponse {
         this.skuCode = skuCode;
     }
 
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
     public boolean isInStock() {
         return isInStock;
     }
 
     public void setInStock(boolean inStock) {
-        this.isInStock = inStock;
+        isInStock = inStock;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

@@ -1,5 +1,6 @@
 package com.micromart.products.services;
 import com.micromart.products.model.data.ProductDto;
+import com.micromart.products.model.meta.ProductMetadata;
 import com.micromart.products.model.responses.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ public interface ProductService {
     ProductDto createProduct(ProductDto createProductDetails);
     ProductDto updateProduct(Long id,ProductDto updateProductDetails);
     void deleteProduct(Long id);
+    ProductMetadata getMetadataBySku(String sku);
     ProductResponse getProductById(Long id);
     Page<ProductResponse> getAllProducts(Pageable pageable);
     Page<ProductResponse> getProductsByCategory(Long categoryId, Pageable pageable);

@@ -1,14 +1,17 @@
 package com.micromart.Inventory.service;
 
+import com.micromart.Inventory.client.ProductClient;
 import com.micromart.Inventory.entity.Inventory;
 import com.micromart.Inventory.exceptions.NotFoundException;
 import com.micromart.Inventory.model.data.InventoryDto;
+import com.micromart.Inventory.model.meta.ProductMetadata;
 import com.micromart.Inventory.model.responses.InventoryResponse;
 import com.micromart.Inventory.repository.InventoryRepository;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -20,11 +23,14 @@ import java.util.List;
 @Service
 public class InventoryServiceImpl implements InventoryService{
     private final InventoryRepository inventoryRepository;
+
+    private final ProductClient productClient;
     private final ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(InventoryServiceImpl.class);
 
-    public InventoryServiceImpl(InventoryRepository inventoryRepository, ModelMapper modelMapper) {
+    public InventoryServiceImpl(InventoryRepository inventoryRepository, ProductClient productClient, ModelMapper modelMapper) {
         this.inventoryRepository = inventoryRepository;
+        this.productClient = productClient;
         this.modelMapper = modelMapper;
     }
 
@@ -50,10 +56,15 @@ public class InventoryServiceImpl implements InventoryService{
     @Transactional(readOnly = true)
     public List<InventoryResponse> isInStock(List<String> skuCodes) {
         return inventoryRepository.findBySkuCodeIn(skuCodes).stream()
-                .map(inventory -> new InventoryResponse(
-                        inventory.getSkuCode(),
-                        inventory.getQuantity() > 0
-                )).toList();
+                .map(inventory -> {
+                    InventoryResponse response = new InventoryResponse();
+
+                    response.setSkuCode(inventory.getSkuCode());
+                    response.setInStock(inventory.getQuantity() > 0);
+                     response.setQuantity(inventory.getQuantity());
+
+                    return response;
+                }).toList();
     }
 
     @Override
@@ -88,4 +99,39 @@ public class InventoryServiceImpl implements InventoryService{
         return modelMapper.map(inventory, InventoryDto.class);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<InventoryResponse> getAggregatedInventory(Pageable pageable, String keyword) {
+        Page<Inventory> inventoryPage;
+        if (keyword != null && !keyword.isEmpty()) {
+            inventoryPage = inventoryRepository.findBySkuCodeContainingIgnoreCase(keyword, pageable);
+        } else {
+            inventoryPage = inventoryRepository.findAll(pageable);
+        }
+
+        return inventoryPage.map(inv -> {
+            ProductMetadata meta = productClient.getProductMetadata(inv.getSkuCode());
+
+            InventoryResponse response = new InventoryResponse();
+
+            response.setSkuCode(inv.getSkuCode());
+            response.setQuantity(inv.getQuantity());
+            response.setInStock(inv.getQuantity() > 0);
+
+            if (meta != null) {
+                response.setName(meta.getName());
+                response.setPrice(meta.getPrice());
+                response.setCategory(meta.getCategory());
+            } else {
+                response.setName("OPERATIVE_UNKNOWN_SKU");
+            }
+            return response;
+        });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<InventoryResponse> getInventoryRegistry(Pageable pageable) {
+        return getAggregatedInventory(pageable, null);
+    }
 }

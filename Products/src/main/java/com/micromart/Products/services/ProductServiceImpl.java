@@ -7,6 +7,7 @@ import com.micromart.products.exceptions.AlreadyExistsException;
 import com.micromart.products.exceptions.NotFoundException;
 import com.micromart.products.exceptions.ResourceNotFoundException;
 import com.micromart.products.model.data.ProductDto;
+import com.micromart.products.model.meta.ProductMetadata;
 import com.micromart.products.model.responses.ProductResponse;
 import com.micromart.products.repository.CategoryRepository;
 import com.micromart.products.repository.ProductRepository;
@@ -81,6 +82,22 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setCategory(getCategoryOrThrow(updateProductDetails.getCategoryId()));
         Product productToBeUpdated = productRepository.save(existingProduct);
         return modelMapper.map(productToBeUpdated, ProductDto.class);
+    }
+
+    @Override
+    public ProductMetadata getMetadataBySku(String sku) {
+        Product product = productRepository.findBySkuCode(sku)
+                .orElseThrow(() -> new RuntimeException("Product not found for SKU: " + sku));
+
+        ProductMetadata metadata = new ProductMetadata();
+        metadata.setName(product.getName());
+        metadata.setPrice(product.getPrice());
+
+        if (product.getCategory() != null) {
+            metadata.setCategory(product.getCategory().getName());
+        }
+
+        return metadata;
     }
 
     @Override

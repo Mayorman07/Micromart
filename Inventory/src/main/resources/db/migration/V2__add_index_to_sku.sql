@@ -1,0 +1,1 @@
+CREATE INDEX idx_t_inventory_sku_code ON t_inventory (sku_code);
