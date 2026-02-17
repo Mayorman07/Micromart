@@ -49,8 +49,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throws AuthenticationException {
         try {
 
-            LoginRequest loginCredentials = new ObjectMapper().readValue(req.getInputStream(), LoginRequest.class);
-
+            LoginRequest loginCredentials = objectMapper.readValue(req.getInputStream(), LoginRequest.class);
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(loginCredentials.getEmail(), loginCredentials.getPassword(), new ArrayList<>()));
 
@@ -80,8 +79,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .issuedAt(Date.from(now))
                 .signWith(secretKey)
                 .compact();
+        String refreshToken = userService.createRefreshToken(userId);
 
-        LoginResponse loginResponse = new LoginResponse(token, userDetails.getUserId(), expirationTime);
+        LoginResponse loginResponse = new LoginResponse(token, userDetails.getUserId(), refreshToken,expirationTime);
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
         res.setStatus(HttpStatus.OK.value());
         res.getWriter().write(objectMapper.writeValueAsString(loginResponse));

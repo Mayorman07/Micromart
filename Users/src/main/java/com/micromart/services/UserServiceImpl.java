@@ -143,11 +143,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean requestPasswordReset(String email) {
+    public void requestPasswordReset(String email) {
         PasswordResetRequestEvent event = new PasswordResetRequestEvent(email);
         messagePublisher.sendPasswordResetAttempt(event);
         logger.info("Queued password reset attempt for potential user: {}", email);
-        return true;
     }
 
 
