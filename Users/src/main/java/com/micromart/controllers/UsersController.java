@@ -3,7 +3,9 @@ package com.micromart.controllers;
 import com.micromart.models.data.UserDto;
 import com.micromart.models.data.UserProfileDto;
 import com.micromart.models.requests.CreateUserRequest;
+import com.micromart.models.requests.TokenRefreshRequest;
 import com.micromart.models.responses.CreateUserResponse;
+import com.micromart.models.responses.TokenRefreshResponse;
 import com.micromart.models.responses.UserProfileResponse;
 import com.micromart.services.UserService;
 import com.micromart.validations.InputValidator;
@@ -92,6 +94,12 @@ public class UsersController{
         UserProfileDto requestedUserDetails = userService.viewProfile(email);
         UserProfileResponse returnValue = modelMapper.map(requestedUserDetails,UserProfileResponse.class);
         return ResponseEntity.ok(returnValue);
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<TokenRefreshResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+        TokenRefreshResponse response = userService.generateNewAccessToken(request);
+        return ResponseEntity.ok(response);
     }
 
 }

@@ -2,10 +2,10 @@ package com.micromart.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.micromart.models.data.CustomUserDetails;
-import com.micromart.models.data.UserDto;
 import com.micromart.models.requests.LoginRequest;
 import com.micromart.models.responses.LoginResponse;
 import com.micromart.services.UserService;
+import com.micromart.utils.JwtUtils;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,7 +18,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.security.Keys;
@@ -35,14 +34,16 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final UserService userService;
     private final Environment environment;
     private final ObjectMapper objectMapper;
+    private final JwtUtils jwtUtils;
 
     public AuthenticationFilter(UserService userService, Environment environment,
-                                AuthenticationManager authenticationManager, ObjectMapper objectMapper) {
+                                AuthenticationManager authenticationManager, ObjectMapper objectMapper, JwtUtils jwtUtils) {
 
         super(authenticationManager);
         this.environment = environment;
         this.userService = userService;
         this.objectMapper = objectMapper;
+        this.jwtUtils = jwtUtils;
     }
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
@@ -66,22 +67,10 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         String userId = userDetails.getUserId();
         userService.updateLastLoggedIn(userId);
-        String tokenSecret = environment.getProperty("token.secret.key");
-        byte[] secretKeyBytes = tokenSecret.getBytes(StandardCharsets.UTF_8);
-        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
-        Instant now = Instant.now();
-        long expirationTime = Long.parseLong(environment.getProperty("token.expiration.time"));
-        Date expirationDate = Date.from(now.plusMillis(expirationTime));
-        String token = Jwts.builder()
-                .claim("scope", auth.getAuthorities())
-                .subject(userDetails.getUserId())
-                .expiration(expirationDate)
-                .issuedAt(Date.from(now))
-                .signWith(secretKey)
-                .compact();
+        String accessToken = jwtUtils.generateAccessToken(userId, auth.getAuthorities());
         String refreshToken = userService.createRefreshToken(userId);
-
-        LoginResponse loginResponse = new LoginResponse(token, userDetails.getUserId(), refreshToken,expirationTime);
+        long expirationTime = Long.parseLong(environment.getProperty("token.expiration.time"));
+        LoginResponse loginResponse = new LoginResponse(accessToken, refreshToken, userDetails.getUserId(), expirationTime);
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
         res.setStatus(HttpStatus.OK.value());
         res.getWriter().write(objectMapper.writeValueAsString(loginResponse));

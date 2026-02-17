@@ -15,7 +15,10 @@ import com.micromart.models.data.CustomUserDetails;
 import com.micromart.models.data.UserCreatedEventDto;
 import com.micromart.models.data.UserDto;
 import com.micromart.models.data.UserProfileDto;
+import com.micromart.models.requests.TokenRefreshRequest;
+import com.micromart.models.responses.TokenRefreshResponse;
 import com.micromart.repositories.UserRepository;
+import com.micromart.utils.JwtUtils;
 import com.micromart.utils.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +56,7 @@ public class UserServiceImpl implements UserService {
     private final MessagePublisher messagePublisher;
     private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService;
+    private final JwtUtils jwtUtils;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Override
@@ -140,6 +144,20 @@ public class UserServiceImpl implements UserService {
                 });
         userRepository.delete(existingUser);
         logger.info("The user with the email has been deleted");
+    }
+
+    @Override
+    public TokenRefreshResponse generateNewAccessToken(TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    var roles = user.getRoles();
+                    String newAccessToken = jwtUtils.generateAccessToken(user.getUserId(), roles);
+                    return new TokenRefreshResponse(newAccessToken, requestRefreshToken, "Bearer");
+                })
+                .orElseThrow(() -> new NotFoundException("Refresh token is not in database!"));
     }
 
     @Override

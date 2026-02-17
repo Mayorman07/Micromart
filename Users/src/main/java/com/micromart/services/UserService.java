@@ -2,6 +2,8 @@ package com.micromart.services;
 
 import com.micromart.models.data.UserDto;
 import com.micromart.models.data.UserProfileDto;
+import com.micromart.models.requests.TokenRefreshRequest;
+import com.micromart.models.responses.TokenRefreshResponse;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService extends UserDetailsService {
@@ -16,4 +18,5 @@ public interface UserService extends UserDetailsService {
     boolean performPasswordReset(String token, String newPassword);
     boolean verifyUser(String token);
     void deleteUser(String email);
+    TokenRefreshResponse generateNewAccessToken(TokenRefreshRequest request);
 }

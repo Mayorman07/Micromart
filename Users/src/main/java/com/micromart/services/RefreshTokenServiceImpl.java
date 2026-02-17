@@ -3,7 +3,6 @@ package com.micromart.services;
 import com.micromart.entities.RefreshToken;
 import com.micromart.entities.User;
 import com.micromart.exceptions.ExpiredTokenException;
-import com.micromart.exceptions.NotFoundException;
 import com.micromart.repositories.RefreshTokenRepository;
 import com.micromart.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -46,5 +46,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     @Transactional
     public void deleteTokenByUser(User user) {
         refreshTokenRepository.deleteByUser(user);
+    }
+
+    @Override
+    public Optional<RefreshToken> findByToken(String token) {
+        return refreshTokenRepository.findByToken(token);
     }
 }
