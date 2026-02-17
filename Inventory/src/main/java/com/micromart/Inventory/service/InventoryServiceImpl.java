@@ -18,11 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class InventoryServiceImpl implements InventoryService{
     private final InventoryRepository inventoryRepository;
     private final ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(InventoryServiceImpl.class);
+
+    public InventoryServiceImpl(InventoryRepository inventoryRepository, ModelMapper modelMapper) {
+        this.inventoryRepository = inventoryRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     @Transactional
@@ -46,12 +50,10 @@ public class InventoryServiceImpl implements InventoryService{
     @Transactional(readOnly = true)
     public List<InventoryResponse> isInStock(List<String> skuCodes) {
         return inventoryRepository.findBySkuCodeIn(skuCodes).stream()
-                .map(inventory ->
-                        InventoryResponse.builder()
-                                .skuCode(inventory.getSkuCode())
-                                .isInStock(inventory.getQuantity() > 0)
-                                .build()
-                ).toList();
+                .map(inventory -> new InventoryResponse(
+                        inventory.getSkuCode(),
+                        inventory.getQuantity() > 0
+                )).toList();
     }
 
     @Override

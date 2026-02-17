@@ -20,13 +20,12 @@ public class VerificationController {
     private final UserService userService;
     @GetMapping("/verify")
     public ResponseEntity<Object> verifyUser(@RequestParam("token") String token) {
-        System.out.println("✅ VerificationController called with token: " + token);
         boolean isVerified = userService.verifyUser(token);
-        if (isVerified) {
-            return ResponseEntity.ok("Email verified successfully");
 
+        if (isVerified) {
+            return ResponseEntity.ok(java.util.Map.of("message", "Verified"));
         } else {
-            return ResponseEntity.badRequest().body("Invalid or expired token");
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Expired"));
         }
     }
 }

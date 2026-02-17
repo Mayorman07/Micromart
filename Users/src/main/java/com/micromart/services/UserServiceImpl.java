@@ -216,15 +216,19 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public boolean verifyUser(String token) {
-        Optional<User> userWithVerificationToken = userRepository.findByVerificationToken(token);
-        if (userWithVerificationToken.isPresent()) {
-            User employee = userWithVerificationToken.get();
-            employee.setStatus(Status.ACTIVE);
-            employee.setVerificationToken(null);
-            userRepository.save(employee);
+        Optional<User> userOptional = userRepository.findByVerificationToken(token);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setStatus(Status.ACTIVE);
+            user.setVerificationToken(null);
+            userRepository.save(user);
+            logger.info("User {} verified successfully with token.", user.getEmail());
             return true;
         }
+        logger.warn("Verification failed: Token {} not found or already used.", token);
         return false;
     }
 

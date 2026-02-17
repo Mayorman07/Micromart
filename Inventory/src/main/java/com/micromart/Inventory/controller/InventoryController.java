@@ -22,10 +22,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/inventory")
-@RequiredArgsConstructor
 public class InventoryController {
     private final InventoryService inventoryService;
     private final ModelMapper modelMapper;
+
+    public InventoryController(InventoryService inventoryService, ModelMapper modelMapper) {
+        this.inventoryService = inventoryService;
+        this.modelMapper = modelMapper;
+    }
     @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<InventoryResponse> createInventory(@RequestBody InventoryRequest inventoryRequest){
         InventoryDto createInventory = modelMapper.map(inventoryRequest,InventoryDto.class);

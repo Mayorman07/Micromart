@@ -53,15 +53,14 @@ public class ProductServiceImpl implements ProductService {
             throw new AlreadyExistsException("Product with SKU " + skuCode + " already exists");
         }
 
-        Product product = Product.builder()
-                .name(createProductDetails.getName())
-                .description(createProductDetails.getDescription())
-                .price(createProductDetails.getPrice())
-                .skuCode(skuCode)
-                .imageUrl(createProductDetails.getImageUrl())
-                .active(true)
-                .category(category)
-                .build();
+        Product product = new Product();
+        product.setName(createProductDetails.getName());
+        product.setDescription(createProductDetails.getDescription());
+        product.setPrice(createProductDetails.getPrice());
+        product.setSkuCode(skuCode);
+        product.setImageUrl(createProductDetails.getImageUrl());
+        product.setActive(true);
+        product.setCategory(category);
 
         Product savedProduct = productRepository.save(product);
         logger.info("Product saved to Catalog DB. ID: {}", savedProduct.getId());

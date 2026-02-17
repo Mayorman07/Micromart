@@ -44,10 +44,6 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
     }
 
-    @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<Object> handleConflict(ConflictException ex) {
-        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
-    }
 
     private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus status) {
         Map<String, Object> body = new LinkedHashMap<>();

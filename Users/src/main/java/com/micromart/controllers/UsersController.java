@@ -97,6 +97,7 @@ public class UsersController{
     }
 
     @PostMapping("/refresh-token")
+    @PreAuthorize("hasAuthority('product:READ')")
     public ResponseEntity<TokenRefreshResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
         TokenRefreshResponse response = userService.generateNewAccessToken(request);
         return ResponseEntity.ok(response);

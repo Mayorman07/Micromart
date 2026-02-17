@@ -3,6 +3,8 @@ package com.micromart.products.client;
 import com.micromart.products.model.requests.InventoryRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -12,7 +14,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class InventoryClient {
 
     private final WebClient.Builder webClientBuilder;
+    private static final Logger logger = LoggerFactory.getLogger(InventoryClient.class);
 
+    public InventoryClient(WebClient.Builder webClientBuilder) {
+        this.webClientBuilder = webClientBuilder;
+    }
     public void initializeStock(String skuCode, Integer quantity) {
         InventoryRequest inventoryRequest = new InventoryRequest();
         inventoryRequest.setSkuCode(skuCode);
@@ -26,9 +32,9 @@ public class InventoryClient {
                     .bodyToMono(String.class)
                     .block();
 
-            log.info("Inventory initialized for SKU: {}", skuCode);
+            logger.info("Inventory initialized for SKU: {}", skuCode);
         } catch (Exception e) {
-            log.error("Failed to initialize inventory for SKU: " + skuCode, e);
+            logger.error("Failed to initialize inventory for SKU: " + skuCode, e);
            throw new RuntimeException("Inventory Service unavailable");
         }
     }

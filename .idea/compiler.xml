@@ -21,7 +21,7 @@
         </processorPath>
         <module name="Users" />
       </profile>
-      <profile name="Annotation profile for Products" enabled="true">
+      <profile name="Annotation profile for Inventory" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -29,8 +29,8 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
         <module name="notification" />
-        <module name="Products" />
         <module name="Inventory" />
+        <module name="Products" />
       </profile>
     </annotationProcessing>
   </component>

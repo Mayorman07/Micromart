@@ -20,7 +20,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
-    @Value("${token.refresh.expiration.time:2592000000}")
+    @Value("${token.refresh.expiration.time:1296000000}")
     private Long refreshTokenDurationMs;
     @Override
     public RefreshToken createRefreshToken(User user) {

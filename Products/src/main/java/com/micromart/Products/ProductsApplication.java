@@ -18,9 +18,4 @@ public class ProductsApplication {
 		SpringApplication.run(ProductsApplication.class, args);
 	}
 
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
-
 }
