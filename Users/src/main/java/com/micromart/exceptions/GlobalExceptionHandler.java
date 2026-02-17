@@ -39,6 +39,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<Object> handleExpiredToken(ExpiredTokenException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+    }
+
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<Object> handleConflict(ConflictException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);

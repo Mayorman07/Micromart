@@ -3,6 +3,7 @@ package com.micromart.repositories;
 import com.micromart.constants.Status;
 import com.micromart.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -22,6 +23,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
             "u.lastLoggedIn < :thirtyDaysAgo AND " +
             "u.lastLoggedIn IS NOT NULL AND " +
             "(u.lastReactivationEmailSentDate IS NULL OR u.lastReactivationEmailSentDate < :ninetyDaysAgo)")
+    @Modifying
     List<User> findUsersForReactivation(@Param("thirtyDaysAgo") Date thirtyDaysAgo,
                                         @Param("ninetyDaysAgo") Date ninetyDaysAgo);
 }

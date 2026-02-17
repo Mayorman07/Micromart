@@ -2,6 +2,7 @@ package com.micromart.services;
 
 import com.micromart.entities.RefreshToken;
 import com.micromart.entities.User;
+import com.micromart.exceptions.ExpiredTokenException;
 import com.micromart.exceptions.NotFoundException;
 import com.micromart.repositories.RefreshTokenRepository;
 import com.micromart.repositories.UserRepository;
@@ -36,7 +37,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
-            throw new RuntimeException("Refresh token was expired. Please make a new signin request");
+            throw new ExpiredTokenException("Expired refresh token. Kindly sign in again");
         }
         return token;
     }
