@@ -6,7 +6,6 @@ import com.micromart.models.requests.LoginRequest;
 import com.micromart.models.responses.LoginResponse;
 import com.micromart.services.UserService;
 import com.micromart.utils.JwtUtils;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,14 +19,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.security.Keys;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 
 @Component
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -67,7 +61,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         String userId = userDetails.getUserId();
         userService.updateLastLoggedIn(userId);
-        String accessToken = jwtUtils.generateAccessToken(userId, auth.getAuthorities());
+        String accessToken = jwtUtils.generateAccessToken(userDetails.getEmail(), auth.getAuthorities());
         String refreshToken = userService.createRefreshToken(userId);
         long expirationTime = Long.parseLong(environment.getProperty("token.expiration.time"));
         LoginResponse loginResponse = new LoginResponse(accessToken, refreshToken, userDetails.getUserId(), expirationTime);

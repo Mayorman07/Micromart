@@ -20,6 +20,5 @@ public interface UserService extends UserDetailsService {
     boolean performPasswordReset(String token, String newPassword);
     boolean verifyUser(String token);
     void deleteUser(String email);
-    Page<UserDto> findAllUsers(Pageable pageable);
-    TokenRefreshResponse generateNewAccessToken(TokenRefreshRequest request);
+    Page<UserProfileDto> findAllUsers(Pageable pageable, String keyword);
 }

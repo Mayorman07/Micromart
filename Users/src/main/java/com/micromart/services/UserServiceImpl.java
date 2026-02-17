@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -149,24 +150,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDto> findAllUsers(Pageable pageable) {
-        Page<User> usersPage = userRepository.findAll(pageable);
+    public Page<UserProfileDto> findAllUsers(Pageable pageable, String keyword) {
+        Page<User> usersPage;
+        if (keyword != null && !keyword.isEmpty()) {
+            usersPage = userRepository.findAllByKeyword(keyword, pageable);
+        } else {
+            usersPage = userRepository.findAll(pageable);
+        }
 
-        return usersPage.map(entity -> modelMapper.map(entity, UserDto.class));
-    }
-
-    @Override
-    public TokenRefreshResponse generateNewAccessToken(TokenRefreshRequest request) {
-        String requestRefreshToken = request.getRefreshToken();
-        return refreshTokenService.findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
-                    var roles = user.getRoles();
-                    String newAccessToken = jwtUtils.generateAccessToken(user.getUserId(), roles);
-                    return new TokenRefreshResponse(newAccessToken, requestRefreshToken, "Bearer");
-                })
-                .orElseThrow(() -> new NotFoundException("Refresh token is not in database!"));
+        return usersPage.map(user -> modelMapper.map(user, UserProfileDto.class));
     }
 
     @Override
@@ -175,7 +167,6 @@ public class UserServiceImpl implements UserService {
         messagePublisher.sendPasswordResetAttempt(event);
         logger.info("Queued password reset attempt for potential user: {}", email);
     }
-
 
     @Override
     public boolean performPasswordReset(String token, String newPassword) {

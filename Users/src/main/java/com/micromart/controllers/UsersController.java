@@ -7,6 +7,7 @@ import com.micromart.models.requests.TokenRefreshRequest;
 import com.micromart.models.responses.CreateUserResponse;
 import com.micromart.models.responses.TokenRefreshResponse;
 import com.micromart.models.responses.UserProfileResponse;
+import com.micromart.services.RefreshTokenService;
 import com.micromart.services.UserService;
 import com.micromart.validations.InputValidator;
 import jakarta.validation.Valid;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -40,6 +42,7 @@ public class UsersController{
 
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final RefreshTokenService refreshTokenService;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @GetMapping(path = "/test/status")
@@ -91,33 +94,31 @@ public class UsersController{
     }
 
     @GetMapping(path ="/view/{email}")
-    @PreAuthorize("hasRole('ADMIN') or hasAuthority('user:READ')")
-    public ResponseEntity<UserProfileResponse> viewProfile(@PathVariable("email") String email){
-        logger.info("Received request to view personal employee with email: {}", email);
-        UserProfileDto requestedUserDetails = userService.viewProfile(email);
-        UserProfileResponse returnValue = modelMapper.map(requestedUserDetails,UserProfileResponse.class);
-        return ResponseEntity.ok(returnValue);
+    @PreAuthorize("@userSecurity.canViewProfile(#email, authentication)")
+    public ResponseEntity<UserProfileResponse> viewProfile(@PathVariable("email") String email) {
+        logger.info("Dossier access requested for: {}", email);
+
+        UserProfileDto userDto = userService.viewProfile(email);
+        return ResponseEntity.ok(modelMapper.map(userDto, UserProfileResponse.class));
     }
 
     @PostMapping("/refresh-token")
-    @PreAuthorize("hasAuthority('product:READ')")
     public ResponseEntity<TokenRefreshResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
-        TokenRefreshResponse response = userService.generateNewAccessToken(request);
+        TokenRefreshResponse response = refreshTokenService.generateNewAccessToken(request);
         return ResponseEntity.ok(response);
     }
-
     @GetMapping(path = "/all")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('user:READ')")
     public ResponseEntity<Page<UserProfileResponse>> getAllUsers(
+            @RequestParam(value = "keyword", required = false) String keyword,
             @PageableDefault(page = 0, size = 15) Pageable pageable) {
 
-        logger.info("Admin accessing operative registry page: {}", pageable.getPageNumber());
+        Page<UserProfileDto> userPage = userService.findAllUsers(pageable, keyword);
 
-        Page<UserDto> userPage = userService.findAllUsers(pageable);
-        Page<UserProfileResponse> returnValue = userPage.map(userDto ->
+        Page<UserProfileResponse> response = userPage.map(userDto ->
                 modelMapper.map(userDto, UserProfileResponse.class)
         );
 
-        return ResponseEntity.ok(returnValue);
+        return ResponseEntity.ok(response);
     }
 }

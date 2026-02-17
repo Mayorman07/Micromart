@@ -51,7 +51,7 @@ public class InitialUsersSetup {
         Authority userRead = createAuthority("user:READ");
         Authority userWrite = createAuthority("user:WRITE");
 
-        createRole(Roles.ROLE_USER.name(), List.of(productRead));
+        createRole(Roles.ROLE_USER.name(), Arrays.asList(productRead,userRead));
         createRole(Roles.ROLE_MANAGER.name(), Arrays.asList(productRead, productWrite, userRead));
         Role roleAdmin = createRole(Roles.ROLE_ADMIN.name(), Arrays.asList(productRead, productWrite, userRead, userWrite));
 

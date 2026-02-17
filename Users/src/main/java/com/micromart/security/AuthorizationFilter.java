@@ -31,39 +31,56 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
 
-        String authorizationHeader = req.getHeader(environment.getProperty("authorization.token.header.name"));
+        String headerName = environment.getProperty("authorization.token.header.name");
+        String headerPrefix = environment.getProperty("authorization.token.header.prefix");
 
-        if (authorizationHeader == null
-                || !authorizationHeader.startsWith(environment.getProperty("authorization.token.header.prefix"))) {
+        String authorizationHeader = req.getHeader(headerName);
+
+        if (authorizationHeader == null || !authorizationHeader.startsWith(headerPrefix)) {
             chain.doFilter(req, res);
             return;
         }
 
         UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
 
+        // 🛡️ Sets the verified Email and Authorities into the Security Context
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest req) {
-        String authorizationHeader = req.getHeader(environment.getProperty("authorization.token.header.name"));
+        String headerName = environment.getProperty("authorization.token.header.name");
+        String headerPrefix = environment.getProperty("authorization.token.header.prefix");
+
+        String authorizationHeader = req.getHeader(headerName);
 
         if (authorizationHeader == null) {
             return null;
         }
 
-        String token = authorizationHeader.replace(Objects.requireNonNull(environment.getProperty("authorization.token.header.prefix")), "").trim();
+        // ✂️ Strip the 'Bearer ' prefix to get the raw token
+        String token = authorizationHeader.replace(Objects.requireNonNull(headerPrefix), "").trim();
         String tokenSecret = environment.getProperty("token.secret.key");
 
+        // 🎹 Initialize our custom parser
         JwtClaimsParser jwtClaimsParser = new JwtClaimsParser(token, tokenSecret);
 
-        String userId = jwtClaimsParser.getJwtSubject();
+        // 🎯 CRITICAL: This now pulls the EMAIL from the JWT Subject
+        String userEmail = jwtClaimsParser.getJwtSubject();
 
-        if (userId == null) {
+        if (userEmail == null) {
             return null;
         }
 
-        return new UsernamePasswordAuthenticationToken(userId, null, jwtClaimsParser.getUserAuthorities());
-
+        /**
+         * 🏆 THE WINNING MOVE:
+         * We pass userEmail as the 'Principal' (1st argument).
+         * This aligns the Token Identity with the Controller's @PathVariable email.
+         */
+        return new UsernamePasswordAuthenticationToken(
+                userEmail,
+                null,
+                jwtClaimsParser.getUserAuthorities()
+        );
     }
 }
