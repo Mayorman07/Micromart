@@ -20,7 +20,7 @@ public class InventoryClient {
 
         try {
             webClientBuilder.build().post()
-                    .uri("http://inventory-service/api/inventory/create")
+                    .uri("http://inventory/api/inventory/create")
                     .bodyValue(inventoryRequest)
                     .retrieve()
                     .bodyToMono(String.class)

@@ -69,7 +69,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         userService.updateLastLoggedIn(userId);
         String tokenSecret = environment.getProperty("token.secret.key");
         byte[] secretKeyBytes = tokenSecret.getBytes(StandardCharsets.UTF_8);
-        // Create a SecretKey using Keys.hMacShaKeyFor -> length of string determines algorithm to be used
         SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
         Instant now = Instant.now();
         long expirationTime = Long.parseLong(environment.getProperty("token.expiration.time"));

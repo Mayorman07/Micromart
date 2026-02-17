@@ -12,6 +12,7 @@ public interface UserService extends UserDetailsService {
     void assignManagerRole(String userId);
     boolean requestPasswordReset(String email);
     void deactivateUser(String email);
+    String createRefreshToken(String userId);
     boolean performPasswordReset(String token, String newPassword);
     boolean verifyUser(String token);
     void deleteUser(String email);

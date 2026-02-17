@@ -4,6 +4,7 @@ import com.micromart.constants.AddressType;
 import com.micromart.constants.Status;
 import com.micromart.entities.Address;
 import com.micromart.entities.Authority;
+import com.micromart.entities.RefreshToken;
 import com.micromart.entities.Role;
 import com.micromart.entities.User;
 import com.micromart.exceptions.ConflictException;
@@ -51,6 +52,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final MessagePublisher messagePublisher;
     private final TokenService tokenService;
+    private final RefreshTokenService refreshTokenService;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Override
@@ -185,6 +187,14 @@ public class UserServiceImpl implements UserService {
         existingUser.setStatus(Status.DEACTIVATED);
         User userToBeDeactivate = modelMapper.map(existingUser,User.class);
         userRepository.save(userToBeDeactivate);
+    }
+
+    @Override
+    public String createRefreshToken(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+        return refreshToken.getToken();
     }
 
 
