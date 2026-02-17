@@ -4,7 +4,6 @@ import com.micromart.Inventory.model.data.InventoryDto;
 import com.micromart.Inventory.model.requests.InventoryRequest;
 import com.micromart.Inventory.model.responses.InventoryResponse;
 import com.micromart.Inventory.service.InventoryService;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
