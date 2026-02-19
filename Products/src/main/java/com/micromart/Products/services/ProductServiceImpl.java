@@ -11,10 +11,12 @@ import com.micromart.products.model.meta.ProductMetadata;
 import com.micromart.products.model.responses.ProductResponse;
 import com.micromart.products.repository.CategoryRepository;
 import com.micromart.products.repository.ProductRepository;
+import com.micromart.products.utils.CategoryIdValidator;
 import com.micromart.products.utils.SkuCodeGenerator;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,47 +29,84 @@ public class ProductServiceImpl implements ProductService {
 
     private final ModelMapper modelMapper;
     private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
     private final SkuCodeGenerator skuCodeGenerator;
     private final InventoryClient inventoryClient;
-
+    private final CategoryIdValidator categoryIdValidator;
 
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
-    public ProductServiceImpl(ModelMapper modelMapper, ProductRepository productRepository,
-                              CategoryRepository categoryRepository, SkuCodeGenerator skuCodeGenerator, WebClient.Builder webClientBuilder, InventoryClient inventoryClient) {
+    public ProductServiceImpl(ModelMapper modelMapper, ProductRepository productRepository, SkuCodeGenerator skuCodeGenerator, WebClient.Builder webClientBuilder,
+                              InventoryClient inventoryClient,CategoryIdValidator categoryIdValidator) {
         this.modelMapper = modelMapper;
         this.productRepository = productRepository;
-        this.categoryRepository=categoryRepository;
         this.skuCodeGenerator=skuCodeGenerator;
         this.inventoryClient = inventoryClient;
+        this.categoryIdValidator=categoryIdValidator;
     }
 
-    @Override
-    @Transactional
-    public ProductDto createProduct(ProductDto createProductDetails) {
+//    @Override
+//    @Transactional
+//    public ProductDto createProduct(ProductDto createProductDetails) {
+//
+//        Category category= categoryIdValidator.getCategoryOrThrow(createProductDetails.getCategoryId());
+//        String skuCode = resolveSkuCode(createProductDetails);
+//
+//        if (productRepository.existsBySkuCode(skuCode)) {
+//            throw new DataIntegrityViolationException("Product with SKU " + skuCode + " already exists");
+//        }
+//
+//        Product product = new Product();
+//        product.setName(createProductDetails.getName());
+//        product.setDescription(createProductDetails.getDescription());
+//        product.setPrice(createProductDetails.getPrice());
+//        product.setSkuCode(skuCode);
+//        product.setImageUrl(createProductDetails.getImageUrl());
+//        product.setActive(true);
+//        product.setCategory(category);
+//
+//        Product savedProduct = productRepository.save(product);
+//        logger.info("Product saved to Catalog DB. ID: {}", savedProduct.getId());
+//        inventoryClient.initializeStock(skuCode, createProductDetails.getStockQuantity());
+//
+//        return modelMapper.map(savedProduct, ProductDto.class);
+//    }
 
-        Category category = getCategoryOrThrow(createProductDetails.getCategoryId());
+    @Override
+    public ProductDto createProduct(ProductDto createProductDetails) {
+        Product savedProduct = null;
         String skuCode = resolveSkuCode(createProductDetails);
 
+        try {
+            savedProduct = saveProductToDatabase(createProductDetails, skuCode);
+            inventoryClient.initializeStock(skuCode, createProductDetails.getStockQuantity());
+            return modelMapper.map(savedProduct, ProductDto.class);
+
+        } catch (Exception e) {
+            logger.error("Stock initialization failed. Compensating by deleting product.", e);
+            if (savedProduct != null) {
+                compensateDeleteProduct(savedProduct.getId());
+            }
+            throw new NotFoundException("Failed to create product: " + e.getMessage());
+        }
+    }
+    @Transactional
+    public Product saveProductToDatabase(ProductDto details, String skuCode) {
         if (productRepository.existsBySkuCode(skuCode)) {
             throw new AlreadyExistsException("Product with SKU " + skuCode + " already exists");
         }
 
         Product product = new Product();
-        product.setName(createProductDetails.getName());
-        product.setDescription(createProductDetails.getDescription());
-        product.setPrice(createProductDetails.getPrice());
-        product.setSkuCode(skuCode);
-        product.setImageUrl(createProductDetails.getImageUrl());
-        product.setActive(true);
-        product.setCategory(category);
+        return productRepository.save(product);
+    }
 
-        Product savedProduct = productRepository.save(product);
-        logger.info("Product saved to Catalog DB. ID: {}", savedProduct.getId());
-        inventoryClient.initializeStock(skuCode, createProductDetails.getStockQuantity());
-
-        return modelMapper.map(savedProduct, ProductDto.class);
+    @Transactional
+    public void compensateDeleteProduct(Long productId) {
+        try {
+            productRepository.deleteById(productId);
+            logger.info("Compensation successful: Product {} deleted", productId);
+        } catch (Exception e) {
+            logger.error("COMPENSATION FAILED! Product {} exists without stock.", productId, e);
+        }
     }
 
     @Override
@@ -79,7 +118,7 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setDescription(updateProductDetails.getDescription());
         existingProduct.setPrice(updateProductDetails.getPrice());
         existingProduct.setImageUrl(updateProductDetails.getImageUrl());
-        existingProduct.setCategory(getCategoryOrThrow(updateProductDetails.getCategoryId()));
+        existingProduct.setCategory(categoryIdValidator.getCategoryOrThrow(updateProductDetails.getCategoryId()));
         Product productToBeUpdated = productRepository.save(existingProduct);
         return modelMapper.map(productToBeUpdated, ProductDto.class);
     }
@@ -133,10 +172,6 @@ public class ProductServiceImpl implements ProductService {
         return productPage.map(product -> modelMapper.map(product, ProductResponse.class));
     }
 
-    private Category getCategoryOrThrow(Long categoryId) {
-        return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException("Category not found with ID: " + categoryId));
-    }
 
     private String resolveSkuCode(ProductDto request) {
         if (request.getSkuCode() != null && !request.getSkuCode().isEmpty()) {

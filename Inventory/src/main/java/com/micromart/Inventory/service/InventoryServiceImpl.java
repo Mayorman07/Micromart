@@ -134,4 +134,5 @@ public class InventoryServiceImpl implements InventoryService{
     public Page<InventoryResponse> getInventoryRegistry(Pageable pageable) {
         return getAggregatedInventory(pageable, null);
     }
+
 }

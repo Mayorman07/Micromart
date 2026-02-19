@@ -25,4 +25,6 @@ public class SkuCodeGenerator {
         String clean = normalized.replaceAll("[^a-zA-Z0-9]", "");
         return clean.length() > 3 ? clean.substring(0, 3) : clean;
     }
+
+
 }
