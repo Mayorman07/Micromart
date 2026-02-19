@@ -11,6 +11,7 @@ public interface ProductService {
     ProductDto createProduct(ProductDto createProductDetails);
     ProductDto updateProduct(Long id,ProductDto updateProductDetails);
     void deleteProduct(Long id);
+    List<ProductMetadata> getMetadataForSkus(List<String> skuCodes);
     ProductMetadata getMetadataBySku(String sku);
     ProductResponse getProductById(Long id);
     Page<ProductResponse> getAllProducts(Pageable pageable);

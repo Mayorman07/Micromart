@@ -23,6 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -151,6 +154,18 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         return modelMapper.map(product, ProductResponse.class);
+    }
+
+    public List<ProductMetadata> getMetadataForSkus(List<String> skuCodes) {
+        return productRepository.findBySkuCodeIn(skuCodes)
+                .stream()
+                .map(product -> new ProductMetadata(
+                        product.getName(),
+                        product.getPrice(),
+                        product.getCategory().getName(),
+                        product.getSkuCode() // Ensure SKU is returned so the Map can be built
+                ))
+                .collect(Collectors.toList());
     }
 
     @Override

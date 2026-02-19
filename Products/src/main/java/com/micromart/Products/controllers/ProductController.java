@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -92,6 +94,12 @@ public class ProductController {
     @GetMapping("/metadata/{sku}")
     public ResponseEntity<ProductMetadata> getProductMetadata(@PathVariable String sku) {
         ProductMetadata metadata = productService.getMetadataBySku(sku);
+        return ResponseEntity.ok(metadata);
+    }
+
+    @PostMapping("/metadata/batch")
+    public ResponseEntity<List<ProductMetadata>> getMetadataBatch(@RequestBody List<String> skuCodes) {
+        List<ProductMetadata> metadata = productService.getMetadataForSkus(skuCodes);
         return ResponseEntity.ok(metadata);
     }
 }

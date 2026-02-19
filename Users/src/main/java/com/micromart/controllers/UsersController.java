@@ -45,11 +45,6 @@ public class UsersController{
     private final RefreshTokenService refreshTokenService;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    @GetMapping(path = "/test/status")
-    public String status(){
-
-        return "Just testing as usual, normal normal";
-    }
     @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest userRequest, BindingResult bindingResult){
         logger.info("The incoming create employee request {} " , userRequest);

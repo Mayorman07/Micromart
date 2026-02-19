@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class InventoryServiceImpl implements InventoryService{
@@ -102,22 +104,31 @@ public class InventoryServiceImpl implements InventoryService{
     @Override
     @Transactional(readOnly = true)
     public Page<InventoryResponse> getAggregatedInventory(Pageable pageable, String keyword) {
-        Page<Inventory> inventoryPage;
-        if (keyword != null && !keyword.isEmpty()) {
-            inventoryPage = inventoryRepository.findBySkuCodeContainingIgnoreCase(keyword, pageable);
-        } else {
-            inventoryPage = inventoryRepository.findAll(pageable);
-        }
+        // 1. Fetch the Inventory Page first
+        Page<Inventory> inventoryPage = (keyword != null && !keyword.isEmpty())
+                ? inventoryRepository.findBySkuCodeContainingIgnoreCase(keyword, pageable)
+                : inventoryRepository.findAll(pageable);
 
+        // 2. Extract all SKU codes from the current page
+        List<String> skuCodes = inventoryPage.getContent().stream()
+                .map(Inventory::getSkuCode)
+                .collect(Collectors.toList());
+
+        // 3. Perform ONE network call to fetch all metadata in parallel
+        // Convert the list to a Map for fast access
+        Map<String, ProductMetadata> metadataMap = productClient.getMetadataBatch(skuCodes)
+                .collectMap(ProductMetadata::getSkuCode)
+                .block(); // Block only once for the whole batch
+
+        // 4. Map to Response DTO
         return inventoryPage.map(inv -> {
-            ProductMetadata meta = productClient.getProductMetadata(inv.getSkuCode());
-
             InventoryResponse response = new InventoryResponse();
-
             response.setSkuCode(inv.getSkuCode());
             response.setQuantity(inv.getQuantity());
             response.setInStock(inv.getQuantity() > 0);
 
+            assert metadataMap != null;
+            ProductMetadata meta = metadataMap.getOrDefault(inv.getSkuCode(), null);
             if (meta != null) {
                 response.setName(meta.getName());
                 response.setPrice(meta.getPrice());
