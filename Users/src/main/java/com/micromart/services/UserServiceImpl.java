@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.micromart.repositories.RoleRepository;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
