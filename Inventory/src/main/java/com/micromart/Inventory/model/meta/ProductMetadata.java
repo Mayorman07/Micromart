@@ -9,6 +9,7 @@ public class ProductMetadata {
     private BigDecimal price;
     private String category;
     private String skuCode;
+    private String imageUrl;
     public ProductMetadata() {}
     public ProductMetadata(String name, BigDecimal price, String category,String skuCode) {
         this.name = name;
@@ -28,6 +29,14 @@ public class ProductMetadata {
 
     public void setSkuCode(String skuCode) {
         this.skuCode = skuCode;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getCategory() { return category; }

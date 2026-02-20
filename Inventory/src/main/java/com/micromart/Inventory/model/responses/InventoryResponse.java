@@ -20,6 +20,8 @@ public class InventoryResponse {
     private BigDecimal price;
     private String category;
 
+    private String imageUrl;
+
     public String getSkuCode() {
         return skuCode;
     }
@@ -41,7 +43,7 @@ public class InventoryResponse {
     }
 
     public void setInStock(boolean inStock) {
-        isInStock = inStock;
+        this.isInStock = inStock;
     }
 
     public String getName() {
@@ -66,5 +68,13 @@ public class InventoryResponse {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

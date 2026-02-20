@@ -64,7 +64,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String accessToken = jwtUtils.generateAccessToken(userDetails.getEmail(), auth.getAuthorities());
         String refreshToken = userService.createRefreshToken(userId);
         long expirationTime = Long.parseLong(environment.getProperty("token.expiration.time"));
-        LoginResponse loginResponse = new LoginResponse(accessToken, refreshToken, userDetails.getUserId(), expirationTime);
+        LoginResponse loginResponse = new LoginResponse(accessToken, userDetails.getUserId(), refreshToken, expirationTime);
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
         res.setStatus(HttpStatus.OK.value());
         res.getWriter().write(objectMapper.writeValueAsString(loginResponse));

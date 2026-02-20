@@ -47,33 +47,6 @@ public class ProductServiceImpl implements ProductService {
         this.categoryIdValidator=categoryIdValidator;
     }
 
-//    @Override
-//    @Transactional
-//    public ProductDto createProduct(ProductDto createProductDetails) {
-//
-//        Category category= categoryIdValidator.getCategoryOrThrow(createProductDetails.getCategoryId());
-//        String skuCode = resolveSkuCode(createProductDetails);
-//
-//        if (productRepository.existsBySkuCode(skuCode)) {
-//            throw new DataIntegrityViolationException("Product with SKU " + skuCode + " already exists");
-//        }
-//
-//        Product product = new Product();
-//        product.setName(createProductDetails.getName());
-//        product.setDescription(createProductDetails.getDescription());
-//        product.setPrice(createProductDetails.getPrice());
-//        product.setSkuCode(skuCode);
-//        product.setImageUrl(createProductDetails.getImageUrl());
-//        product.setActive(true);
-//        product.setCategory(category);
-//
-//        Product savedProduct = productRepository.save(product);
-//        logger.info("Product saved to Catalog DB. ID: {}", savedProduct.getId());
-//        inventoryClient.initializeStock(skuCode, createProductDetails.getStockQuantity());
-//
-//        return modelMapper.map(savedProduct, ProductDto.class);
-//    }
-
     @Override
     public ProductDto createProduct(ProductDto createProductDetails) {
         Product savedProduct = null;
@@ -98,7 +71,15 @@ public class ProductServiceImpl implements ProductService {
             throw new AlreadyExistsException("Product with SKU " + skuCode + " already exists");
         }
 
+        Category category = categoryIdValidator.getCategoryOrThrow(details.getCategoryId());
         Product product = new Product();
+        product.setName(details.getName());
+        product.setDescription(details.getDescription());
+        product.setPrice(details.getPrice());
+        product.setImageUrl(details.getImageUrl());
+        product.setSkuCode(skuCode);
+        product.setActive(true);
+        product.setCategory(category);
         return productRepository.save(product);
     }
 
@@ -163,7 +144,8 @@ public class ProductServiceImpl implements ProductService {
                         product.getName(),
                         product.getPrice(),
                         product.getCategory().getName(),
-                        product.getSkuCode() // Ensure SKU is returned so the Map can be built
+                        product.getSkuCode(),
+                        product.getImageUrl()
                 ))
                 .collect(Collectors.toList());
     }

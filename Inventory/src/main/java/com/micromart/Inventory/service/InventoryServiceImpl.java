@@ -129,10 +129,14 @@ public class InventoryServiceImpl implements InventoryService{
 
             assert metadataMap != null;
             ProductMetadata meta = metadataMap.getOrDefault(inv.getSkuCode(), null);
+
             if (meta != null) {
                 response.setName(meta.getName());
                 response.setPrice(meta.getPrice());
                 response.setCategory(meta.getCategory());
+
+                response.setImageUrl(meta.getImageUrl());
+
             } else {
                 response.setName("OPERATIVE_UNKNOWN_SKU");
             }

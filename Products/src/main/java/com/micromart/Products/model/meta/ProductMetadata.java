@@ -9,15 +9,17 @@ public class ProductMetadata {
     private BigDecimal price;
     private String category;
     private String skuCode;
+    private String imageUrl;
 
     public ProductMetadata() {
     }
 
-    public ProductMetadata(String name, BigDecimal price, String category,String skuCode ) {
+    public ProductMetadata(String name, BigDecimal price, String category,String skuCode, String imageUrl ) {
         this.name = name;
         this.price = price;
         this.category = category;
         this.skuCode = skuCode;
+        this.imageUrl=imageUrl;
     }
 
     public String getName() { return name; }
@@ -33,6 +35,14 @@ public class ProductMetadata {
 
     public BigDecimal getPrice() { return price; }
     public void setPrice(BigDecimal price) { this.price = price; }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
