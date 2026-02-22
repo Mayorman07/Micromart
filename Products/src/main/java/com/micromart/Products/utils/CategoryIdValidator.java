@@ -3,12 +3,18 @@ package com.micromart.products.utils;
 import com.micromart.products.entity.Category;
 import com.micromart.products.exceptions.NotFoundException;
 import com.micromart.products.repository.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CategoryIdValidator {
 
-    CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+
+    @Autowired
+    public CategoryIdValidator(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     public Category getCategoryOrThrow(Long categoryId) {
         return categoryRepository.findById(categoryId)
