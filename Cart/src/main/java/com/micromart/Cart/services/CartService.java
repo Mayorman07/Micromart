@@ -1,19 +1,23 @@
 package com.micromart.Cart.services;
 
+import com.micromart.Cart.model.dto.CartDto;
 import com.micromart.Cart.model.dto.CartItemDto;
+import com.micromart.Cart.model.requests.CartRequest;
+import com.micromart.Cart.model.responses.CartResponse;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface CartService {
 
-    CartItemDto removeItemFromCart(Long cartId, String skuCode);
+    // Add item to cart (creates cart if doesn't exist)
+    CartDto addItem(String userId, CartRequest cartRequest);
 
-    CartItemDto clearUserCart(Long cartId);
+    // Update quantity of existing item
+    CartDto updateQuantity(String userId,CartRequest cartRequest);
 
-    CartItemDto updateQuantity(Long cartId, String skuCode, Integer newQuantity);
+    CartDto removeItemFromCart(String userId, String skuCode);
 
-    CartItemDto addItemToCart(Long cartId, String skuCode);
-
-    CartItemDto viewCart(Long cartId);
+    CartDto viewCart(String userId);
+    CartDto clearUserCart(String userId);
 
 }

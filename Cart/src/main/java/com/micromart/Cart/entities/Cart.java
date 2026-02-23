@@ -23,7 +23,7 @@ public class Cart {
     private Long id;
 
     @Column(name = "user_id", unique = true, nullable = false)
-    private String userId; // Changed to String to match your JWT/Auth
+    private String userId;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -37,7 +37,6 @@ public class Cart {
     private LocalDateTime updatedAt;
 
     // === Helper Methods for Bidirectional Sync ===
-    // These ensure the child knows about the parent immediately
 
     public void addItem(CartItem item) {
         items.add(item);

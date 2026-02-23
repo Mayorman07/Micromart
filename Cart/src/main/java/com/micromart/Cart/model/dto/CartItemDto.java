@@ -11,10 +11,12 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class CartItemDto {
 
+    private Long id;
     private String skuCode;
     private String productName;      // Snapshot
     private String imageUrl;         // Snapshot
     private BigDecimal unitPrice;    // Snapshot
-    private Integer quantity;        // ✅ Quantity belongs HERE
+    private Integer quantity;        // Quantity belongs HERE
     private BigDecimal subtotal;     // quantity * unitPrice
 }
+
