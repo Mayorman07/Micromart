@@ -15,13 +15,10 @@ import com.micromart.models.data.CustomUserDetails;
 import com.micromart.models.data.UserCreatedEventDto;
 import com.micromart.models.data.UserDto;
 import com.micromart.models.data.UserProfileDto;
-import com.micromart.models.requests.TokenRefreshRequest;
-import com.micromart.models.responses.TokenRefreshResponse;
 import com.micromart.repositories.UserRepository;
 import com.micromart.utils.JwtUtils;
 import com.micromart.utils.TokenService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,10 +40,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {

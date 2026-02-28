@@ -109,18 +109,14 @@ public class InventoryServiceImpl implements InventoryService{
                 ? inventoryRepository.findBySkuCodeContainingIgnoreCase(keyword, pageable)
                 : inventoryRepository.findAll(pageable);
 
-        // 2. Extract all SKU codes from the current page
         List<String> skuCodes = inventoryPage.getContent().stream()
                 .map(Inventory::getSkuCode)
                 .collect(Collectors.toList());
 
-        // 3. Perform ONE network call to fetch all metadata in parallel
-        // Convert the list to a Map for fast access
         Map<String, ProductMetadata> metadataMap = productClient.getMetadataBatch(skuCodes)
                 .collectMap(ProductMetadata::getSkuCode)
                 .block(); // Block only once for the whole batch
 
-        // 4. Map to Response DTO
         return inventoryPage.map(inv -> {
             InventoryResponse response = new InventoryResponse();
             response.setSkuCode(inv.getSkuCode());
