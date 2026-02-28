@@ -22,12 +22,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/cart")
-@RequiredArgsConstructor
 public class CartController {
 
    private final CartService cartService;
    private final ModelMapper modelMapper;
-    private static final Logger logger = LoggerFactory.getLogger(CartController.class);
+   private static final Logger logger = LoggerFactory.getLogger(CartController.class);
+
+    public CartController(CartService cartService, ModelMapper modelMapper){
+        this.cartService=cartService;
+        this.modelMapper=modelMapper;
+    }
 
     @PostMapping("/items")
    public ResponseEntity<CartResponse> addItem(@AuthenticationPrincipal String userId,

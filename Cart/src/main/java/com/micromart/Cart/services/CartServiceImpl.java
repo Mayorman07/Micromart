@@ -22,14 +22,21 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class CartServiceImpl implements CartService{
-    private CartService cartService;
     private final ModelMapper modelMapper;
     private final InventoryClient inventoryClient;
     private final CartRepository cartRepository;
     private final ProductClient productClient;
     private static final Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
+
+    public CartServiceImpl(ModelMapper modelMapper,
+                           InventoryClient inventoryClient,CartRepository cartRepository,
+                           ProductClient productClient){
+        this.modelMapper=modelMapper;
+        this.inventoryClient=inventoryClient;
+        this.cartRepository=cartRepository;
+        this.productClient=productClient;
+    }
     @Override
     @Transactional
     public CartDto addItem(String userId, CartRequest cartRequest) {

@@ -11,11 +11,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "carts")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Cart {
 
     @Id
@@ -26,7 +21,6 @@ public class Cart {
     private String userId;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private List<CartItem> items = new ArrayList<>();
 
     @CreationTimestamp
@@ -36,15 +30,52 @@ public class Cart {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    // === Helper Methods for Bidirectional Sync ===
+    // Standard Constructors
+    public Cart() {}
+    public Cart(Long id, String userId, List<CartItem> items) {
+        this.id = id;
+        this.userId = userId;
+        this.items = items;
+    }
 
+    // === Manual Builder Pattern ===
+    public static CartBuilder builder() {
+        return new CartBuilder();
+    }
+
+    public static class CartBuilder {
+        private String userId;
+        public CartBuilder userId(String userId) { this.userId = userId; return this; }
+        public Cart build() {
+            Cart cart = new Cart();
+            cart.setUserId(userId);
+            return cart;
+        }
+    }
+
+    // === Manual Getters and Setters ===
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+
+    public List<CartItem> getItems() {
+        if (items == null) items = new ArrayList<>();
+        return items;
+    }
+    public void setItems(List<CartItem> items) { this.items = items; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    // === Helper Methods for Bidirectional Sync ===
     public void addItem(CartItem item) {
-        items.add(item);
+        getItems().add(item);
         item.setCart(this);
     }
 
     public void removeItem(CartItem item) {
-        items.remove(item);
+        getItems().remove(item);
         item.setCart(null);
     }
 }
