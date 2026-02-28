@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -63,4 +64,8 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     // Calculate total amount in user's cart for Checkout
     @Query("SELECT COALESCE(SUM(ci.quantity * ci.unitPrice), 0) FROM CartItem ci WHERE ci.cart.userId = :userId")
     BigDecimal calculateTotalAmountByUserId(@Param("userId") String userId);
+
+    @Modifying
+    @Query(value = "DELETE FROM carts WHERE updated_at < :threshold LIMIT 1000", nativeQuery = true)
+    int deleteExpiredBatch(@Param("threshold") LocalDateTime threshold);
 }
