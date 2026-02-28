@@ -13,11 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 public class CartResponse {
 
-    private Long cartId;             // ✅ Consistent Long type
-    private String userId;           // ✅ Match JWT token format
-    private List<CartItemDto> items; // ✅ CRITICAL: List of items
-    private Integer itemCount;       // Sum of all quantities
-    private BigDecimal totalAmount;  // Sum of all subtotals
-    private boolean isEmpty;// Trigger "Your cart is empty" UI
+    private Long cartId;
+    private String userId;
+    private List<CartItemDto> items;
+    private Integer itemCount;
+    private BigDecimal totalAmount;
+    private boolean isEmpty;
     private String message;
 }
