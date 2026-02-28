@@ -37,7 +37,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final ModelMapper modelMapper;
-    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     public ProductController(ProductService productService, ModelMapper modelMapper) {
         this.productService = productService;

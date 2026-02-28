@@ -27,7 +27,7 @@ public class CartController {
 
    private final CartService cartService;
    private final ModelMapper modelMapper;
-    private static final Logger logger = LoggerFactory.getLogger(CartService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 
     @PostMapping("/items")
    public ResponseEntity<CartResponse> addItem(@AuthenticationPrincipal String userId,
@@ -56,13 +56,13 @@ public class CartController {
    public ResponseEntity<CartResponse> viewCart(@AuthenticationPrincipal String userId){
         CartDto cartToBeViewed = cartService.viewCart(userId);
         CartResponse returnValue = modelMapper.map(cartToBeViewed, CartResponse.class);
-        return ResponseEntity.status(HttpStatus.FOUND).body(returnValue);
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
    }
    @DeleteMapping("/clear")
    public ResponseEntity<CartResponse> clearUserCart(@AuthenticationPrincipal String userId){
        CartDto cartToBeEmptied= cartService.clearUserCart(userId);
        CartResponse returnValue = modelMapper.map(cartToBeEmptied, CartResponse.class);
-       return ResponseEntity.status(HttpStatus.FOUND).body(returnValue);
+       return ResponseEntity.status(HttpStatus.OK).body(returnValue);
    }
 
 }

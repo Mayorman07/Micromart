@@ -29,7 +29,7 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
     private final ModelMapper modelMapper;
-    private static final Logger logger = LoggerFactory.getLogger(CategoryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
 
     public CategoryController(CategoryService categoryService, ModelMapper modelMapper) {
         this.categoryService = categoryService;
