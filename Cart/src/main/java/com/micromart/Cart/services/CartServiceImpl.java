@@ -151,8 +151,16 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
+    @Transactional
     public CartDto clearUserCart(String userId) {
-        return null;
+        logger.info("Clearing entire cart for user: {}", userId);
+
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new CartBusinessException("Cart not found for user: " + userId));
+
+        cart.getItems().clear();
+        Cart savedCart = cartRepository.save(cart);
+        return mapToCartDto(savedCart);
     }
 
 
