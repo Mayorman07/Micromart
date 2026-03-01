@@ -13,8 +13,7 @@ public class ProductClient {
 
     private final WebClient.Builder webClientBuilder;
     private static final Logger logger = LoggerFactory.getLogger(ProductClient.class);
-    private static final String PRODUCT_SERVICE_URL = "http://product-service/products/metadata/batch";
-
+    private static final String PRODUCT_SERVICE_URL = "http://Products/products/metadata/batch";
     public ProductClient(WebClient.Builder webClientBuilder){
         this.webClientBuilder = webClientBuilder;
 

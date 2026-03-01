@@ -14,7 +14,7 @@ public class InventoryClient {
 
     private final WebClient.Builder webClientBuilder;
     private static final Logger logger = LoggerFactory.getLogger(InventoryClient.class);
-    private static final String INVENTORY_SERVICE_URL = "http://inventory-service/api/inventory/sku-code/";
+    private static final String INVENTORY_SERVICE_URL = "http://inventory/api/inventory/sku-code/";
     public InventoryClient(WebClient.Builder webClientBuilder){
         this.webClientBuilder = webClientBuilder;
     }
