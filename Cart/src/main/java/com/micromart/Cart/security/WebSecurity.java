@@ -1,5 +1,6 @@
 package com.micromart.Cart.security;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -13,15 +14,19 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurity {
     private final Environment environment;
+    private final HandlerExceptionResolver exceptionResolver;
 
-    public WebSecurity(Environment environment) {
+    public WebSecurity(Environment environment,
+                       @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
         this.environment = environment;
+        this.exceptionResolver = exceptionResolver;
     }
 
     @Bean
@@ -38,7 +43,7 @@ public class WebSecurity {
                 .anyRequest().authenticated()
         );
 
-        http.addFilter(new AuthorizationFilter(authenticationManager, environment));
+        http.addFilter(new AuthorizationFilter(authenticationManager, environment, exceptionResolver));
 
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
@@ -49,5 +54,4 @@ public class WebSecurity {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
 }

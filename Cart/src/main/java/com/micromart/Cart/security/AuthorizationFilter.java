@@ -1,6 +1,7 @@
 package com.micromart.Cart.security;
 
 import com.parser.JwtAuthorities.JwtClaimsParser;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,16 +11,21 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
     private final Environment environment;
+    private final HandlerExceptionResolver exceptionResolver;
 
-    public AuthorizationFilter(AuthenticationManager authenticationManager, Environment environment) {
+    public AuthorizationFilter(AuthenticationManager authenticationManager,
+                               Environment environment,
+                               HandlerExceptionResolver exceptionResolver) {
         super(authenticationManager);
         this.environment = environment;
+        this.exceptionResolver = exceptionResolver;
     }
 
     @Override
@@ -36,10 +42,13 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(req, res);
+        try {
+            UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            chain.doFilter(req, res);
+        } catch (Exception ex) {
+            exceptionResolver.resolveException(req, res, null, ex);
+        }
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest req) {
