@@ -61,24 +61,28 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDetails) {
 
         if (userRepository.findByEmail(userDetails.getEmail()).isPresent()) {
-            logger.info("User with email {} already exists!, ", userDetails.getEmail());
+            logger.info("User creation failed: Email {} already exists.", userDetails.getEmail());
             throw new ConflictException("Existing user!");
         }
         userDetails.setUserId(UUID.randomUUID().toString());
         userDetails.setEncryptedPassword(passwordEncoder.encode(userDetails.getPassword()));
         userDetails.setStatus(Status.INACTIVE);
         User userToBeCreated = modelMapper.map(userDetails, User.class);
+
         if (userDetails.getAddress() != null) {
             Address addressEntity = modelMapper.map(userDetails.getAddress(), Address.class);
             addressEntity.setUser(userToBeCreated);
             addressEntity.setAddressId(UUID.randomUUID().toString());
             addressEntity.setType(AddressType.SHIPPING);
+
             userToBeCreated.setAddresses(List.of(addressEntity));
         }
         String verificationToken = tokenService.generateToken();
         userToBeCreated.setVerificationToken(verificationToken);
+
         User savedUser = userRepository.save(userToBeCreated);
         publishUserCreatedEvent(savedUser, verificationToken);
+
         return modelMapper.map(savedUser, UserDto.class);
     }
 

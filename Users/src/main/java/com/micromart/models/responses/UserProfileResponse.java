@@ -1,5 +1,7 @@
 package com.micromart.models.responses;
 import java.util.Date;
+import java.util.List;
+
 import com.micromart.constants.Status;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,6 +15,8 @@ public class UserProfileResponse {
     private Status status;
     private String userId;
     private Date lastLoggedIn;
+    private String mobileNumber;
+    private List<AddressResponse> addresses;
 
     public String getFirstName() {
         return firstName;
@@ -60,5 +64,21 @@ public class UserProfileResponse {
 
     public void setLastLoggedIn(Date lastLoggedIn) {
         this.lastLoggedIn = lastLoggedIn;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public List<AddressResponse> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<AddressResponse> addresses) {
+        this.addresses = addresses;
     }
 }

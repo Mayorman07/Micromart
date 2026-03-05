@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data // 👈 This is the missing piece of the puzzle
+import java.util.List;
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserProfileDto {
@@ -18,6 +20,8 @@ public class UserProfileDto {
     private String updatedAt;
     private String department;
     private String lastLoggedIn;
+    private String mobileNumber;
+    private List<AddressDto> addresses;
 
     public String getFirstName() {
         return firstName;
@@ -89,5 +93,21 @@ public class UserProfileDto {
 
     public void setLastLoggedIn(String lastLoggedIn) {
         this.lastLoggedIn = lastLoggedIn;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public List<AddressDto> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<AddressDto> addresses) {
+        this.addresses = addresses;
     }
 }
