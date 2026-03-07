@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,7 +18,8 @@ public class PaymentFactory {
                 .collect(Collectors.toMap(PaymentStrategy::getType, s -> s));
     }
 
-    public PaymentStrategy get(PaymentMethod method) {
-        return strategies.get(method);
+    public PaymentStrategy getStrategy(PaymentMethod method) {
+        return Optional.ofNullable(strategies.get(method))
+                .orElseThrow(() -> new IllegalArgumentException("No strategy found for: " + method));
     }
 }

@@ -8,12 +8,29 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BankTransferStrategy implements PaymentStrategy {
+
     @Override
     public PaymentResponse initiate(OrderDto order) {
-        String mockInstructions = "Please transfer " + order.getTotalAmount() +
-                " to: MicroMart Bank | Acct: 1234567890 | Bank: TeekaBank";
 
-        return new PaymentResponse(null, mockInstructions, "PENDING_VERIFICATION");
+        String amountToPay = order.getTotalAmount().toString();
+
+        String instructions = String.format(
+                "ORDER #%s PLACED. \n" +
+                        "Please transfer %s %s to: \n" +
+                        "Bank: MicroMart Microfinance Bank \n" +
+                        "Account Number: 0123456789 \n" +
+                        "Reference: %s",
+                order.getOrderId(),
+                order.getCurrency(),
+                amountToPay,
+                order.getOrderId()
+        );
+
+        return new PaymentResponse(
+                null,
+                instructions,
+                "AWAITING_TRANSFER"
+        );
     }
 
     @Override
