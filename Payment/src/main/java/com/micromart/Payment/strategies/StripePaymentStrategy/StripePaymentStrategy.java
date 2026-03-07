@@ -1,6 +1,7 @@
 package com.micromart.Payment.strategies.StripePaymentStrategy;
 
 import com.micromart.Payment.enums.PaymentMethod;
+import com.micromart.Payment.enums.Status;
 import com.micromart.Payment.model.dto.OrderDto;
 import com.micromart.Payment.model.dto.OrderItemDto;
 import com.micromart.Payment.model.response.PaymentResponse;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -34,14 +37,17 @@ public class StripePaymentStrategy implements PaymentStrategy {
 
     @Override
     public PaymentResponse initiate(OrderDto order) {
+
         try {
+            long expirationTime = Instant.now().plus(2, ChronoUnit.HOURS).getEpochSecond();
             SessionCreateParams.Builder sessionBuilder = SessionCreateParams.builder()
                     .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                     .setMode(SessionCreateParams.Mode.PAYMENT)
                     .setSuccessUrl(successUrl + "?orderId=" + order.getOrderId())
                     .setCancelUrl(cancelUrl)
                     .putMetadata("orderId", order.getOrderId())
-                    .setCustomerEmail(order.getUserEmail());
+                    .setCustomerEmail(order.getUserEmail())
+                     .setExpiresAt(expirationTime);
 
             for (OrderItemDto item : order.getItems()) {
                 sessionBuilder.addLineItem(
@@ -63,7 +69,7 @@ public class StripePaymentStrategy implements PaymentStrategy {
             return PaymentResponse.builder()
                     .paymentUrl(session.getUrl())
                     .instructions("Redirecting...")
-                    .status("PENDING")
+                    .status(Status.PENDING)
                     .sessionId(session.getId())
                     .build();
 
