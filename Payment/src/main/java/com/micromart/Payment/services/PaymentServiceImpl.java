@@ -9,17 +9,26 @@ import com.micromart.Payment.model.request.PaymentRequest;
 import com.micromart.Payment.model.response.PaymentResponse;
 import com.micromart.Payment.repository.PaymentRecordRepository;
 import com.micromart.Payment.strategies.PaymentStrategy;
+import com.stripe.exception.SignatureVerificationException;
+import com.stripe.model.Event;
+import com.stripe.model.StripeObject;
+import com.stripe.model.checkout.Session;
+import com.stripe.net.Webhook;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import com.micromart.Payment.entity.PaymentRecord;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService{
+
+    @Value("${stripe.webhook.secret}")
+    private String endpointSecret;
 
     private final PaymentFactory paymentFactory;
     private final ModelMapper modelMapper;
@@ -117,5 +126,45 @@ public class PaymentServiceImpl implements PaymentService{
         // rabbitMQPublisher.sendPaymentSuccessEvent(paymentRecord.getOrderId());
 
         return "Successfully approved payment for Order: " + paymentRecord.getOrderId();
+    }
+
+    @Override
+    @Transactional
+    public void processStripeWebhook(String payload, String sigHeader) throws SignatureVerificationException {
+
+        Event event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
+
+        StripeObject stripeObject = event.getDataObjectDeserializer().getObject().orElse(null);
+
+        if (stripeObject instanceof Session session) {
+            String sessionId = session.getId();
+            logger.info("Processing Webhook for Stripe Session: {}", sessionId);
+
+            PaymentRecord paymentRecord = paymentRecordRepository.findByExternalReference(sessionId)
+                    .orElseThrow(() -> new ResourceNotFoundException("No internal record found for Stripe Session: " + sessionId));
+
+            switch (event.getType()) {
+                case "checkout.session.completed" -> {
+                    if (paymentRecord.getStatus() == Status.PENDING) {
+                        paymentRecord.setStatus(Status.PAID);
+                        paymentRecordRepository.save(paymentRecord);
+                        logger.info("Order {} marked as COMPLETED via Webhook!", paymentRecord.getOrderId());
+
+                        //  TODO: THE RIPPLE EFFECT (RabbitMQ)
+                    }
+                }
+                case "checkout.session.expired" -> {
+                    if (paymentRecord.getStatus() == Status.PENDING) {
+                        paymentRecord.setStatus(Status.EXPIRED);
+                        paymentRecord.setErrorMessage("Stripe Checkout Session Expired");
+                        paymentRecordRepository.save(paymentRecord);
+                        logger.info("Order {} marked as CANCELLED via Webhook expiration.", paymentRecord.getOrderId());
+
+                        //  TODO: THE RIPPLE EFFECT (RabbitMQ)
+                    }
+                }
+                default -> logger.info("Unhandled Stripe event type: {}", event.getType());
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.micromart.Payment.exceptions;
 
 import com.micromart.Payment.model.response.ErrorResponse;
+import com.stripe.exception.SignatureVerificationException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,12 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler(SignatureVerificationException.class)
+    public ResponseEntity<ErrorResponse> handleStripeSignatureException(SignatureVerificationException e, HttpServletRequest request) {
+        logger.warn("Invalid Stripe Webhook signature! Possible attack: {}", e.getMessage());
+        return buildErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(Exception e, HttpStatus status, HttpServletRequest request) {

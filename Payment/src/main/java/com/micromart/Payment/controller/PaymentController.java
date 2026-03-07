@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
 
     private final PaymentService paymentService;
-    private final ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
     @PostMapping("/initiate")
