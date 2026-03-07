@@ -13,4 +13,11 @@ public interface PaymentService {
      * @return PaymentResponse with redirect URL or confirmation details
      */
     PaymentResponse processPayment(String userId, PaymentRequest paymentRequest);
+
+    /**
+     * Admin endpoint to manually approve Bank and Crypto payments.
+     * @param reference The unique BT-REF or TxHash
+     * @return A success message
+     */
+    String approveManualPayment(String reference);
 }

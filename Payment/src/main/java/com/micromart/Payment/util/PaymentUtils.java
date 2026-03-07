@@ -19,4 +19,10 @@ public class PaymentUtils {
     public static boolean isMockBankTransferReference(String reference) {
         return reference != null && reference.startsWith("BT-MICRO-");
     }
+
+    public static String generateMockTxHash() {
+        String uuid1 = java.util.UUID.randomUUID().toString().replace("-", "");
+        String uuid2 = java.util.UUID.randomUUID().toString().replace("-", "");
+        return "0x" + (uuid1 + uuid2).substring(0, 64).toLowerCase();
+    }
 }

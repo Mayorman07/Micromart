@@ -1,6 +1,7 @@
 package com.micromart.Payment.entity;
 
 import com.micromart.Payment.enums.PaymentMethod;
+import com.micromart.Payment.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -42,7 +43,7 @@ public class PaymentRecord {
     private String externalReference;
 
     @Column(nullable = false)
-    private String status; // "PENDING", "COMPLETED", "FAILED", "CANCELLED"
+    private Status status; // "PENDING", "COMPLETED", "FAILED", "CANCELLED"
 
     private String errorMessage; // Optional: store failure reason
 
