@@ -5,9 +5,11 @@ import com.micromart.Payment.model.dto.OrderDto;
 import com.micromart.Payment.model.dto.OrderItemDto;
 import com.micromart.Payment.model.response.PaymentResponse;
 import com.micromart.Payment.strategies.PaymentStrategy;
+import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,12 +19,18 @@ import java.math.BigDecimal;
 @Service
 @RequiredArgsConstructor
 public class StripePaymentStrategy implements PaymentStrategy {
-
+    @Value("${stripe.secret.key}")
+    private String secretKey;
     @Value("${stripe.success.url}")
     private String successUrl;
 
     @Value("${stripe.cancel.url}")
     private String cancelUrl;
+
+    @PostConstruct
+    public void init() {
+        Stripe.apiKey = secretKey;
+    }
 
     @Override
     public PaymentResponse initiate(OrderDto order) {
