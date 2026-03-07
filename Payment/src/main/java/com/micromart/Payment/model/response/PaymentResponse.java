@@ -13,9 +13,7 @@ public class PaymentResponse {
     private String paymentUrl;
     private String instructions;
     private String status;
-
-    private String paymentIntentId;
-
+    private String sessionId;
     private String clientSecret;
 
     public PaymentResponse(String paymentUrl, String instructions, String status) {

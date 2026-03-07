@@ -4,6 +4,7 @@ import com.micromart.Payment.enums.PaymentMethod;
 import com.micromart.Payment.model.dto.OrderDto;
 import com.micromart.Payment.model.response.PaymentResponse;
 import com.micromart.Payment.strategies.PaymentStrategy;
+import com.micromart.Payment.util.PaymentUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,23 +15,25 @@ public class BankTransferStrategy implements PaymentStrategy {
 
         String amountToPay = order.getTotalAmount().toString();
 
+        String transferReference = PaymentUtils.generateBankTransferReference();
+
         String instructions = String.format(
                 "ORDER #%s PLACED. \n" +
                         "Please transfer %s %s to: \n" +
                         "Bank: MicroMart Microfinance Bank \n" +
                         "Account Number: 0123456789 \n" +
-                        "Reference: %s",
+                        "CRITICAL: Use this Reference in your transfer description: %s",
                 order.getOrderId(),
                 order.getCurrency(),
                 amountToPay,
-                order.getOrderId()
+                transferReference
         );
 
-        return new PaymentResponse(
-                null,
-                instructions,
-                "AWAITING_TRANSFER"
-        );
+        return PaymentResponse.builder()
+                .instructions(instructions)
+                .status("AWAITING_TRANSFER")
+                .sessionId(transferReference)
+                .build();
     }
 
     @Override

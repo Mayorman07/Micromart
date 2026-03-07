@@ -64,7 +64,7 @@ public class StripePaymentStrategy implements PaymentStrategy {
                     .paymentUrl(session.getUrl())
                     .instructions("Redirecting...")
                     .status("PENDING")
-                    .paymentIntentId(session.getId())
+                    .sessionId(session.getId())
                     .build();
 
         } catch (StripeException e) {
