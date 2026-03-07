@@ -3,6 +3,7 @@ package com.micromart.Payment.controller;
 import com.micromart.Payment.model.request.PaymentRequest;
 import com.micromart.Payment.model.response.PaymentResponse;
 import com.micromart.Payment.services.PaymentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -19,14 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/payments")
-@RequiredArgsConstructor
 public class PaymentController {
 
     private final PaymentService paymentService;
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
+    public PaymentController(PaymentService paymentService){
+        this.paymentService=paymentService;
+
+    }
 
     @PostMapping("/initiate")
-    public ResponseEntity<PaymentResponse> initiatePayment(@AuthenticationPrincipal String userId, @RequestBody PaymentRequest paymentRequest){
+    public ResponseEntity<PaymentResponse> initiatePayment(@AuthenticationPrincipal String userId, @RequestBody @Valid PaymentRequest paymentRequest){
         logger.info("The incoming create payment request {} " , paymentRequest);
         PaymentResponse orderToBePaid = paymentService.processPayment(userId,paymentRequest);
         logger.info("The outgoing create payment response {} " , orderToBePaid);

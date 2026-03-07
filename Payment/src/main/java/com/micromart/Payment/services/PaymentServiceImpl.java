@@ -7,6 +7,7 @@ import com.micromart.Payment.factory.PaymentFactory;
 import com.micromart.Payment.messaging.PaymentEvent;
 import com.micromart.Payment.messaging.PaymentStatusPublisher;
 import com.micromart.Payment.model.dto.OrderDto;
+import com.micromart.Payment.model.dto.OrderItemDto;
 import com.micromart.Payment.model.request.PaymentRequest;
 import com.micromart.Payment.model.response.PaymentResponse;
 import com.micromart.Payment.repository.PaymentRecordRepository;
@@ -25,8 +26,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
-@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService{
 
     @Value("${stripe.webhook.secret}")
@@ -36,6 +39,15 @@ public class PaymentServiceImpl implements PaymentService{
     private final ModelMapper modelMapper;
     private final PaymentRecordRepository paymentRecordRepository;
     private final PaymentStatusPublisher paymentStatusPublisher;
+
+    public PaymentServiceImpl( PaymentFactory paymentFactory,ModelMapper modelMapper
+    ,PaymentRecordRepository paymentRecordRepository,PaymentStatusPublisher paymentStatusPublisher){
+        this.paymentFactory=paymentFactory;
+        this.modelMapper=modelMapper;
+        this.paymentRecordRepository=paymentRecordRepository;
+        this.paymentStatusPublisher=paymentStatusPublisher;
+
+    }
     private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
     @Override
@@ -48,7 +60,18 @@ public class PaymentServiceImpl implements PaymentService{
         PaymentResponse response = null;
 
         try {
+            List<OrderItemDto> itemDtos = paymentRequest.getItems().stream()
+                    .map(itemReq -> OrderItemDto.builder()
+                            .skuCode(itemReq.getSkuCode())
+                            .productName(itemReq.getProductName())
+                            .unitPrice(itemReq.getUnitPrice())
+                            .quantity(itemReq.getQuantity())
+                            .build())
+                    .collect(Collectors.toList());
+
             OrderDto orderDto = modelMapper.map(paymentRequest, OrderDto.class);
+
+            orderDto.setItems(itemDtos);
             orderDto.setUserId(userId);
             orderDto.setStatus(Status.PENDING);
 
@@ -56,15 +79,14 @@ public class PaymentServiceImpl implements PaymentService{
                     paymentRequest.getPaymentMethod().toUpperCase()
             );
 
-
-            paymentRecord = PaymentRecord.builder()
-                    .orderId(paymentRequest.getOrderId())
-                    .userId(userId)
-                    .amount(paymentRequest.getTotalAmount())
-                    .currency(paymentRequest.getCurrency())
-                    .paymentMethod(method)
-                    .status(Status.PENDING)
-                    .build();
+            paymentRecord = new PaymentRecord(
+                    paymentRequest.getOrderId(),
+                    userId,
+                    paymentRequest.getTotalAmount(),
+                    paymentRequest.getCurrency(),
+                    method,
+                    Status.PENDING
+            );
 
             paymentRecord = paymentRecordRepository.save(paymentRecord);
             logger.info("Saved PENDING payment record | internalId: {}, orderId: {}",
@@ -106,7 +128,6 @@ public class PaymentServiceImpl implements PaymentService{
             throw new RuntimeException("Payment service unavailable", e);
         }
     }
-
     @Override
     @Transactional
     public String approveManualPayment(String reference) {
@@ -169,12 +190,12 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     private void sendStatusUpdate(PaymentRecord record) {
-        PaymentEvent event = PaymentEvent.builder()
-                .orderId(record.getOrderId())
-                .userId(record.getUserId())
-                .status(record.getStatus())
-                .paymentMethod(record.getPaymentMethod().name())
-                .build();
+        PaymentEvent event = new PaymentEvent(
+                record.getOrderId(),
+                record.getUserId(),
+                record.getStatus(),
+                record.getPaymentMethod()
+        );
 
         paymentStatusPublisher.publishPaymentStatus(event);
     }

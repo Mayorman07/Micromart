@@ -17,12 +17,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class PaymentSweeperService {
 
     private final PaymentRecordRepository paymentRecordRepository;
     private final PaymentStatusPublisher paymentStatusPublisher;
     private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
+
+    public PaymentSweeperService (PaymentRecordRepository paymentRecordRepository,
+                                  PaymentStatusPublisher paymentStatusPublisher){
+        this.paymentRecordRepository=paymentRecordRepository;
+        this.paymentStatusPublisher=paymentStatusPublisher;
+
+    }
 
 
     /**
@@ -51,15 +57,14 @@ public class PaymentSweeperService {
             record.setStatus(Status.CANCELLED);
             record.setErrorMessage("Payment abandoned by user (Timeout)");
 
-            PaymentEvent event = PaymentEvent.builder()
-                    .orderId(record.getOrderId())
-                    .userId(record.getUserId())
-                    .status(Status.CANCELLED)
-                    .paymentMethod(record.getPaymentMethod().name())
-                    .build();
+            PaymentEvent event = new PaymentEvent(
+                    record.getOrderId(),
+                    record.getUserId(),
+                    Status.CANCELLED,
+                    record.getPaymentMethod()
+            );
 
             paymentStatusPublisher.publishPaymentStatus(event);
-
             logger.info("Cancelled abandoned payment for Order: {}", record.getOrderId());
         }
 

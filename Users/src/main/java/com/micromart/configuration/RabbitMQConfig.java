@@ -35,7 +35,10 @@ public class RabbitMQConfig {
     // --- User Created Queue & Binding ---
     @Bean
     public Queue queue() {
-        return new Queue(QUEUE_NAME);
+        return QueueBuilder.durable(QUEUE_NAME)
+                .withArgument("x-dead-letter-exchange", "notification.dlx")
+                .withArgument("x-dead-letter-routing-key", "notification.deadletter.key")
+                .build();
     }
 
     @Bean

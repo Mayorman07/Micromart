@@ -2,7 +2,6 @@ package com.micromart.Payment.controller;
 
 import com.micromart.Payment.services.PaymentService;
 import com.stripe.exception.SignatureVerificationException;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/payments")
-@RequiredArgsConstructor
 public class WebhookController {
 
     private final PaymentService paymentService;
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
+    public WebhookController(PaymentService paymentService){
+        this.paymentService=paymentService;
+    }
 
 
     @PostMapping("/webhook")

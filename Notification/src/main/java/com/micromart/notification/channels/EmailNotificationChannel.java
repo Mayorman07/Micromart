@@ -1,5 +1,7 @@
 package com.micromart.notification.channels;
 
+import com.micromart.notification.client.OrderClient;
+import com.micromart.notification.model.OrderSummaryDTO;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
@@ -21,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 public class EmailNotificationChannel implements NotificationChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailNotificationChannel.class);
-
+    private final OrderClient orderClient;
     private final JavaMailSender javaMailSender;
     private final Environment environment;
     private final SpringTemplateEngine templateEngine;
@@ -33,9 +35,10 @@ public class EmailNotificationChannel implements NotificationChannel {
      * @param environment    Application environment for accessing configuration properties.
      * @param templateEngine Thymeleaf engine for parsing email templates.
      */
-    public EmailNotificationChannel(JavaMailSender javaMailSender,
+    public EmailNotificationChannel( OrderClient orderClient, JavaMailSender javaMailSender,
                                     Environment environment,
                                     SpringTemplateEngine templateEngine) {
+        this.orderClient=orderClient;
         this.javaMailSender = javaMailSender;
         this.environment = environment;
         this.templateEngine = templateEngine;
@@ -165,9 +168,13 @@ public class EmailNotificationChannel implements NotificationChannel {
     }
 
     public void sendPaymentSuccessEmail(String toEmail, String orderId) {
+        OrderSummaryDTO summary = orderClient.getOrderSummary(orderId);
         try {
             Context context = new Context();
             context.setVariable("orderId", orderId);
+            context.setVariable("firstName", summary.getCustomerFirstName());
+            context.setVariable("items", summary.getItems());
+            context.setVariable("totalAmount", summary.getTotalAmount());
             context.setVariable("trackUrl", environment.getProperty("app.frontend.url") + "/orders/" + orderId);
 
             String htmlBody = templateEngine.process("payment-success-email", context);

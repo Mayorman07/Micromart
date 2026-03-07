@@ -5,16 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Confirmed</title>
     <style>
-        body { margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f9f9; }
-        .email-container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); overflow: hidden; border: 1px solid #eaeaea; }
-        .header { background: linear-gradient(135deg, #00b4db, #0083b0); padding: 40px 20px; text-align: center; }
-        .header h1 { color: white; margin: 0; font-size: 26px; letter-spacing: 2px; font-weight: 700; text-transform: uppercase; }
-        .body-content { padding: 40px; color: #444444; line-height: 1.6; text-align: left; }
-        .body-content h2 { color: #333; font-size: 22px; margin-top: 0; }
-        .order-pill { display: inline-block; background-color: #f0f7ff; color: #007bb5; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 14px; margin-bottom: 20px; }
-        .button-container { text-align: center; margin-top: 30px; }
-        .cta-button { background: linear-gradient(135deg, #00b4db, #0083b0); color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 15px rgba(0, 180, 219, 0.3); display: inline-block; }
-        .footer { text-align: center; padding: 20px; font-size: 12px; color: #999; }
+        body { margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f7f9; }
+        .email-container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05); overflow: hidden; border: 1px solid #e1e8ed; }
+        .header { background: linear-gradient(135deg, #00b4db, #0083b0); padding: 50px 20px; text-align: center; }
+        .header h1 { color: white; margin: 0; font-size: 24px; letter-spacing: 3px; font-weight: 800; text-transform: uppercase; }
+
+        .body-content { padding: 40px; color: #4a5568; line-height: 1.7; }
+        .success-icon { text-align: center; font-size: 48px; margin-bottom: 10px; }
+        .body-content h2 { color: #1a202c; font-size: 24px; margin-top: 0; text-align: center; margin-bottom: 8px; }
+
+        .order-pill-wrapper { text-align: center; margin-bottom: 30px; }
+        .order-pill { display: inline-block; background-color: #ebf8ff; color: #2b6cb0; padding: 6px 16px; border-radius: 30px; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Order Summary Table */
+        .summary-table { width: 100%; border-collapse: collapse; margin: 25px 0; border-radius: 12px; overflow: hidden; border: 1px solid #edf2f7; }
+        .summary-header { background-color: #f8fafc; color: #718096; font-size: 12px; text-transform: uppercase; font-weight: 700; }
+        .summary-header td { padding: 12px 15px; }
+        .item-row td { padding: 15px; border-bottom: 1px solid #edf2f7; font-size: 15px; }
+        .total-row { font-weight: 800; color: #1a202c; background-color: #f8fafc; }
+
+        .button-container { text-align: center; margin-top: 40px; }
+        .cta-button { background: linear-gradient(135deg, #00b4db, #0083b0); color: #ffffff; padding: 18px 36px; text-decoration: none; border-radius: 14px; font-weight: 800; font-size: 16px; box-shadow: 0 6px 20px rgba(0, 180, 219, 0.4); display: inline-block; transition: transform 0.2s ease; }
+
+        .footer { text-align: center; padding: 30px; font-size: 12px; color: #a0aec0; background-color: #fafcfe; border-top: 1px solid #edf2f7; }
+        .support-text { margin-top: 15px; font-style: italic; }
     </style>
 </head>
 <body>
@@ -22,19 +36,44 @@
     <div class="header">
         <h1>MICROMART</h1>
     </div>
+
     <div class="body-content">
+        <div class="success-icon">✅</div>
         <h2>Payment Confirmed!</h2>
-        <div class="order-pill">Order #<span th:text="${orderId}">12345</span></div>
-        <p>Hi Friend,</p>
-        <p>We've successfully processed your payment. Your order is now being prepared by our team with the utmost care.</p>
-        <p>You can track your package and view your digital receipt at any time by clicking the button below.</p>
+
+        <div class="order-pill-wrapper">
+            <div class="order-pill">Order #<span th:text="${orderId}">12345</span></div>
+        </div>
+
+        <p>Hi <strong th:text="${firstName}">Friend</strong>,</p>
+        <p>Success! Your payment has been processed. We’ve notified our warehouse, and your items are currently being hand-picked and packed for shipment.</p>
+
+        <table class="summary-table">
+            <tr class="summary-header">
+                <td>Item</td>
+                <td align="center">Qty</td>
+                <td align="right">Price</td>
+            </tr>
+            <tr class="item-row" th:each="item : ${items}">
+                <td th:text="${item.name}">Cool Gadget</td>
+                <td align="center" th:text="${item.quantity}">1</td>
+                <td align="right" th:text="${#numbers.formatCurrency(item.price)}">$25.00</td>
+            </tr>
+            <tr class="item-row total-row">
+                <td colspan="2">Total Amount Paid</td>
+                <td align="right" th:text="${#numbers.formatCurrency(totalAmount)}">$25.00</td>
+            </tr>
+        </table>
 
         <div class="button-container">
             <a th:href="${trackUrl}" class="cta-button">Track My Order</a>
         </div>
     </div>
+
     <div class="footer">
-        © 2026 Micromart Inc. Lagos, Nigeria.
+        <p><strong>Micromart Inc.</strong><br>123 Tech Hub, Victoria Island, Lagos, Nigeria.</p>
+        <p class="support-text">Need help? Reply to this email or visit our Help Center.</p>
+        <p>© 2026 Micromart. All rights reserved.</p>
     </div>
 </div>
 </body>

@@ -37,7 +37,6 @@ public class StripePaymentStrategy implements PaymentStrategy {
 
     @Override
     public PaymentResponse initiate(OrderDto order) {
-
         try {
             long expirationTime = Instant.now().plus(2, ChronoUnit.HOURS).getEpochSecond();
             SessionCreateParams.Builder sessionBuilder = SessionCreateParams.builder()
@@ -47,31 +46,39 @@ public class StripePaymentStrategy implements PaymentStrategy {
                     .setCancelUrl(cancelUrl)
                     .putMetadata("orderId", order.getOrderId())
                     .setCustomerEmail(order.getUserEmail())
-                     .setExpiresAt(expirationTime);
+                    .setExpiresAt(expirationTime);
 
             for (OrderItemDto item : order.getItems()) {
+                SessionCreateParams.LineItem.PriceData.ProductData.Builder productDataBuilder =
+                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                .setName(item.getProductName());
+
+                if (item.getImageUrl() != null && !item.getImageUrl().isBlank()) {
+                    productDataBuilder.addImage(item.getImageUrl());
+                }
+
                 sessionBuilder.addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setQuantity(item.getQuantity().longValue())
-                                .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
-                                        .setCurrency("usd")
-                                        .setUnitAmount(item.getUnitPrice().multiply(new BigDecimal(100)).longValue())
-                                        .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                .setName(item.getProductName())
-                                                .putMetadata("sku", item.getSkuCode())
-                                                .build())
-                                        .build())
+                                .setPriceData(
+                                        SessionCreateParams.LineItem.PriceData.builder()
+                                                .setCurrency("usd")
+                                                .setUnitAmount(item.getUnitPrice().multiply(new BigDecimal(100)).longValue())
+                                                .setProductData(productDataBuilder.build())
+                                                .build()
+                                )
                                 .build()
                 );
             }
 
             Session session = Session.create(sessionBuilder.build());
-            return PaymentResponse.builder()
-                    .paymentUrl(session.getUrl())
-                    .instructions("Redirecting...")
-                    .status(Status.PENDING)
-                    .sessionId(session.getId())
-                    .build();
+
+            return new PaymentResponse(
+                    session.getUrl(),
+                    "Redirecting...",
+                    Status.PENDING,
+                    session.getId()
+            );
 
         } catch (StripeException e) {
             throw new RuntimeException("Stripe error: " + e.getMessage());

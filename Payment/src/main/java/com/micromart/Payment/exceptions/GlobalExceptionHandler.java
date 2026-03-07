@@ -40,13 +40,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGeneric(Exception e, HttpServletRequest request) {
         logger.error("Unexpected error occurred at path: {}", request.getRequestURI(), e);
 
-        ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-                .message("An unexpected error occurred. Please contact support.")
-                .path(request.getRequestURI())
-                .build();
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                "An unexpected error occurred. Please contact support.",
+                request.getRequestURI()
+        );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
@@ -58,14 +58,13 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(Exception e, HttpStatus status, HttpServletRequest request) {
-        ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(status.value())
-                .error(status.getReasonPhrase())
-                .message(e.getMessage())
-                .path(request.getRequestURI())
-                .build();
-
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                e.getMessage(),
+                request.getRequestURI()
+        );
         return ResponseEntity.status(status).body(response);
     }
 }

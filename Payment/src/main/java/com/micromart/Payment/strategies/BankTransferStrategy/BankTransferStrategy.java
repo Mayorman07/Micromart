@@ -1,6 +1,7 @@
 package com.micromart.Payment.strategies.BankTransferStrategy;
 
 import com.micromart.Payment.enums.PaymentMethod;
+import com.micromart.Payment.enums.Status;
 import com.micromart.Payment.model.dto.OrderDto;
 import com.micromart.Payment.model.response.PaymentResponse;
 import com.micromart.Payment.strategies.PaymentStrategy;
@@ -12,9 +13,7 @@ public class BankTransferStrategy implements PaymentStrategy {
 
     @Override
     public PaymentResponse initiate(OrderDto order) {
-
         String amountToPay = order.getTotalAmount().toString();
-
         String transferReference = PaymentUtils.generateBankTransferReference();
 
         String instructions = String.format(
@@ -29,11 +28,12 @@ public class BankTransferStrategy implements PaymentStrategy {
                 transferReference
         );
 
-        return PaymentResponse.builder()
-                .instructions(instructions)
-                .status("AWAITING_TRANSFER")
-                .sessionId(transferReference)
-                .build();
+        return new PaymentResponse(
+                null,
+                instructions,
+                Status.AWAITING_TRANSFER,
+                transferReference
+        );
     }
 
     @Override

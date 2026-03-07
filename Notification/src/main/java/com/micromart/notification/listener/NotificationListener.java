@@ -16,146 +16,121 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 
 /**
- * Consumes asynchronous messages from RabbitMQ queues and dispatches notifications.
- * Acts as the primary entry point for event-driven communications within the Notification Service.
+ * Service component responsible for consuming asynchronous messages from RabbitMQ.
+ * This listener acts as the central hub for dispatching system notifications (Email, SMS).
+ * * NOTE: Internal try-catch blocks are omitted to allow exceptions to bubble up to Spring AMQP.
+ * This triggers the configured retry logic and eventually moves failed messages to the
+ * Dead Letter Queue (DLQ) for manual intervention.
  */
 @Component
 public class NotificationListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(NotificationListener.class);
-
     private final NotificationFactory notificationFactory;
     private final Environment environment;
+    private static final Logger log = LoggerFactory.getLogger(NotificationListener.class);
 
-    /**
-     * Constructs the NotificationListener with necessary dependencies.
-     *
-     * @param notificationFactory Factory for instantiating the appropriate notification channels.
-     * @param environment         Application environment for accessing configuration properties.
-     */
-    public NotificationListener(NotificationFactory notificationFactory, Environment environment) {
-        this.notificationFactory = notificationFactory;
-        this.environment = environment;
+    private NotificationListener(NotificationFactory notificationFactory, Environment environment){
+        this.notificationFactory=notificationFactory;
+        this.environment=environment;
     }
 
     /**
-     * Consumes messages from the user-created queue to dispatch welcome and verification communications.
-     * Attempts to send both an HTML verification email and an SMS text message.
+     * Handles new user registration events.
+     * Dispatches a verification email and an optional welcome SMS.
      *
-     * @param event The data transfer object containing the new user's details and verification token.
+     * @param event DTO containing user registration details and verification token.
      */
     @RabbitListener(queues = RabbitMQConfig.USER_CREATED_QUEUE)
     public void handleUserCreatedEvent(UserCreatedEventDto event) {
-        logger.info("Received user creation event for: {}", event.getEmail());
+        log.info(" Processing user creation notification for: {}", event.getEmail());
 
-        // Process Email Notification
-        try {
-            NotificationChannel channel = notificationFactory.getChannel("EMAIL");
-            if (channel instanceof EmailNotificationChannel emailChannel) {
-                emailChannel.sendHtmlVerificationEmail(
-                        event.getEmail(),
-                        event.getFirstName(),
-                        event.getVerificationToken()
-                );
-            } else {
-                logger.warn("Resolved channel is not an EmailNotificationChannel. Falling back to plain text.");
-                channel.sendNotification(event.getEmail(), "Welcome", "Please verify your account.");
-            }
-        } catch (Exception e) {
-            logger.error("Failed to send welcome email to {}: {}", event.getEmail(), e.getMessage(), e);
+        // Send Verification Email
+        NotificationChannel emailChannel = notificationFactory.getChannel("EMAIL");
+        if (emailChannel instanceof EmailNotificationChannel channel) {
+            channel.sendHtmlVerificationEmail(
+                    event.getEmail(),
+                    event.getFirstName(),
+                    event.getVerificationToken()
+            );
         }
 
-        // Process SMS Notification
-        if (event.getMobileNumber() != null && !event.getMobileNumber().isEmpty()) {
-            try {
-                String smsBody = String.format("Welcome to Micromart, %s! Your verification code is: %s",
-                        event.getFirstName(), event.getVerificationToken());
+        // Send Welcome SMS if a mobile number is provided
+        if (event.getMobileNumber() != null && !event.getMobileNumber().isBlank()) {
+            String smsBody = String.format("Welcome to Micromart, %s! Your verification code is: %s",
+                    event.getFirstName(), event.getVerificationToken());
 
-                NotificationChannel smsChannel = notificationFactory.getChannel("SMS");
-                smsChannel.sendNotification(event.getMobileNumber(), "", smsBody);
-
-                logger.info("Welcome SMS successfully dispatched to {}", event.getMobileNumber());
-            } catch (Exception e) {
-                logger.error("Failed to send welcome SMS to {}: {}", event.getMobileNumber(), e.getMessage(), e);
-            }
-        } else {
-            logger.warn("No valid mobile number found for user {}. Skipping SMS dispatch.", event.getEmail());
+            NotificationChannel smsChannel = notificationFactory.getChannel("SMS");
+            smsChannel.sendNotification(event.getMobileNumber(), "", smsBody);
+            log.info("📱 Welcome SMS dispatched to {}", event.getMobileNumber());
         }
     }
 
     /**
-     * Consumes messages from the password-reset queue to dispatch secure reset links.
+     * Handles password reset requests.
+     * Dispatches an email containing the secure reset link.
      *
-     * @param event The data transfer object containing the user's email and reset token.
+     * @param event DTO containing user email and the generated reset token.
      */
     @RabbitListener(queues = RabbitMQConfig.PASSWORD_RESET_QUEUE)
     public void handlePasswordResetEvent(PasswordResetEventDto event) {
-        logger.info("Received password reset request for: {}", event.getEmail());
+        log.info(" Processing password reset notification for: {}", event.getEmail());
 
-        try {
-            NotificationChannel channel = notificationFactory.getChannel("EMAIL");
-            if (channel instanceof EmailNotificationChannel emailChannel) {
-                emailChannel.sendHtmlPasswordResetEmail(
-                        event.getEmail(),
-                        event.getFirstName(),
-                        event.getPasswordResetToken()
-                );
-            } else {
-                logger.warn("Resolved channel is not an EmailNotificationChannel. Falling back to plain text.");
-                channel.sendNotification(event.getEmail(), "Reset Password", "Your token is: " + event.getPasswordResetToken());
-            }
-        } catch (Exception e) {
-            logger.error("Failed to send password reset email to {}: {}", event.getEmail(), e.getMessage(), e);
+        NotificationChannel channel = notificationFactory.getChannel("EMAIL");
+        if (channel instanceof EmailNotificationChannel emailChannel) {
+            emailChannel.sendHtmlPasswordResetEmail(
+                    event.getEmail(),
+                    event.getFirstName(),
+                    event.getPasswordResetToken()
+            );
         }
     }
 
     /**
-     * Consumes messages from the user-reactivation queue to dispatch engagement emails.
+     * Handles user reactivation (re-engagement) events.
+     * Processes a Thymeleaf template to generate a "We Miss You" email.
      *
-     * @param event The data transfer object containing the inactive user's details.
+     * @param event DTO containing inactive user details.
      */
     @RabbitListener(queues = RabbitMQConfig.USER_REACTIVATION_QUEUE)
     public void handleReactivationEvent(ReactivationEvent event) {
-        logger.info("Received reactivation request for: {}", event.getEmail());
+        log.info("Processing user reactivation notification for: {}", event.getEmail());
 
-        try {
-            NotificationChannel channel = notificationFactory.getChannel("EMAIL");
-            if (channel instanceof EmailNotificationChannel emailChannel) {
-                Context context = new Context();
-                context.setVariable("firstName", event.getFirstName());
-                context.setVariable("loginUrl", environment.getProperty("app.frontend.url") + "/login");
+        NotificationChannel channel = notificationFactory.getChannel("EMAIL");
+        if (channel instanceof EmailNotificationChannel emailChannel) {
+            Context context = new Context();
+            context.setVariable("firstName", event.getFirstName());
+            context.setVariable("loginUrl", environment.getProperty("app.frontend.url") + "/login");
 
-                emailChannel.sendHtmlEmail(
-                        event.getEmail(),
-                        "We Miss You at MicroMart!",
-                        "reactivation-email",
-                        context
-                );
-            } else {
-                logger.warn("Resolved channel is not an EmailNotificationChannel. Skipping reactivation email.");
-            }
-        } catch (Exception e) {
-            logger.error("Failed to send reactivation email to {}: {}", event.getEmail(), e.getMessage(), e);
+            emailChannel.sendHtmlEmail(
+                    event.getEmail(),
+                    "We Miss You at MicroMart!",
+                    "reactivation-email",
+                    context
+            );
         }
     }
 
+    /**
+     * Handles payment status updates from the Payment Service.
+     * Critical for communicating transaction outcomes to the customer.
+     *
+     * @param event DTO containing Order ID and payment status (PAID/CANCELLED).
+     */
     @RabbitListener(queues = RabbitMQConfig.PAYMENT_NOTIFICATION_QUEUE)
     public void handlePaymentEvent(PaymentEvent event) {
-        logger.info("Received payment event for Order: {} - Status: {}", event.getOrderId(), event.getStatus());
+        log.info("Processing payment notification | Order: {} | Status: {}",
+                event.getOrderId(), event.getStatus());
 
-        try {
-            NotificationChannel channel = notificationFactory.getChannel("EMAIL");
-            if (channel instanceof EmailNotificationChannel emailChannel) {
+        NotificationChannel channel = notificationFactory.getChannel("EMAIL");
+        if (channel instanceof EmailNotificationChannel emailChannel) {
 
-                if ("PAID".equals(event.getStatus().name())) {
-                    emailChannel.sendPaymentSuccessEmail(event.getUserId(), event.getOrderId());
-                } else if ("CANCELLED".equals(event.getStatus().name())) {
-                    emailChannel.sendPaymentCancelledEmail(event.getUserId(), event.getOrderId());
-                }
-
+            // Dispatch appropriate template based on the event status
+            switch (event.getStatus()) {
+                case PAID -> emailChannel.sendPaymentSuccessEmail(event.getUserId(), event.getOrderId());
+                case CANCELLED -> emailChannel.sendPaymentCancelledEmail(event.getUserId(), event.getOrderId());
+                default -> log.warn(" Received unhandled payment status: {} for order: {}",
+                        event.getStatus(), event.getOrderId());
             }
-        } catch (Exception e) {
-            logger.error("Failed to process payment notification for order {}: {}", event.getOrderId(), e.getMessage());
         }
     }
 }

@@ -10,11 +10,14 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class PaymentStatusPublisher {
 
     private final RabbitTemplate rabbitTemplate;
     private static final Logger logger = LoggerFactory.getLogger(PaymentStatusPublisher.class);
+
+    public PaymentStatusPublisher(RabbitTemplate rabbitTemplate){
+        this.rabbitTemplate=rabbitTemplate;
+    }
 
 
     /**
