@@ -13,9 +13,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class OrderItemDto {
 
-    private String productId;    // Unique identifier for the product
-    private String sku;          // Stock Keeping Unit (Critical for Inventory Service)
+    private String skuCode;          // Stock Keeping Unit (Critical for Inventory Service)
     private String productName;  // Display name (Shown on Stripe Checkout)
     private BigDecimal unitPrice; // Price per single item
     private Integer quantity;    // Number of items purchased
+    private String imageUrl;
 }

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public class PasswordResetController {
 
     private final UserService userService;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(PasswordResetController.class);
 
     @PostMapping("/request")
     public ResponseEntity<String> requestPasswordReset(@RequestBody PasswordResetRequest request) {

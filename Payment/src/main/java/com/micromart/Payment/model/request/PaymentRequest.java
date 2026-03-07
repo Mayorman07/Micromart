@@ -1,26 +1,20 @@
-package com.micromart.Payment.model.dto;
+package com.micromart.Payment.model.request;
 
-import com.micromart.Payment.enums.Status;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDto implements Serializable {
+public class PaymentRequest {
 
     private String orderId;
-    private String userId;
     private String userEmail;
     private BigDecimal totalAmount;
     private String currency;
-    private List<OrderItemDto> items;
-    private Status status;
+    private List<OrderItemRequest> items;
 }

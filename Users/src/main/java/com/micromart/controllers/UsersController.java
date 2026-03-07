@@ -43,7 +43,7 @@ public class UsersController{
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final RefreshTokenService refreshTokenService;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
     @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest userRequest, BindingResult bindingResult){

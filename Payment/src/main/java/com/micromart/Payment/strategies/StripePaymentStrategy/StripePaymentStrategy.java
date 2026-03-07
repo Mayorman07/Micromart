@@ -52,6 +52,7 @@ public class StripePaymentStrategy implements PaymentStrategy {
                                         .setUnitAmount(item.getUnitPrice().multiply(new BigDecimal(100)).longValue())
                                         .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                 .setName(item.getProductName())
+                                                .putMetadata("sku", item.getSkuCode())
                                                 .build())
                                         .build())
                                 .build()
@@ -59,7 +60,12 @@ public class StripePaymentStrategy implements PaymentStrategy {
             }
 
             Session session = Session.create(sessionBuilder.build());
-            return new PaymentResponse(session.getUrl(), "Redirecting...", "PENDING");
+            return PaymentResponse.builder()
+                    .paymentUrl(session.getUrl())
+                    .instructions("Redirecting...")
+                    .status("PENDING")
+                    .paymentIntentId(session.getId())
+                    .build();
 
         } catch (StripeException e) {
             throw new RuntimeException("Stripe error: " + e.getMessage());
