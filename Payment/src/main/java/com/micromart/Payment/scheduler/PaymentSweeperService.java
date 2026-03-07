@@ -2,9 +2,13 @@ package com.micromart.Payment.scheduler;
 
 import com.micromart.Payment.entity.PaymentRecord;
 import com.micromart.Payment.enums.Status;
+import com.micromart.Payment.messaging.PaymentEvent;
+import com.micromart.Payment.messaging.PaymentStatusPublisher;
 import com.micromart.Payment.repository.PaymentRecordRepository;
+import com.micromart.Payment.services.PaymentServiceImpl;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +18,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class PaymentSweeperService {
 
     private final PaymentRecordRepository paymentRecordRepository;
+    private final PaymentStatusPublisher paymentStatusPublisher;
+    private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
+
 
     /**
      * This method automatically runs every 30 minutes (1,800,000 milliseconds).
@@ -26,31 +32,41 @@ public class PaymentSweeperService {
     @Scheduled(fixedRate = 1800000)
     @Transactional
     public void sweepAbandonedPayments() {
-        log.info("Sweeper Service waking up to check for abandoned payments...");
+
+        logger.info("Sweeper Service waking up to check for abandoned payments...");
 
         LocalDateTime OneTwentyMinutesAgo = LocalDateTime.now().minusMinutes(120);
 
         List<PaymentRecord> abandonedRecords = paymentRecordRepository
-                .findByStatusAndCreatedAtBefore("PENDING", OneTwentyMinutesAgo);
+                .findByStatusAndCreatedAtBefore(Status.PENDING, OneTwentyMinutesAgo);
 
         if (abandonedRecords.isEmpty()) {
-            log.info(" No abandoned payments found. Going back to sleep.");
+            logger.info(" No abandoned payments found. Going back to sleep.");
             return;
         }
 
-        log.warn("Found {} abandoned PENDING payments. Cancelling them now...", abandonedRecords.size());
+        logger.warn("Found {} abandoned PENDING payments. Cancelling them now...", abandonedRecords.size());
 
         for (PaymentRecord record : abandonedRecords) {
             record.setStatus(Status.CANCELLED);
             record.setErrorMessage("Payment abandoned by user (Timeout)");
 
-            // rabbitMQPublisher.sendPaymentCancelledEvent(record.getOrderId());
+            PaymentEvent event = PaymentEvent.builder()
+                    .orderId(record.getOrderId())
+                    .userId(record.getUserId())
+                    .status(Status.CANCELLED)
+                    .paymentMethod(record.getPaymentMethod().name())
+                    .build();
 
-            log.info("Cancelled abandoned payment for Order: {}", record.getOrderId());
+            paymentStatusPublisher.publishPaymentStatus(event);
+
+            logger.info("Cancelled abandoned payment for Order: {}", record.getOrderId());
         }
 
         paymentRecordRepository.saveAll(abandonedRecords);
 
-        log.info("Sweeper Service finished cleaning up.");
+        logger.info("Sweeper Service finished cleaning up.");
     }
+
+
 }

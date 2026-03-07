@@ -4,6 +4,8 @@ import com.micromart.Payment.enums.PaymentMethod;
 import com.micromart.Payment.enums.Status;
 import com.micromart.Payment.exceptions.ResourceNotFoundException;
 import com.micromart.Payment.factory.PaymentFactory;
+import com.micromart.Payment.messaging.PaymentEvent;
+import com.micromart.Payment.messaging.PaymentStatusPublisher;
 import com.micromart.Payment.model.dto.OrderDto;
 import com.micromart.Payment.model.request.PaymentRequest;
 import com.micromart.Payment.model.response.PaymentResponse;
@@ -33,6 +35,7 @@ public class PaymentServiceImpl implements PaymentService{
     private final PaymentFactory paymentFactory;
     private final ModelMapper modelMapper;
     private final PaymentRecordRepository paymentRecordRepository;
+    private final PaymentStatusPublisher paymentStatusPublisher;
     private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
     @Override
@@ -123,8 +126,7 @@ public class PaymentServiceImpl implements PaymentService{
 
         logger.info("Successfully approved payment for Order: {}", paymentRecord.getOrderId());
 
-        // rabbitMQPublisher.sendPaymentSuccessEvent(paymentRecord.getOrderId());
-
+        sendStatusUpdate(paymentRecord);
         return "Successfully approved payment for Order: " + paymentRecord.getOrderId();
     }
 
@@ -149,8 +151,7 @@ public class PaymentServiceImpl implements PaymentService{
                         paymentRecord.setStatus(Status.PAID);
                         paymentRecordRepository.save(paymentRecord);
                         logger.info("Order {} marked as COMPLETED via Webhook!", paymentRecord.getOrderId());
-
-                        //  TODO: THE RIPPLE EFFECT (RabbitMQ)
+                        sendStatusUpdate(paymentRecord);
                     }
                 }
                 case "checkout.session.expired" -> {
@@ -159,12 +160,22 @@ public class PaymentServiceImpl implements PaymentService{
                         paymentRecord.setErrorMessage("Stripe Checkout Session Expired");
                         paymentRecordRepository.save(paymentRecord);
                         logger.info("Order {} marked as CANCELLED via Webhook expiration.", paymentRecord.getOrderId());
-
-                        //  TODO: THE RIPPLE EFFECT (RabbitMQ)
+                        sendStatusUpdate(paymentRecord);
                     }
                 }
                 default -> logger.info("Unhandled Stripe event type: {}", event.getType());
             }
         }
+    }
+
+    private void sendStatusUpdate(PaymentRecord record) {
+        PaymentEvent event = PaymentEvent.builder()
+                .orderId(record.getOrderId())
+                .userId(record.getUserId())
+                .status(record.getStatus())
+                .paymentMethod(record.getPaymentMethod().name())
+                .build();
+
+        paymentStatusPublisher.publishPaymentStatus(event);
     }
 }

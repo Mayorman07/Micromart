@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmed</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f9f9; }
+        .email-container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); overflow: hidden; border: 1px solid #eaeaea; }
+        .header { background: linear-gradient(135deg, #00b4db, #0083b0); padding: 40px 20px; text-align: center; }
+        .header h1 { color: white; margin: 0; font-size: 26px; letter-spacing: 2px; font-weight: 700; text-transform: uppercase; }
+        .body-content { padding: 40px; color: #444444; line-height: 1.6; text-align: left; }
+        .body-content h2 { color: #333; font-size: 22px; margin-top: 0; }
+        .order-pill { display: inline-block; background-color: #f0f7ff; color: #007bb5; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 14px; margin-bottom: 20px; }
+        .button-container { text-align: center; margin-top: 30px; }
+        .cta-button { background: linear-gradient(135deg, #00b4db, #0083b0); color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 15px rgba(0, 180, 219, 0.3); display: inline-block; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #999; }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        <h1>MICROMART</h1>
+    </div>
+    <div class="body-content">
+        <h2>Payment Confirmed!</h2>
+        <div class="order-pill">Order #<span th:text="${orderId}">12345</span></div>
+        <p>Hi Friend,</p>
+        <p>We've successfully processed your payment. Your order is now being prepared by our team with the utmost care.</p>
+        <p>You can track your package and view your digital receipt at any time by clicking the button below.</p>
+
+        <div class="button-container">
+            <a th:href="${trackUrl}" class="cta-button">Track My Order</a>
+        </div>
+    </div>
+    <div class="footer">
+        © 2026 Micromart Inc. Lagos, Nigeria.
+    </div>
+</div>
+</body>
+</html>

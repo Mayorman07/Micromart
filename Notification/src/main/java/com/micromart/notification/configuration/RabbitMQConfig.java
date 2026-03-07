@@ -16,6 +16,9 @@ public class RabbitMQConfig {
     public static final String ROUTING_KEY_RESET = "password.reset";
     public static final String USER_REACTIVATION_QUEUE = "user.reactivation.queue";
     public static final String USER_REACTIVATION_CREATED = "user.reactivation";
+    public static final String PAYMENT_EXCHANGE = "payment_exchange";
+    public static final String PAYMENT_NOTIFICATION_QUEUE = "payment.notification.queue";
+    public static final String PAYMENT_ROUTING_KEY = "payment_status_key";
 
     @Bean
     TopicExchange userEventsExchange() {
@@ -35,6 +38,19 @@ public class RabbitMQConfig {
     @Bean
     Queue userReactivationQueue() {
         return new Queue(USER_REACTIVATION_QUEUE, true);
+    }
+
+    @Bean
+    TopicExchange paymentExchange() { return new TopicExchange(PAYMENT_EXCHANGE);}
+
+    @Bean
+    Queue paymentNotificationQueue() { return new Queue(PAYMENT_NOTIFICATION_QUEUE, true);}
+
+    @Bean
+    Binding paymentBinding(Queue paymentNotificationQueue, TopicExchange paymentExchange) {
+        return BindingBuilder.bind(paymentNotificationQueue)
+                .to(paymentExchange)
+                .with(PAYMENT_ROUTING_KEY);
     }
 
     // --- Bindings ---

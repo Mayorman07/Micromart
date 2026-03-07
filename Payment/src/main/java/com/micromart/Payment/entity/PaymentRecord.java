@@ -43,6 +43,7 @@ public class PaymentRecord {
     private String externalReference;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Status status; // "PENDING", "COMPLETED", "FAILED", "CANCELLED"
 
     private String errorMessage; // Optional: store failure reason

@@ -163,4 +163,34 @@ public class EmailNotificationChannel implements NotificationChannel {
             throw new RuntimeException("Email sending failed", e);
         }
     }
+
+    public void sendPaymentSuccessEmail(String toEmail, String orderId) {
+        try {
+            Context context = new Context();
+            context.setVariable("orderId", orderId);
+            context.setVariable("trackUrl", environment.getProperty("app.frontend.url") + "/orders/" + orderId);
+
+            String htmlBody = templateEngine.process("payment-success-email", context);
+            sendSimpleHtmlEmail(toEmail, "Payment Received! Order #" + orderId, htmlBody);
+
+            logger.info("Payment success email sent for order {}", orderId);
+        } catch (Exception e) {
+            logger.error("Error building payment success email: {}", e.getMessage());
+        }
+    }
+
+    public void sendPaymentCancelledEmail(String toEmail, String orderId) {
+        try {
+            Context context = new Context();
+            context.setVariable("orderId", orderId);
+            context.setVariable("retryUrl", environment.getProperty("app.frontend.url") + "/checkout");
+
+            String htmlBody = templateEngine.process("payment-cancelled-email", context);
+            sendSimpleHtmlEmail(toEmail, "Order Cancelled - #" + orderId, htmlBody);
+
+            logger.info("Payment cancellation email sent for order {}", orderId);
+        } catch (Exception e) {
+            logger.error("Error building payment cancelled email: {}", e.getMessage());
+        }
+    }
 }

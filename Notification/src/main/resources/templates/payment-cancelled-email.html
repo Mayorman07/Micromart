@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Update</title>
+  <style>
+        /* Reset & Base Styles */
+        body { margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f9f9; }
+        table { border-collapse: collapse; width: 100%; }
+
+        /* The "Glass" Card Container */
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); /* Sophisticated shadow */
+            overflow: hidden;
+            border: 1px solid #eaeaea;
+        }
+
+        /* Header with a Soft Coral/Rose Gradient */
+        .header {
+            background: linear-gradient(135deg, #FF9966, #FF5E62); /* Aesthetic soft coral gradient */
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: white;
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Body Content */
+        .body-content {
+            padding: 40px;
+            color: #444444;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .body-content h2 {
+            color: #333;
+            font-size: 22px;
+            margin-top: 0;
+        }
+
+        /* The Order Pill */
+        .order-pill-fail {
+            display: inline-block;
+            background-color: #fff5f5; /* Very light pink/red background */
+            color: #d11e33; /* A more subdued red for text */
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* The Action Button (Matches Verification Button style) */
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #FF9966, #FF5E62); /* Coral gradient button */
+            color: #ffffff;
+            padding: 16px 32px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.3); /* Button shadow */
+            display: inline-block;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+
+    </style>
+</head>
+<body>
+<div class="email-container">
+
+  <div class="header">
+    <h1>MICROMART</h1>
+  </div>
+
+  <div class="body-content">
+    <h2>Oh no! Session Expired</h2>
+
+    <div class="order-pill-fail">Order #<span th:text="${orderId}">12345</span></div>
+
+    <p>Hi Friend,</p>
+
+    <p>It looks like your payment session for this order has timed out or was interrupted. Don't worry—we've saved your progress.</p>
+
+    <p>Your items are still waiting for you. Simply return to the checkout page using the link below to finalize your purchase.</p>
+
+    <div class="button-container">
+      <a th:href="${retryUrl}" class="cta-button">Complete Checkout</a>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    © 2026 Micromart Inc. Lagos, Nigeria.
+  </div>
+</div>
+</body>
+</html>

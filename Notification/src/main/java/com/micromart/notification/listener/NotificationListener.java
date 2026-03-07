@@ -5,6 +5,7 @@ import com.micromart.notification.channels.NotificationChannel;
 import com.micromart.notification.configuration.RabbitMQConfig;
 import com.micromart.notification.factory.NotificationFactory;
 import com.micromart.notification.model.PasswordResetEventDto;
+import com.micromart.notification.model.PaymentEvent;
 import com.micromart.notification.model.ReactivationEvent;
 import com.micromart.notification.model.UserCreatedEventDto;
 import org.slf4j.Logger;
@@ -135,6 +136,26 @@ public class NotificationListener {
             }
         } catch (Exception e) {
             logger.error("Failed to send reactivation email to {}: {}", event.getEmail(), e.getMessage(), e);
+        }
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.PAYMENT_NOTIFICATION_QUEUE)
+    public void handlePaymentEvent(PaymentEvent event) {
+        logger.info("Received payment event for Order: {} - Status: {}", event.getOrderId(), event.getStatus());
+
+        try {
+            NotificationChannel channel = notificationFactory.getChannel("EMAIL");
+            if (channel instanceof EmailNotificationChannel emailChannel) {
+
+                if ("PAID".equals(event.getStatus().name())) {
+                    emailChannel.sendPaymentSuccessEmail(event.getUserId(), event.getOrderId());
+                } else if ("CANCELLED".equals(event.getStatus().name())) {
+                    emailChannel.sendPaymentCancelledEmail(event.getUserId(), event.getOrderId());
+                }
+
+            }
+        } catch (Exception e) {
+            logger.error("Failed to process payment notification for order {}: {}", event.getOrderId(), e.getMessage());
         }
     }
 }

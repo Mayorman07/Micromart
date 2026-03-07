@@ -1,5 +1,6 @@
 package com.micromart.Payment.repository;
 
+import com.micromart.Payment.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import com.micromart.Payment.entity.PaymentRecord;
@@ -18,7 +19,7 @@ public interface PaymentRecordRepository extends JpaRepository<PaymentRecord, Lo
     Optional<PaymentRecord> findByExternalReference(String externalReference);
 
     // Check if a payment already exists for this order + status
-    boolean existsByOrderIdAndStatus(String orderId, String status);
+    boolean existsByOrderIdAndStatus(String orderId, Status status);
 
-    List<PaymentRecord> findByStatusAndCreatedAtBefore(String status, LocalDateTime cutoffTime);
+    List<PaymentRecord> findByStatusAndCreatedAtBefore(Status status, LocalDateTime cutoffTime);
 }
