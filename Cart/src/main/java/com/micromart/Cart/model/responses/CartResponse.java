@@ -12,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartResponse {
-
     private Long cartId;
     private String userId;
     private List<CartItemDto> items;

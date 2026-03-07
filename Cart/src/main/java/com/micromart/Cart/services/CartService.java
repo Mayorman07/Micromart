@@ -9,10 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CartService {
 
-    // Add item to cart (creates cart if doesn't exist)
     CartDto addItem(String userId, CartRequest cartRequest);
 
-    // Update quantity of existing item
     CartDto updateQuantity(String userId,CartRequest cartRequest);
 
     CartDto removeItemFromCart(String userId, String skuCode);

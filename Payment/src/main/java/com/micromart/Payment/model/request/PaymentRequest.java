@@ -17,4 +17,5 @@ public class PaymentRequest {
     private BigDecimal totalAmount;
     private String currency;
     private List<OrderItemRequest> items;
+    private String paymentMethod;
 }

@@ -38,7 +38,7 @@ public class CartController {
         logger.info("The incoming create cart request {} " , cartRequest);
         CartDto itemsInCart = cartService.addItem(userId, cartRequest);
         CartResponse returnValue = modelMapper.map(itemsInCart, CartResponse.class);
-        logger.info("The outgoing create cart request {} " , returnValue);
+        logger.info("The outgoing create cart response {} " , returnValue);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
    }
     @PutMapping("/update")
