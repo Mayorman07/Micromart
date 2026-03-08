@@ -48,7 +48,10 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue reactivationQueue() {
-        return new Queue(REACTIVATION_QUEUE, true);
+        return QueueBuilder.durable(REACTIVATION_QUEUE)
+                .withArgument("x-dead-letter-exchange", "notification.dlx")
+                .withArgument("x-dead-letter-routing-key", "notification.deadletter.key")
+                .build();
     }
 
     @Bean
@@ -71,7 +74,10 @@ public class RabbitMQConfig {
     // --- Password Reset Queue & Binding (NEW) ---
     @Bean
     public Queue passwordResetQueue() {
-        return new Queue(PASSWORD_RESET_QUEUE);
+        return QueueBuilder.durable(PASSWORD_RESET_QUEUE)
+                .withArgument("x-dead-letter-exchange", "notification.dlx")
+                .withArgument("x-dead-letter-routing-key", "notification.deadletter.key")
+                .build();
     }
 
     @Bean

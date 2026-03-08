@@ -8,6 +8,7 @@ import com.micromart.Payment.messaging.PaymentEvent;
 import com.micromart.Payment.messaging.PaymentStatusPublisher;
 import com.micromart.Payment.model.dto.OrderDto;
 import com.micromart.Payment.model.dto.OrderItemDto;
+import com.micromart.Payment.model.request.OrderItemRequest;
 import com.micromart.Payment.model.request.PaymentRequest;
 import com.micromart.Payment.model.response.PaymentResponse;
 import com.micromart.Payment.repository.PaymentRecordRepository;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,18 +62,22 @@ public class PaymentServiceImpl implements PaymentService{
         PaymentResponse response = null;
 
         try {
-            List<OrderItemDto> itemDtos = paymentRequest.getItems().stream()
-                    .map(itemReq -> OrderItemDto.builder()
-                            .skuCode(itemReq.getSkuCode())
-                            .productName(itemReq.getProductName())
-                            .unitPrice(itemReq.getUnitPrice())
-                            .quantity(itemReq.getQuantity())
-                            .build())
-                    .collect(Collectors.toList());
+            List<OrderItemDto> items = new ArrayList<>();
+            if (paymentRequest.getItems() != null) {
+                for (OrderItemRequest itemReq : paymentRequest.getItems()) {
+                    OrderItemDto dto = new OrderItemDto();
+                    dto.setSkuCode(itemReq.getSkuCode());
+                    dto.setProductName(itemReq.getProductName());
+                    dto.setUnitPrice(itemReq.getUnitPrice());
+                    dto.setQuantity(itemReq.getQuantity());
+                    dto.setImageUrl(itemReq.getImageUrl());
+                    items.add(dto);
+                }
+            }
 
             OrderDto orderDto = modelMapper.map(paymentRequest, OrderDto.class);
 
-            orderDto.setItems(itemDtos);
+            orderDto.setItems(items);
             orderDto.setUserId(userId);
             orderDto.setStatus(Status.PENDING);
 

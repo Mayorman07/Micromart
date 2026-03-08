@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class PaymentRequest {
 
@@ -44,6 +43,8 @@ public class PaymentRequest {
     @NotEmpty(message = "At least one item is required")
     @Valid
     private List<OrderItemRequest> items;
+
+    public PaymentRequest() {}
 
     public String getOrderId() {
         return orderId;

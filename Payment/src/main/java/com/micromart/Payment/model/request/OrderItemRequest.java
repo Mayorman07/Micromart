@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class OrderItemRequest {
     @NotBlank(message = "SKU code is required")
@@ -31,6 +30,8 @@ public class OrderItemRequest {
     @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
     private String imageUrl;
+
+    public OrderItemRequest() {}
 
     public String getSkuCode() {
         return skuCode;
