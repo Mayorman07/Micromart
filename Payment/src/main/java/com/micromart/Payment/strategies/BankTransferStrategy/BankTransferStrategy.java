@@ -19,7 +19,7 @@ public class BankTransferStrategy implements PaymentStrategy {
         String instructions = String.format(
                 "ORDER #%s PLACED. \n" +
                         "Please transfer %s %s to: \n" +
-                        "Bank: MicroMart Microfinance Bank \n" +
+                        "Bank: Mayorman Microfinance Bank \n" +
                         "Account Number: 0123456789 \n" +
                         "CRITICAL: Use this Reference in your transfer description: %s",
                 order.getOrderId(),

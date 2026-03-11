@@ -21,16 +21,17 @@
         </processorPath>
         <module name="Users" />
       </profile>
-      <profile name="Annotation profile for Payment" enabled="true">
+      <profile name="Annotation profile for Order" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
+        <module name="Order" />
         <module name="notification" />
-        <module name="Payment" />
         <module name="Products" />
+        <module name="Payment" />
         <module name="Inventory" />
         <module name="Cart" />
       </profile>
@@ -44,6 +45,7 @@
       <module name="Gateway" options="-parameters" />
       <module name="Inventory" options="-parameters" />
       <module name="JwtAuthorities" options="-parameters" />
+      <module name="Order" options="-parameters" />
       <module name="Payment" options="-parameters" />
       <module name="Products" options="-parameters" />
       <module name="Users" options="-parameters" />
