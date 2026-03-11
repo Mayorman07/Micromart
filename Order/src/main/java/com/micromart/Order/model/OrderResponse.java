@@ -1,5 +1,6 @@
 package com.micromart.Order.model;
 
+import com.micromart.Order.enums.CancellationReason;
 import com.micromart.Order.enums.OrderStatus;
 import com.micromart.Order.model.responses.OrderItemResponse;
 import lombok.AllArgsConstructor;
@@ -22,4 +23,5 @@ public class OrderResponse {
     private OrderStatus orderStatus;
     private List<OrderItemResponse> items;
     private LocalDateTime createdAt;
+    private CancellationReason cancellationReason;
 }

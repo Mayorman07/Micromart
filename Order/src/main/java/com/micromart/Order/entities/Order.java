@@ -1,5 +1,6 @@
 package com.micromart.Order.entities;
 
+import com.micromart.Order.enums.CancellationReason;
 import com.micromart.Order.enums.OrderStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -44,6 +45,9 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+    @Enumerated(EnumType.STRING)
+    private CancellationReason cancellationReason;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")
