@@ -13,7 +13,6 @@ import java.util.List;
 public interface OrderService {
     OrderResponse createOrder(OrderRequest orderRequest);
     OrderResponse getOrderByOrderNumber(String orderNumber);
-    List<OrderResponse> getUserOrders(String userEmail);
     Page<OrderResponse> getUserOrders(String userEmail, Pageable pageable);
     OrderResponse cancelOrder(String orderNumber, CancellationReason reason);
 
