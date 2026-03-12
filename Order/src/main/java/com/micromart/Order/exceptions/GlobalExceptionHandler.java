@@ -71,6 +71,21 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(OrderAccessDeniedException.class)
+    public ResponseEntity<ErrorDetails> handleOrderAccessDeniedException(OrderAccessDeniedException ex, HttpServletRequest request) {
+        logger.error("OrderAccessDeniedException: {}", ex.getMessage());
+
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.FORBIDDEN.value()) // 403 Forbidden
+                .error("Forbidden")
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleGlobalException(Exception ex, HttpServletRequest request) {
         logger.error("Unhandled Exception: ", ex);
@@ -85,4 +100,5 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 }

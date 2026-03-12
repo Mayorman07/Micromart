@@ -3,6 +3,7 @@ package com.micromart.Order.services;
 import com.micromart.Order.entities.Order;
 import com.micromart.Order.enums.CancellationReason;
 import com.micromart.Order.enums.OrderStatus;
+import com.micromart.Order.exceptions.OrderAccessDeniedException;
 import com.micromart.Order.exceptions.OrderCancellationException;
 import com.micromart.Order.exceptions.OrderNotFoundException;
 import com.micromart.Order.mapper.OrderMapper;
@@ -63,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with number: " + orderNumber));
 
         if (!order.getUserEmail().equals(authenticatedUserEmail)) {
-            throw new AccessDeniedException("You do not have access to order: " + orderNumber);
+            throw new OrderAccessDeniedException("You do not have access to order: " + orderNumber);
         }
         return orderMapper.mapToResponse(order);
     }
@@ -84,7 +85,8 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with number: " + orderNumber));
 
         if (!order.getUserEmail().equals(authenticatedUserEmail)) {
-            throw new AccessDeniedException("You do not have access to order: " + orderNumber);
+            logger.warn("User {} attempted to cancel order {} belonging to {}", authenticatedUserEmail, orderNumber, order.getUserEmail());
+            throw new OrderAccessDeniedException("You do not have permission to access or modify order: " + orderNumber);
         }
 
         if (order.getOrderStatus() == OrderStatus.SHIPPED || order.getOrderStatus() == OrderStatus.DELIVERED) {

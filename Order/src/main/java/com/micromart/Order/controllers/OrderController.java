@@ -49,7 +49,7 @@ public class OrderController {
 
     @GetMapping("/{orderNumber}")
     public ResponseEntity<OrderResponse> getOrderByOrderNumber(@PathVariable String orderNumber,
-                                                               AuthenticationPrincipal String userEmail) {
+                                                               @AuthenticationPrincipal String userEmail) {
         logger.info("REST request to get order: {} for user: {}", orderNumber,userEmail);
         return ResponseEntity.ok(orderService.getOrderByOrderNumber(orderNumber,userEmail));
     }

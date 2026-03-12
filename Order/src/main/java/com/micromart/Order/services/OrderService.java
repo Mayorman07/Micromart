@@ -15,9 +15,8 @@ public interface OrderService {
     OrderResponse getOrderByOrderNumber(String orderNumber, String authenticatedUserEmail);
     Page<OrderResponse> getUserOrders(String userEmail, Pageable pageable);
     OrderResponse cancelOrder(String orderNumber, CancellationReason reason,String authenticatedUserEmail);
-
     boolean checkOrderExists(String orderNumber);
-    long getUserOrderCount(String userEmail);
+    long getUserOrderCount(String authenticatedUserEmail);
     List<OrderResponse> getUserOrdersByStatus(String userEmail, OrderStatus status);
     List<OrderResponse> getOrdersByStatus(OrderStatus status);
     List<OrderResponse> getOrdersByDateRange(LocalDateTime start, LocalDateTime end);
