@@ -9,6 +9,7 @@ import com.micromart.Order.model.OrderResponse;
 import com.micromart.Order.model.requests.OrderRequest;
 import com.micromart.Order.model.responses.OrderItemResponse;
 import com.micromart.Order.repository.OrderRepository;
+import com.micromart.Order.utils.OrderUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,6 @@ import com.micromart.Order.entities.OrderLineItems;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService{
     public OrderResponse createOrder(OrderRequest orderRequest) {
         logger.info("Initiating new order for user: {}", orderRequest.getUserEmail());
 
-        String generatedOrderNumber = "ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String generatedOrderNumber = OrderUtils.generateOrderNumber();
 
         List<OrderLineItems> lineItems = orderRequest.getItems().stream()
                 .map(item -> OrderLineItems.builder()

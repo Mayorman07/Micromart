@@ -12,10 +12,6 @@ public class ModelMapperConfig {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);
-
-//        modelMapper.createTypeMap(OrderItemRequest.class, OrderItemDto.class);
-
-
         return modelMapper;
     }
 }
