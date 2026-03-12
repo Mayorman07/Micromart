@@ -36,10 +36,9 @@ public class WebSecurity {
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/payments/webhook").permitAll()
-                .requestMatchers(HttpMethod.GET, "/payments/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/orders/**").permitAll()
                 .requestMatchers("/error").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/payments/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/orders/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()
         );
