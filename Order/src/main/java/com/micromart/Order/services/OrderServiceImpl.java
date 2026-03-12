@@ -5,6 +5,7 @@ import com.micromart.Order.enums.CancellationReason;
 import com.micromart.Order.enums.OrderStatus;
 import com.micromart.Order.exceptions.OrderCancellationException;
 import com.micromart.Order.exceptions.OrderNotFoundException;
+import com.micromart.Order.mapper.OrderMapper;
 import com.micromart.Order.model.OrderResponse;
 import com.micromart.Order.model.requests.OrderRequest;
 import com.micromart.Order.model.responses.OrderItemResponse;
@@ -26,27 +27,20 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class OrderServiceImpl implements OrderService{
+public class OrderServiceImpl implements OrderService {
+
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
+
     @Override
     @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest) {
         logger.info("Initiating new order for user: {}", orderRequest.getUserEmail());
 
         String generatedOrderNumber = OrderUtils.generateOrderNumber();
-
-        List<OrderLineItems> lineItems = orderRequest.getItems().stream()
-                .map(item -> OrderLineItems.builder()
-                        .skuCode(item.getSkuCode())
-                        .productName(item.getProductName())
-                        .imageUrl(item.getImageUrl())
-                        .unitPrice(item.getUnitPrice())
-                        .quantity(item.getQuantity())
-                        .build())
-                .toList();
-
+        List<OrderLineItems> lineItems = orderMapper.mapToEntityList(orderRequest.getItems());
         BigDecimal backendCalculatedTotal = lineItems.stream()
                 .map(item -> item.getUnitPrice().multiply(new BigDecimal(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -61,24 +55,21 @@ public class OrderServiceImpl implements OrderService{
 
         Order savedOrder = orderRepository.save(order);
         logger.info("Order {} successfully created and saved to database.", savedOrder.getOrderNumber());
-
-        return mapToOrderResponse(savedOrder);
+        return orderMapper.mapToResponse(savedOrder);
     }
 
     @Override
     public OrderResponse getOrderByOrderNumber(String orderNumber) {
         Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with number: " + orderNumber));
-        return mapToOrderResponse(order);
+        return orderMapper.mapToResponse(order);
     }
-
 
     @Override
     public Page<OrderResponse> getUserOrders(String userEmail, Pageable pageable) {
         logger.info("Fetching paginated orders for user: {}", userEmail);
         Page<Order> orderPage = orderRepository.findByUserEmailOrderByCreatedAtDesc(userEmail, pageable);
-
-        return orderPage.map(this::mapToOrderResponse);
+        return orderPage.map(orderMapper::mapToResponse);
     }
 
     @Override
@@ -99,7 +90,7 @@ public class OrderServiceImpl implements OrderService{
         Order savedOrder = orderRepository.save(order);
         logger.info("Successfully cancelled order {} due to {}", orderNumber, reason);
 
-        return mapToOrderResponse(savedOrder);
+        return orderMapper.mapToResponse(savedOrder);
     }
 
     // --- Extended Query Methods ---
@@ -119,7 +110,7 @@ public class OrderServiceImpl implements OrderService{
         logger.info("Fetching orders for user {} with status {}", userEmail, status);
         return orderRepository.findByUserEmailAndOrderStatus(userEmail, status)
                 .stream()
-                .map(this::mapToOrderResponse)
+                .map(orderMapper::mapToResponse)
                 .collect(Collectors.toList());
     }
 
@@ -128,7 +119,7 @@ public class OrderServiceImpl implements OrderService{
         logger.info("Admin query: Fetching all orders with status {}", status);
         return orderRepository.findByOrderStatus(status)
                 .stream()
-                .map(this::mapToOrderResponse)
+                .map(orderMapper::mapToResponse)
                 .collect(Collectors.toList());
     }
 
@@ -137,31 +128,7 @@ public class OrderServiceImpl implements OrderService{
         logger.info("Admin query: Fetching orders between {} and {}", start, end);
         return orderRepository.findByCreatedAtBetween(start, end)
                 .stream()
-                .map(this::mapToOrderResponse)
+                .map(orderMapper::mapToResponse)
                 .collect(Collectors.toList());
-    }
-
-    // --- Helper Method: Map Entity back to Response DTO ---
-
-    private OrderResponse mapToOrderResponse(Order order) {
-        List<OrderItemResponse> itemResponses = order.getOrderLineItemsList().stream()
-                .map(item -> OrderItemResponse.builder()
-                        .skuCode(item.getSkuCode())
-                        .productName(item.getProductName())
-                        .imageUrl(item.getImageUrl())
-                        .unitPrice(item.getUnitPrice())
-                        .quantity(item.getQuantity())
-                        .build())
-                .collect(Collectors.toList());
-
-        return OrderResponse.builder()
-                .orderNumber(order.getOrderNumber())
-                .userEmail(order.getUserEmail())
-                .totalAmount(order.getTotalAmount())
-                .orderStatus(order.getOrderStatus())
-                .cancellationReason(order.getCancellationReason())
-                .createdAt(order.getCreatedAt())
-                .items(itemResponses)
-                .build();
     }
 }
