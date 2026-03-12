@@ -63,11 +63,11 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
         JwtClaimsParser jwtClaimsParser = new JwtClaimsParser(token, tokenSecret);
 
-        String userId = jwtClaimsParser.getJwtSubject();
+        String userEmail = jwtClaimsParser.getJwtSubject();
 
-        if (userId == null) {
+        if (userEmail == null) {
             return null;
         }
-        return new UsernamePasswordAuthenticationToken(userId, null, jwtClaimsParser.getUserAuthorities());
+        return new UsernamePasswordAuthenticationToken(userEmail, null, jwtClaimsParser.getUserAuthorities());
     }
 }

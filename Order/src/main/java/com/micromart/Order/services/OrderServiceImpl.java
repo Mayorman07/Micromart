@@ -8,7 +8,6 @@ import com.micromart.Order.exceptions.OrderNotFoundException;
 import com.micromart.Order.mapper.OrderMapper;
 import com.micromart.Order.model.OrderResponse;
 import com.micromart.Order.model.requests.OrderRequest;
-import com.micromart.Order.model.responses.OrderItemResponse;
 import com.micromart.Order.repository.OrderRepository;
 import com.micromart.Order.utils.OrderUtils;
 import lombok.RequiredArgsConstructor;
@@ -59,9 +58,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse getOrderByOrderNumber(String orderNumber) {
+    public OrderResponse getOrderByOrderNumber(String orderNumber, String authenticatedUserEmail) {
         Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with number: " + orderNumber));
+
+        if (!order.getUserEmail().equals(authenticatedUserEmail)) {
+            throw new AccessDeniedException("You do not have access to order: " + orderNumber);
+        }
         return orderMapper.mapToResponse(order);
     }
 
@@ -74,11 +77,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponse cancelOrder(String orderNumber, CancellationReason reason) {
+    public OrderResponse cancelOrder(String orderNumber, CancellationReason reason,String authenticatedUserEmail) {
         logger.info("Attempting to cancel order {} with reason: {}", orderNumber, reason);
 
         Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with number: " + orderNumber));
+
+        if (!order.getUserEmail().equals(authenticatedUserEmail)) {
+            throw new AccessDeniedException("You do not have access to order: " + orderNumber);
+        }
 
         if (order.getOrderStatus() == OrderStatus.SHIPPED || order.getOrderStatus() == OrderStatus.DELIVERED) {
             throw new OrderCancellationException("Cannot cancel an order that has already been shipped or delivered.");

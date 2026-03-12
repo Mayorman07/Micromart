@@ -12,9 +12,9 @@ import java.util.List;
 
 public interface OrderService {
     OrderResponse createOrder(OrderRequest orderRequest);
-    OrderResponse getOrderByOrderNumber(String orderNumber);
+    OrderResponse getOrderByOrderNumber(String orderNumber, String authenticatedUserEmail);
     Page<OrderResponse> getUserOrders(String userEmail, Pageable pageable);
-    OrderResponse cancelOrder(String orderNumber, CancellationReason reason);
+    OrderResponse cancelOrder(String orderNumber, CancellationReason reason,String authenticatedUserEmail);
 
     boolean checkOrderExists(String orderNumber);
     long getUserOrderCount(String userEmail);
