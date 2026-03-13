@@ -29,12 +29,13 @@ public class PaymentEventListener {
     public void handlePaymentSuccess(PaymentEvent paymentEvent) {
         logger.info("Received PaymentEvent for Order ID: {} with status: {}", paymentEvent.getOrderId(), paymentEvent.getStatus());
 
-        if (!"SUCCESS".equalsIgnoreCase(paymentEvent.getStatus())) {
-            logger.warn("Payment was not successful for Order {}. Ignoring Ripple Effect.", paymentEvent.getOrderId());
+        if (!"PAID".equalsIgnoreCase(paymentEvent.getStatus())) {
+            logger.warn("Payment is not PAID for Order {}. Current status is {}. Ignoring Ripple Effect.",
+                    paymentEvent.getOrderId(), paymentEvent.getStatus());
             return;
         }
 
-        Order order = orderRepository.findByOrderNumber(paymentEvent.getOrderId()) // 🎯 UPDATED GETTER
+        Order order = orderRepository.findByOrderNumber(paymentEvent.getOrderId())
                 .orElseThrow(() -> new RuntimeException("Order not found during payment processing: " + paymentEvent.getOrderId()));
 
         order.setOrderStatus(OrderStatus.PAID);
@@ -50,7 +51,6 @@ public class PaymentEventListener {
                         .build())
                 .collect(Collectors.toList());
 
-        // 3. Trigger the Ripple Effect
         eventPublisher.publishDeductStockEvent(new OrderEventPayloads.DeductStockEvent(order.getOrderNumber(), eventItems));
         eventPublisher.publishClearCartEvent(new OrderEventPayloads.ClearCartEvent(order.getUserEmail()));
         eventPublisher.publishOrderReceiptEvent(new OrderEventPayloads.OrderReceiptEvent(order.getOrderNumber(), order.getUserEmail(), order.getTotalAmount(), eventItems));

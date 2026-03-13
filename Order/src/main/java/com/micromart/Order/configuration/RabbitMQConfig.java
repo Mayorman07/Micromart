@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    // The main exchange where all microservices will publish their events
     public static final String MICROMART_EXCHANGE = "micromart.exchange";
 
     @Bean
