@@ -12,11 +12,14 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class CartEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(CartEventListener.class);
     private final CartService cartService;
+
+    public CartEventListener(CartService cartService) {
+        this.cartService = cartService;
+    }
 
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "cart.clear.queue", durable = "true"),

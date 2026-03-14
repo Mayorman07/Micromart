@@ -6,7 +6,6 @@ import com.micromart.Order.events.OrderEventPayloads;
 import com.micromart.Order.events.PaymentEvent;
 import com.micromart.Order.publisher.OrderEventPublisher;
 import com.micromart.Order.repository.OrderRepository;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -17,15 +16,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
+
 public class PaymentEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentEventListener.class);
     private final OrderRepository orderRepository;
     private final OrderEventPublisher eventPublisher;
+
+    public PaymentEventListener(OrderRepository orderRepository, OrderEventPublisher eventPublisher) {
+        this.orderRepository = orderRepository;
+        this.eventPublisher = eventPublisher;
+    }
 
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "payment.success.queue", durable = "true"),
@@ -51,12 +54,12 @@ public class PaymentEventListener {
         logger.info("Order {} updated to PAID status.", order.getOrderNumber());
 
         List<OrderEventPayloads.EventLineItem> eventItems = order.getOrderLineItemsList().stream()
-                .map(item -> OrderEventPayloads.EventLineItem.builder()
-                        .skuCode(item.getSkuCode())
-                        .productName(item.getProductName())
-                        .quantity(item.getQuantity())
-                        .build())
-                .collect(Collectors.toList());
+                .map(item -> new OrderEventPayloads.EventLineItem(
+                        item.getSkuCode(),
+                        item.getProductName(),
+                        item.getQuantity()
+                ))
+                .toList();
 
         eventPublisher.publishDeductStockEvent(new OrderEventPayloads.DeductStockEvent(order.getOrderNumber(), eventItems));
         eventPublisher.publishClearCartEvent(new OrderEventPayloads.ClearCartEvent(order.getUserEmail()));

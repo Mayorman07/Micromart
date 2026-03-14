@@ -17,13 +17,13 @@ public class OrderMapper {
         if (itemRequests == null) return List.of();
 
         return itemRequests.stream()
-                .map(item -> OrderLineItems.builder()
-                        .skuCode(item.getSkuCode())
-                        .productName(item.getProductName())
-                        .imageUrl(item.getImageUrl())
-                        .unitPrice(item.getUnitPrice())
-                        .quantity(item.getQuantity())
-                        .build())
+                .map(item -> new OrderLineItems(
+                        item.getSkuCode(),
+                        item.getProductName(),
+                        item.getImageUrl(),
+                        item.getUnitPrice(),
+                        item.getQuantity()
+                ))
                 .collect(Collectors.toList());
     }
 

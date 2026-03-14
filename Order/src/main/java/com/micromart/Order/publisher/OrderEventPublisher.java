@@ -9,11 +9,14 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class OrderEventPublisher {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderEventPublisher.class);
     private final RabbitTemplate rabbitTemplate;
+
+    public OrderEventPublisher(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
     public void publishDeductStockEvent(OrderEventPayloads.DeductStockEvent event) {
         logger.info("Publishing DeductStockEvent for Order: {}", event.getOrderNumber());

@@ -4,6 +4,7 @@ import com.micromart.notification.channels.EmailNotificationChannel;
 import com.micromart.notification.channels.NotificationChannel;
 import com.micromart.notification.configuration.RabbitMQConfig;
 import com.micromart.notification.factory.NotificationFactory;
+import com.micromart.notification.model.OrderReceiptEvent;
 import com.micromart.notification.model.PasswordResetEventDto;
 import com.micromart.notification.model.PaymentEvent;
 import com.micromart.notification.model.ReactivationEvent;
@@ -141,7 +142,7 @@ public class NotificationListener {
             exchange = @org.springframework.amqp.rabbit.annotation.Exchange(value = "micromart.exchange", type = "topic"),
             key = "notification.receipt"
     ))
-    public void handleOrderReceiptEvent(com.micromart.notification.model.OrderReceiptEvent event) {
+    public void handleOrderReceiptEvent(OrderReceiptEvent event) {
         log.info("Processing order fulfillment notification for Order: {}", event.getOrderNumber());
 
         NotificationChannel channel = notificationFactory.getChannel("EMAIL");
