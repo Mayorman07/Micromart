@@ -2,29 +2,48 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>We Miss You - MicroMart</title>
+    <title>We've Missed You - MicroMart</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f7f6; -webkit-font-smoothing: antialiased;">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; -webkit-font-smoothing: antialiased;">
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f4f7f6; padding: 40px 20px;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; padding: 80px 20px;">
     <tr>
         <td align="center">
 
-            <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 35px rgba(0, 201, 255, 0.15);">
+            <table width="560" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff;">
 
                 <tr>
-                    <td align="center" style="background: #00C9FF; background: linear-gradient(135deg, #00C9FF 0%, #0083B0 100%); padding: 50px 30px;">
-                        <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.1);">MicroMart</h1>
-                        <p style="color: #e0f9ff; font-size: 14px; margin: 10px 0 0 0; font-weight: 500;">Your Premium Shopping Destination</p>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td align="center" style="padding: 40px 40px 10px 40px;">
+                    <td align="left" style="padding-bottom: 40px;">
                         <table border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td align="center" valign="middle" width="80" height="80" style="background: linear-gradient(135deg, #00C9FF 0%, #0083B0 100%); border-radius: 50%; font-size: 40px; color: #ffffff; font-weight: 300; line-height: 80px; box-shadow: 0 10px 25px rgba(0, 201, 255, 0.3);">
-                                    &hearts;
+                                <td width="40" style="height: 2px; background-color: #00C9FF; line-height: 2px; font-size: 2px;">&nbsp;</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td align="left" style="padding-bottom: 20px;">
+                        <h1 style="color: #00C9FF; margin: 0; font-size: 14px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;">MICROMART</h1>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td align="left" style="padding-bottom: 50px;">
+                        <h2 style="color: #111827; margin: 0 0 16px 0; font-size: 36px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1;">We've missed <br>your presence.</h2>
+                        <p style="color: #4b5563; font-size: 16px; margin: 0; line-height: 1.6; max-width: 460px;">
+                            Hi <span th:text="${firstName != null ? firstName : 'Partner'}" style="color: #111827; font-weight: 600;">Partner</span>, it’s been a while since your last visit. We've curated new collections and exclusive updates specifically with your taste in mind.
+                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-bottom: 40px; border-top: 1px solid #f3f4f6; padding-top: 40px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td align="left" style="background-color: #f0fdfa; border-radius: 4px; padding: 24px; border: 1px solid #ccfbf1;">
+                                    <p style="font-size: 11px; color: #0f766e; text-transform: uppercase; font-weight: 700; margin: 0 0 8px 0; letter-spacing: 1.5px;">Welcome Back Incentive</p>
+                                    <p style="font-size: 18px; color: #111827; font-weight: 700; margin: 0;">Enjoy an <span style="color: #00C9FF;">exclusive 15% discount</span> on your next acquisition.</p>
                                 </td>
                             </tr>
                         </table>
@@ -32,34 +51,15 @@
                 </tr>
 
                 <tr>
-                    <td align="center" style="padding: 10px 40px 20px 40px;">
-                        <h2 style="font-size: 28px; font-weight: 700; color: #1a1a1a; margin: 0 0 20px 0; letter-spacing: -0.5px;">
-                            We've missed you, <span style="color: #00C9FF;" th:text="${firstName != null ? firstName : 'Friend'}">Friend</span>! &#128075;
-                        </h2>
-
-                        <div style="background-color: #e0f9ff; color: #0083B0; padding: 12px 25px; border-radius: 50px; display: inline-block; font-size: 15px; font-weight: 600; margin-bottom: 25px; border: 1px solid #b3efff;">
-                            &#127873; <strong style="color: #00C9FF;">Exclusive 15% OFF</strong> your next order
-                        </div>
-
-                        <p style="font-size: 16px; color: #666666; margin: 0 0 15px 0; line-height: 1.8;">
-                            It's been a while since your last visit. We've been busy adding <strong>brand new collections</strong>, <strong>exclusive deals</strong>, and <strong>premium products</strong> just waiting for you.
-                        </p>
-                        <p style="font-size: 16px; color: #666666; margin: 0; line-height: 1.8;">
-                            Come see what's new on the shelf — your favorites are waiting.
-                        </p>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td style="padding: 15px 40px 35px 40px;">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="25" style="background-color: #f8f9fa; border-radius: 12px; border-left: 4px solid #00C9FF;">
+                    <td style="padding-bottom: 50px;">
+                        <h3 style="margin: 0 0 20px 0; font-size: 11px; color: #9ca3af; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Latest Curations</h3>
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td>
-                                    <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #1a1a1a; font-weight: 700;">&#10024; What's New at MicroMart</h3>
-                                    <p style="margin: 0 0 10px 0; color: #666666; font-size: 15px; line-height: 1.6;">&#128374; <strong>Smart Eyewear:</strong> Dive into VR headsets and vision tech.</p>
-                                    <p style="margin: 0 0 10px 0; color: #666666; font-size: 15px; line-height: 1.6;">&#128641; <strong>Aerial Drones:</strong> Upgrade your aerial photography and racing quads.</p>
-                                    <p style="margin: 0 0 10px 0; color: #666666; font-size: 15px; line-height: 1.6;">&#127919; <strong>Anime & Pokémon:</strong> New limited-edition figures and collectibles.</p>
-                                    <p style="margin: 0; color: #666666; font-size: 15px; line-height: 1.6;">&#128663; <strong>RC Hobbies:</strong> Restocked remote-controlled cars, boats, and planes.</p>
+                                <td style="color: #4b5563; font-size: 15px; line-height: 2.2;">
+                                    <strong style="color: #111827;">Smart Eyewear</strong> &mdash; Advanced VR and vision technology<br>
+                                    <strong style="color: #111827;">Aerial Drones</strong> &mdash; Professional photography and racing quads<br>
+                                    <strong style="color: #111827;">Collectibles</strong> &mdash; Limited-edition Anime & Pokémon figures<br>
+                                    <strong style="color: #111827;">RC Hobbies</strong> &mdash; Precision-engineered cars and aquatic craft
                                 </td>
                             </tr>
                         </table>
@@ -67,44 +67,35 @@
                 </tr>
 
                 <tr>
-                    <td align="center" style="padding: 10px 40px 30px 40px;">
-                        <a th:href="${loginUrl}" target="_blank" style="background: #00C9FF; background: linear-gradient(135deg, #00C9FF 0%, #0083B0 100%); color: #ffffff; padding: 18px 50px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: 700; display: inline-block; letter-spacing: 0.5px; text-transform: uppercase;">Return to MicroMart</a>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td align="center" style="padding: 0 40px 40px 40px;">
-                        <p style="font-size: 14px; color: #888888; margin: 0;">
-                            Questions? <a href="#" style="color: #00C9FF; text-decoration: none; font-weight: 600;">Contact Support</a> or reply to this email.
-                        </p>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td align="center" style="background-color: #f8f9fa; padding: 40px 30px; border-top: 1px solid #e9ecef;">
-                        <p style="font-size: 13px; color: #999999; margin: 0 0 20px 0;">
-                            &copy; 2026 MicroMart Inc. Lagos, Nigeria.<br>All rights reserved.
-                        </p>
-
-                        <table border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 20px;">
+                    <td align="left" style="padding-bottom: 80px;">
+                        <table border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td align="center" width="40"><a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #0083B0; border-radius: 50%; line-height: 32px; color: white; text-decoration: none; font-weight: bold; font-size: 14px;">f</a></td>
-                                <td align="center" width="40"><a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #0083B0; border-radius: 50%; line-height: 32px; color: white; text-decoration: none; font-weight: bold; font-size: 14px;">t</a></td>
-                                <td align="center" width="40"><a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #0083B0; border-radius: 50%; line-height: 32px; color: white; text-decoration: none; font-weight: bold; font-size: 14px;">in</a></td>
-                                <td align="center" width="40"><a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #0083B0; border-radius: 50%; line-height: 32px; color: white; text-decoration: none; font-weight: bold; font-size: 14px;">ig</a></td>
+                                <td align="center" bgcolor="#111827" style="border-radius: 2px;">
+                                    <a th:href="${loginUrl}" target="_blank" style="font-size: 12px; font-weight: 700; color: #ffffff; text-decoration: none; padding: 18px 40px; display: inline-block; text-transform: uppercase; letter-spacing: 2px;">Explore MicroMart</a>
+                                </td>
                             </tr>
                         </table>
+                    </td>
+                </tr>
 
-                        <p style="font-size: 13px; margin: 0 0 20px 0;">
-                            <a href="#" style="color: #00C9FF; text-decoration: none; font-weight: 600; margin: 0 10px;">Help Center</a>
-                            <a href="#" style="color: #00C9FF; text-decoration: none; font-weight: 600; margin: 0 10px;">Privacy Policy</a>
-                            <a href="#" style="color: #00C9FF; text-decoration: none; font-weight: 600; margin: 0 10px;">Terms</a>
-                            <a href="#" style="color: #00C9FF; text-decoration: none; font-weight: 600; margin: 0 10px;">Unsubscribe</a>
-                        </p>
-
-                        <p style="margin: 0; font-size: 12px; color: #adb5bd;">
-                            Sent with &#128153; by the MicroMart Team
-                        </p>
+                <tr>
+                    <td align="left" style="border-top: 1px solid #f3f4f6; padding-top: 40px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td align="left">
+                                    <p style="font-size: 12px; color: #9ca3af; margin: 0; line-height: 1.6;">
+                                        &copy; 2026 MicroMart Inc.<br>
+                                        Lagos, Nigeria.
+                                    </p>
+                                </td>
+                                <td align="right" valign="bottom">
+                                    <p style="font-size: 12px; margin: 0;">
+                                        <a href="#" style="color: #111827; text-decoration: none; font-weight: 700; margin-left: 20px;">Support</a>
+                                        <a href="#" style="color: #111827; text-decoration: none; font-weight: 700; margin-left: 20px;">Unsubscribe</a>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
 
