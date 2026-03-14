@@ -2,29 +2,56 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Payment Confirmed - Micromart</title>
+    <title>Payment Confirmed - MicroMart</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f7f6; -webkit-font-smoothing: antialiased;">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; -webkit-font-smoothing: antialiased;">
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f4f7f6; padding: 40px 20px;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; padding: 80px 20px;">
     <tr>
         <td align="center">
 
-            <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+            <table width="560" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff;">
 
                 <tr>
-                    <td align="center" style="background: #00b4db; background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%); padding: 45px 30px;">
-                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;">Micromart</h1>
-                        <p style="color: #e0f7fa; font-size: 14px; margin: 10px 0 0 0;">Your Premium Shopping Destination</p>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td align="center" style="padding: 40px 40px 10px 40px;">
+                    <td align="left" style="padding-bottom: 40px;">
                         <table border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td align="center" valign="middle" width="70" height="70" style="background-color: #10b981; border-radius: 50%; font-size: 35px; color: #ffffff; font-weight: bold; line-height: 70px; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);">
-                                    &#10003;
+                                <td width="40" style="height: 2px; background-color: #00b4db; line-height: 2px; font-size: 2px;">&nbsp;</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td align="left" style="padding-bottom: 20px;">
+                        <h1 style="color: #00b4db; margin: 0; font-size: 14px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;">MICROMART</h1>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td align="left" style="padding-bottom: 60px;">
+                        <h2 style="color: #111827; margin: 0 0 16px 0; font-size: 36px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1;">Your order is <br>confirmed.</h2>
+                        <p style="color: #4b5563; font-size: 16px; margin: 0; line-height: 1.6; max-width: 440px;">
+                            Hi <span th:text="${firstName != null ? firstName : 'Partner'}" style="color: #111827; font-weight: 600;">Partner</span>, we have successfully processed your payment. Our team is now preparing your items for dispatch.
+                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-bottom: 40px; border-top: 1px solid #f3f4f6; padding-top: 40px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td width="33%" valign="top">
+                                    <p style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 700; margin: 0 0 8px 0; letter-spacing: 1px;">Reference</p>
+                                    <p style="font-size: 14px; color: #111827; font-weight: 600; margin: 0;" th:text="${orderId}">ORD-12345</p>
+                                </td>
+                                <td width="33%" valign="top">
+                                    <p style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 700; margin: 0 0 8px 0; letter-spacing: 1px;">Status</p>
+                                    <p style="font-size: 14px; color: #10b981; font-weight: 700; margin: 0; text-transform: uppercase;">Paid</p>
+                                </td>
+                                <td width="34%" valign="top" align="right">
+                                    <p style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 700; margin: 0 0 8px 0; letter-spacing: 1px;">Total Amount</p>
+                                    <p style="font-size: 20px; color: #00b4db; font-weight: 800; margin: 0;" th:text="'$' + ${#numbers.formatDecimal(totalAmount, 1, 2)}">$0.00</p>
                                 </td>
                             </tr>
                         </table>
@@ -32,42 +59,36 @@
                 </tr>
 
                 <tr>
-                    <td align="center" style="padding: 10px 40px 20px 40px;">
-                        <h2 style="font-size: 26px; font-weight: 700; color: #1a1a1a; margin: 0 0 15px 0;">
-                            Payment Confirmed, <span style="color: #00b4db;" th:text="${firstName != null ? firstName : 'Partner'}">Partner</span>!
-                        </h2>
-
-                        <div style="background-color: #e0f6fc; color: #0083b0; padding: 8px 24px; border-radius: 50px; display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px;">
-                            <span th:text="'ORDER #' + ${orderId}">ORDER #ORD-12345</span>
-                        </div>
-
-                        <p style="font-size: 16px; color: #666666; margin: 0; line-height: 1.6;">
-                            Thank you for your order! Your payment has been securely processed and confirmed. Our team is already preparing your items for shipment.
-                        </p>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td style="padding: 10px 40px 20px 40px;">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f8f9fa; border-radius: 12px; border: 1px solid #e9ecef; overflow: hidden;">
+                    <td style="padding-bottom: 60px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+                            <thead>
                             <tr>
-                                <td colspan="3" style="background-color: #00b4db; color: #ffffff; padding: 15px 20px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    Order Summary
-                                </td>
+                                <th align="left" style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; padding-bottom: 12px; border-bottom: 1px solid #f3f4f6;">Item Description</th>
+                                <th align="right" style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; padding-bottom: 12px; border-bottom: 1px solid #f3f4f6;">Quantity</th>
                             </tr>
-
+                            </thead>
+                            <tbody>
                             <tr th:each="item : ${items}">
-                                <td style="padding: 15px 20px; border-bottom: 1px solid #e9ecef; font-size: 15px; color: #333333; font-weight: 500; width: 50%;" th:text="${item.productName}">Product Name</td>
-                                <td align="center" style="padding: 15px 10px; border-bottom: 1px solid #e9ecef; font-size: 14px; color: #666666; width: 25%;" th:text="'× ' + ${item.quantity}">× 1</td>
-                                <td align="right" style="padding: 15px 20px; border-bottom: 1px solid #e9ecef; font-size: 15px; color: #333333; font-weight: 600; width: 25%;" th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 2)}">$0.00</td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="2" style="background-color: #e8f5e9; padding: 20px; border-top: 2px solid #10b981; font-size: 16px; color: #1a1a1a; font-weight: 700;">
-                                    Total Paid
+                                <td align="left" style="padding: 20px 0; border-bottom: 1px solid #f9fafb;">
+                                    <span style="display: block; color: #111827; font-size: 15px; font-weight: 600; margin-bottom: 2px;" th:text="${item.productName}">Product Name</span>
+                                    <span style="display: block; color: #9ca3af; font-size: 12px;" th:text="'SKU: ' + ${item.skuCode}">SKU-123</span>
                                 </td>
-                                <td align="right" style="background-color: #e8f5e9; padding: 20px; border-top: 2px solid #10b981; font-size: 22px; color: #10b981; font-weight: 800;" th:text="'$' + ${#numbers.formatDecimal(totalAmount, 1, 2)}">
-                                    $0.00
+                                <td align="right" style="padding: 20px 0; border-bottom: 1px solid #f9fafb; color: #111827; font-size: 15px; font-weight: 500;" th:text="${item.quantity}">1</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-bottom: 60px;">
+                        <h3 style="margin: 0 0 20px 0; font-size: 11px; color: #9ca3af; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Fulfillment Logistics</h3>
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td style="color: #4b5563; font-size: 14px; line-height: 1.8;">
+                                    <span style="color: #00b4db; margin-right: 12px;">&mdash;</span> Order processing initiated in Treasure Island hub<br>
+                                    <span style="color: #00b4db; margin-right: 12px;">&mdash;</span> Item inspection and export-grade packaging<br>
+                                    <span style="color: #00b4db; margin-right: 12px;">&mdash;</span> Final dispatch and live tracking activation
                                 </td>
                             </tr>
                         </table>
@@ -75,15 +96,11 @@
                 </tr>
 
                 <tr>
-                    <td style="padding: 10px 40px 20px 40px;">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="25" style="background-color: #f8f9fa; border-radius: 12px; border-left: 4px solid #00b4db;">
+                    <td align="left" style="padding-bottom: 80px;">
+                        <table border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td>
-                                    <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #1a1a1a; font-weight: 700;">&#128230; What happens next?</h3>
-                                    <p style="margin: 0 0 8px 0; color: #666666; font-size: 14px;">&#9989; Order confirmed and payment processed</p>
-                                    <p style="margin: 0 0 8px 0; color: #666666; font-size: 14px;">&#128230; Items being picked and packed (1-2 business days)</p>
-                                    <p style="margin: 0 0 8px 0; color: #666666; font-size: 14px;">&#128666; Shipped with tracking number via email</p>
-                                    <p style="margin: 0; color: #666666; font-size: 14px;">&#128236; Delivered to your address (3-5 business days)</p>
+                                <td align="center" bgcolor="#111827" style="border-radius: 2px;">
+                                    <a th:href="${trackUrl}" target="_blank" style="font-size: 12px; font-weight: 700; color: #ffffff; text-decoration: none; padding: 18px 40px; display: inline-block; text-transform: uppercase; letter-spacing: 2px;">Track Shipment</a>
                                 </td>
                             </tr>
                         </table>
@@ -91,41 +108,23 @@
                 </tr>
 
                 <tr>
-                    <td style="padding: 10px 40px 20px 40px;">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="20" style="background-color: #e8f5e9; border-radius: 12px; border-left: 4px solid #10b981;">
+                    <td align="left" style="border-top: 1px solid #f3f4f6; padding-top: 40px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td style="font-size: 13px; color: #2e7d32; line-height: 1.5;">
-                                    <strong>&#128274;</strong> Your transaction is secured with 256-bit SSL encryption. We never store your full payment details.
+                                <td align="left">
+                                    <p style="font-size: 12px; color: #9ca3af; margin: 0; line-height: 1.6;">
+                                        &copy; 2026 MicroMart Inc. All rights reserved.<br>
+                                        Lagos, Nigeria.
+                                    </p>
+                                </td>
+                                <td align="right" valign="bottom">
+                                    <p style="font-size: 12px; margin: 0;">
+                                        <a href="#" style="color: #111827; text-decoration: none; font-weight: 700; margin-left: 20px;">Support</a>
+                                        <a href="#" style="color: #111827; text-decoration: none; font-weight: 700; margin-left: 20px;">Policies</a>
+                                    </p>
                                 </td>
                             </tr>
                         </table>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td align="center" style="padding: 10px 40px 20px 40px;">
-                        <a th:href="${trackUrl}" target="_blank" style="background-color: #00b4db; color: #ffffff; padding: 16px 45px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: bold; display: inline-block;">Track My Order</a>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td align="center" style="padding: 0 40px 30px 40px;">
-                        <p style="font-size: 14px; color: #888888; margin: 0;">
-                            Questions about your order? <a href="#" style="color: #00b4db; text-decoration: none; font-weight: 600;">Contact Support</a> or reply to this email.
-                        </p>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td align="center" style="background-color: #f8f9fa; padding: 30px 40px; border-top: 1px solid #e9ecef;">
-                        <p style="font-size: 12px; color: #999999; margin: 0 0 15px 0;">
-                            &copy; 2026 Micromart Inc. Lagos, Nigeria. All rights reserved.
-                        </p>
-                        <p style="font-size: 12px; margin: 0;">
-                            <a href="#" style="color: #00b4db; text-decoration: none; font-weight: bold; margin: 0 10px;">Help Center</a>
-                            <a href="#" style="color: #00b4db; text-decoration: none; font-weight: bold; margin: 0 10px;">Privacy Policy</a>
-                            <a href="#" style="color: #00b4db; text-decoration: none; font-weight: bold; margin: 0 10px;">Terms</a>
-                        </p>
                     </td>
                 </tr>
 
