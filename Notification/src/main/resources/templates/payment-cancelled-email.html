@@ -2,75 +2,80 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Finish Your Order</title>
+  <title>Finish Your Order - MicroMart</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f7f6; -webkit-font-smoothing: antialiased;">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f9fafb; -webkit-font-smoothing: antialiased;">
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f4f7f6; padding: 40px 20px;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f9fafb; padding: 60px 20px;">
   <tr>
     <td align="center">
 
-      <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.06);">
+      <table width="560" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 4px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
 
         <tr>
-          <td align="center" style="background: #ff6b6b; background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%); padding: 35px 40px;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 2px;">MICROMART</h1>
+          <td style="height: 4px; background: #ff6b6b; background: linear-gradient(90deg, #ff6b6b 0%, #ff8e53 100%); line-height: 4px; font-size: 4px;">&nbsp;</td>
+        </tr>
+
+        <tr>
+          <td align="left" style="padding: 40px 40px 20px 40px;">
+            <h1 style="color: #ff6b6b; margin: 0; font-size: 16px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">MICROMART</h1>
           </td>
         </tr>
 
         <tr>
-          <td align="center" style="padding: 40px 40px 20px 40px;">
+          <td align="left" style="padding: 0 40px 30px 40px;">
+            <h2 style="color: #111827; margin: 0 0 16px 0; font-size: 28px; font-weight: 700; letter-spacing: -0.03em;">Saved.</h2>
 
-            <div style="background-color: #fff0ed; color: #ff6b6b; width: 64px; height: 64px; border-radius: 50%; font-size: 28px; line-height: 64px; margin: 0 auto 20px auto; font-weight: bold;">
-              🛒
-            </div>
-
-            <h2 style="color: #222222; margin: 0 0 15px 0; font-size: 24px;">We've saved your progress</h2>
-
-            <div style="background-color: #fff0ed; color: #e53e3e; padding: 6px 18px; border-radius: 20px; display: inline-block; font-size: 13px; font-weight: bold; letter-spacing: 1px;">
-              <span th:text="'ORDER #' + ${orderId}">ORDER #12345</span>
-            </div>
-          </td>
-        </tr>
-
-        <tr>
-          <td style="padding: 10px 40px 25px 40px;">
-            <p style="color: #444444; font-size: 16px; margin: 0 0 15px 0; line-height: 1.6;">
-              Hi <strong style="color: #222222;" th:text="${firstName != null ? firstName : 'Partner'}">Partner</strong>,            </p>
-            <p style="color: #555555; font-size: 16px; margin: 0 0 15px 0; line-height: 1.6;">
-              It looks like your payment session for this order timed out or was interrupted. Don't worry—we've saved your progress so you won't have to start over.
+            <p style="color: #374151; font-size: 16px; margin: 0 0 24px 0; line-height: 1.6;">
+              Hi <span th:text="${firstName != null ? firstName : 'Partner'}" style="color: #111827; font-weight: 600;">Partner</span>,
             </p>
-            <p style="color: #555555; font-size: 16px; margin: 0; line-height: 1.6;">
-              Your items are still securely waiting for you. Simply return to the checkout page using the link below to finalize your purchase.
+
+            <p style="color: #4b5563; font-size: 15px; margin: 0 0 32px 0; line-height: 1.6;">
+              Your payment session for <strong style="color: #111827;">Order #<span th:text="${orderId}">12345</span></strong> was interrupted, but we've held your items. You can pick up exactly where you left off below.
+            </p>
+
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="center" style="border-radius: 4px;" bgcolor="#ff6b6b">
+                  <a th:href="${retryUrl}" target="_blank" style="font-size: 13px; font-weight: 700; color: #ffffff; text-decoration: none; border-radius: 4px; padding: 16px 32px; border: 1px solid #ff6b6b; display: inline-block; text-transform: uppercase; letter-spacing: 1.5px; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);">Complete Checkout</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 0 40px 40px 40px;">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-top: 1px solid #f3f4f6; padding-top: 30px;">
+              <tr>
+                <td>
+                  <p style="font-size: 13px; color: #6b7280; margin: 0; line-height: 1.6;">
+                    <strong style="color: #111827;">Note:</strong> Your items are reserved for a limited time. If you have questions about your payment method, simply reply to this email for assistance.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 0 40px 40px 40px;">
+            <p style="font-size: 12px; color: #9ca3af; margin: 0 0 8px 0;">Trouble with the button? Copy and paste this URL:</p>
+            <p style="font-size: 12px; color: #ff6b6b; margin: 0; word-break: break-all; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;" th:text="${retryUrl}">
+              https://micromart.com/checkout/retry/...
             </p>
           </td>
         </tr>
 
         <tr>
-          <td align="center" style="padding: 20px 40px 45px 40px;">
-            <a th:href="${retryUrl}" target="_blank" style="background-color: #ff6b6b; color: #ffffff; padding: 16px 45px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: bold; display: inline-block; box-shadow: 0 6px 15px rgba(255, 107, 107, 0.3);">Complete Checkout</a>
-
-            <p style="color: #999999; font-size: 13px; margin-top: 25px; line-height: 1.5;">
-              Link not working? Paste this into your browser:<br>
-              <a th:href="${retryUrl}" style="color: #ff6b6b; text-decoration: none; word-break: break-all;" th:text="${retryUrl}">http://link...</a>
+          <td align="left" style="background-color: #f9fafb; padding: 32px 40px; border-top: 1px solid #e5e7eb;">
+            <p style="font-size: 12px; color: #6b7280; margin: 0 0 16px 0; line-height: 18px;">
+              &copy; 2026 MicroMart Inc.<br>
+              Victoria Island, Lagos, Nigeria.
             </p>
-          </td>
-        </tr>
-
-        <tr>
-          <td style="padding: 0 40px;">
-            <hr style="border: none; border-top: 1px solid #eeeeee; margin: 0;" />
-          </td>
-        </tr>
-
-        <tr>
-          <td align="center" style="padding: 25px 40px 30px 40px;">
-            <p style="color: #aaaaaa; font-size: 12px; margin: 0 0 5px 0;">
-              &copy; 2026 Micromart Inc. Lagos, Nigeria.
-            </p>
-            <p style="color: #aaaaaa; font-size: 12px; margin: 0;">
-              <a href="#" style="color: #00b4db; text-decoration: none; font-weight: bold;">Help Center</a> &bull;
-              <a href="#" style="color: #00b4db; text-decoration: none; font-weight: bold;">Privacy Policy</a>
+            <p style="font-size: 12px; margin: 0;">
+              <a href="#" style="color: #00b4db; text-decoration: none; font-weight: 700; margin-right: 16px;">Support</a>
+              <a href="#" style="color: #111827; text-decoration: none; font-weight: 700;">Privacy</a>
             </p>
           </td>
         </tr>
