@@ -37,6 +37,7 @@ public class WebSecurity {
 
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.GET, "/orders/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/orders/summary/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/orders/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()

@@ -26,7 +26,7 @@ public class OrderClient {
 
         try {
             return webClientBuilder.build().get()
-                    .uri("http://order-service/api/internal/orders/{id}/summary", orderId)
+                    .uri("http://Order/api/internal/orders/{id}/summary", orderId)
                     .retrieve()
                     .bodyToMono(OrderSummaryDTO.class)
                     .block(); // We block because the email cannot be sent without this data

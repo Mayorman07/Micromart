@@ -83,6 +83,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public OrderResponse getOrderSummaryForInternalUse(String orderNumber) {
+        logger.info("Internal Sync: Processing order summary for #{}", orderNumber);
+        Order order = orderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found: " + orderNumber));
+
+        return orderMapper.mapToResponse(order);
+    }
+
+    @Override
     @Transactional
     public OrderResponse cancelOrder(String orderNumber, CancellationReason reason,String authenticatedUserEmail) {
         logger.info("Attempting to cancel order {} with reason: {}", orderNumber, reason);

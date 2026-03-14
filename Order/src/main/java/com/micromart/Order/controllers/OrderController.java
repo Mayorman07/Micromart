@@ -74,6 +74,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getUserOrderCount(userEmail));
     }
 
+    @GetMapping("/summary/{orderNumber}")
+    public ResponseEntity<OrderResponse> getOrderSummaryInternal(@PathVariable String orderNumber) {
+        return ResponseEntity.ok(orderService.getOrderSummaryForInternalUse(orderNumber));
+    }
+
     @PutMapping("/{orderNumber}/cancel")
     public ResponseEntity<OrderResponse> cancelOrder(
             @PathVariable String orderNumber,

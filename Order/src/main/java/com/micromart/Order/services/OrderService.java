@@ -17,6 +17,7 @@ public interface OrderService {
     OrderResponse cancelOrder(String orderNumber, CancellationReason reason,String authenticatedUserEmail);
     boolean checkOrderExists(String orderNumber);
     long getUserOrderCount(String authenticatedUserEmail);
+    OrderResponse getOrderSummaryForInternalUse(String orderNumber);
     List<OrderResponse> getUserOrdersByStatus(String userEmail, OrderStatus status);
     List<OrderResponse> getOrdersByStatus(OrderStatus status);
     List<OrderResponse> getOrdersByDateRange(LocalDateTime start, LocalDateTime end);
