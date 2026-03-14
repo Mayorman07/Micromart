@@ -112,9 +112,7 @@ public class NotificationListener {
 
     /**
      * Handles payment status updates from the Payment Service.
-     * Critical for communicating transaction outcomes to the customer.
-     *
-     * @param event DTO containing Order ID and payment status (PAID/CANCELLED).
+     * Triggers EMAIL #1: "Payment Received / Receipt"
      */
     @RabbitListener(queues = RabbitMQConfig.PAYMENT_NOTIFICATION_QUEUE)
     public void handlePaymentEvent(PaymentEvent event) {
@@ -131,6 +129,24 @@ public class NotificationListener {
                 default -> log.warn(" Received unhandled payment status: {} for order: {}",
                         event.getStatus(), event.getOrderId());
             }
+        }
+    }
+
+    /**
+     * Handles detailed order receipt events published by the Order Service.
+     * Triggers EMAIL #2: "Your order is on its way!"
+     */
+    @RabbitListener(bindings = @org.springframework.amqp.rabbit.annotation.QueueBinding(
+            value = @org.springframework.amqp.rabbit.annotation.Queue(value = "notification.receipt.queue", durable = "true"),
+            exchange = @org.springframework.amqp.rabbit.annotation.Exchange(value = "micromart.exchange", type = "topic"),
+            key = "notification.receipt"
+    ))
+    public void handleOrderReceiptEvent(com.micromart.notification.model.OrderReceiptEvent event) {
+        log.info("Processing order fulfillment notification for Order: {}", event.getOrderNumber());
+
+        NotificationChannel channel = notificationFactory.getChannel("EMAIL");
+        if (channel instanceof EmailNotificationChannel emailChannel) {
+            emailChannel.sendOrderReceiptEmail(event);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.micromart.notification.channels;
 
 import com.micromart.notification.client.OrderClient;
+import com.micromart.notification.model.OrderReceiptEvent;
 import com.micromart.notification.model.OrderSummaryDTO;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -183,6 +184,33 @@ public class EmailNotificationChannel implements NotificationChannel {
             logger.info("Payment success email sent for order {}", orderId);
         } catch (Exception e) {
             logger.error("Error building payment success email: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Processes and sends the order receipt email triggered by RabbitMQ.
+     * * @param event The payload received from the RabbitMQ queue containing order details.
+     */
+    public void sendOrderReceiptEmail(OrderReceiptEvent event) {
+        logger.info("Preparing Order Receipt Email for: {}", event.getUserEmail());
+
+        try {
+            Context context = new Context();
+            context.setVariable("orderNumber", event.getOrderNumber());
+            context.setVariable("totalAmount", event.getTotalAmount());
+            context.setVariable("items", event.getItems());
+
+            String trackUrl = environment.getProperty("app.frontend.url") + "/orders/" + event.getOrderNumber();
+            context.setVariable("trackUrl", trackUrl);
+
+            String htmlBody = templateEngine.process("order-receipt-email", context);
+
+            sendSimpleHtmlEmail(event.getUserEmail(), "MicroMart: Your order is on its way!  (Order #" + event.getOrderNumber() + ")", htmlBody);
+
+            logger.info("Order Receipt Email successfully sent to {} for order {}", event.getUserEmail(), event.getOrderNumber());
+
+        } catch (Exception e) {
+            logger.error("Failed to create order receipt email for order {}: {}", event.getOrderNumber(), e.getMessage());
         }
     }
 

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Receipt</title>
+</head>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
+
+<div style="text-align: center; padding-bottom: 20px;">
+    <h2 style="color: #2c3e50;">Thank you for your order! 🎉</h2>
+    <p style="color: #7f8c8d; font-size: 16px;">We've received your order and are getting it ready to ship.</p>
+</div>
+
+<div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+    <p style="margin: 0; font-weight: bold;">Order Number: <span style="font-weight: normal;" th:text="${orderNumber}">ORD-123</span></p>
+    <p style="margin: 5px 0 0 0; font-weight: bold;">Total Amount: <span style="font-weight: normal; color: #27ae60;" th:text="'$' + ${totalAmount}">$0.00</span></p>
+</div>
+
+<h3 style="color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 5px;">Order Details</h3>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+    <tr style="background-color: #f4f4f4; text-align: left;">
+        <th style="padding: 10px; border: 1px solid #ddd;">Item</th>
+        <th style="padding: 10px; border: 1px solid #ddd;">SKU</th>
+        <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Qty</th>
+    </tr>
+    <tr th:each="item : ${items}">
+        <td style="padding: 10px; border: 1px solid #ddd;" th:text="${item.productName}">Product Name</td>
+        <td style="padding: 10px; border: 1px solid #ddd; color: #7f8c8d;" th:text="${item.skuCode}">SKU</td>
+        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;" th:text="${item.quantity}">1</td>
+    </tr>
+</table>
+
+<div style="text-align: center; margin-top: 20px;">
+    <a th:href="${trackUrl}" style="background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Track Your Order</a>
+</div>
+
+</body>
+</html>
