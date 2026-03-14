@@ -6,23 +6,32 @@ import java.math.BigDecimal;
 
 @Data
 public class OrderItemSummary {
-    private String name;
-    private BigDecimal quantity;
+    private String skuCode;
+    private String productName;
+    private Integer quantity;
     private Double price;
 
-    public String getName() {
-        return name;
+    public String getSkuCode() {
+        return skuCode;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSkuCode(String skuCode) {
+        this.skuCode = skuCode;
     }
 
-    public BigDecimal getQuantity() {
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(BigDecimal quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
