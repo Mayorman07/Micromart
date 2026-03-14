@@ -26,13 +26,12 @@ public class OrderClient {
 
         try {
             return webClientBuilder.build().get()
-                    .uri("http://Order/api/internal/orders/{id}/summary", orderId)
+                    .uri("http://Order/api/orders/summary/{orderNumber}", orderId)
                     .retrieve()
                     .bodyToMono(OrderSummaryDTO.class)
-                    .block(); // We block because the email cannot be sent without this data
+                    .block();
         } catch (Exception e) {
             logger.error(" Failed to fetch order summary for Order: " + orderId, e);
-            // Throwing this ensures the RabbitMQ listener retries the message
             throw new RuntimeException("Order Service enrichment unavailable");
         }
     }

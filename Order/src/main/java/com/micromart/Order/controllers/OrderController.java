@@ -1,11 +1,10 @@
 package com.micromart.Order.controllers;
 
 import com.micromart.Order.enums.CancellationReason;
-import com.micromart.Order.model.OrderResponse;
+import com.micromart.Order.model.responses.OrderResponse;
 import com.micromart.Order.model.requests.OrderRequest;
 import com.micromart.Order.services.OrderService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,14 +47,15 @@ public class OrderController {
         orderRequest.setUserEmail(userEmail);
 
         OrderResponse createdOrder = orderService.createOrder(orderRequest);
-        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED); // Returns 201 Created
+        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 
     @GetMapping("/{orderNumber}")
     public ResponseEntity<OrderResponse> getOrderByOrderNumber(@PathVariable String orderNumber,
                                                                @AuthenticationPrincipal String userEmail) {
-        logger.info("REST request to get order: {} for user: {}", orderNumber,userEmail);
-        return ResponseEntity.ok(orderService.getOrderByOrderNumber(orderNumber,userEmail));
+        logger.info("REST request to get order: {} for user: {}", orderNumber, userEmail);
+        OrderResponse response = orderService.getOrderByOrderNumber(orderNumber, userEmail);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/my-orders/paginated")

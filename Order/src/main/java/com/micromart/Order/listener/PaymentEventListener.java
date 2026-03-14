@@ -37,32 +37,44 @@ public class PaymentEventListener {
     ))
     @Transactional
     public void handlePaymentSuccess(PaymentEvent paymentEvent) {
-        logger.info("Received PaymentEvent for Order ID: {} with status: {}", paymentEvent.getOrderId(), paymentEvent.getStatus());
+        if (paymentEvent == null || paymentEvent.getOrderId() == null) {
+            logger.error("Received a null or malformed PaymentEvent");
+            return;
+        }
 
-        if (!"PAID".equalsIgnoreCase(paymentEvent.getStatus())) {
-            logger.warn("Payment is not PAID for Order {}. Current status is {}. Ignoring Ripple Effect.",
-                    paymentEvent.getOrderId(), paymentEvent.getStatus());
+        logger.info("Received PaymentEvent for Order ID: {} with status: {}",
+                paymentEvent.getOrderId(), paymentEvent.getStatus());
+
+        String status = String.valueOf(paymentEvent.getStatus());
+        if (!"PAID".equalsIgnoreCase(status)) {
+            logger.warn("Ignoring event. Status is: {}", status);
             return;
         }
 
         Order order = orderRepository.findByOrderNumber(paymentEvent.getOrderId())
-                .orElseThrow(() -> new RuntimeException("Order not found during payment processing: " + paymentEvent.getOrderId()));
+                .orElseThrow(() -> new RuntimeException("Order not found: " + paymentEvent.getOrderId()));
 
         order.setOrderStatus(OrderStatus.PAID);
         orderRepository.save(order);
+        logger.info("Order {} marked as PAID in database", order.getOrderNumber());
 
-        logger.info("Order {} updated to PAID status.", order.getOrderNumber());
+        try {
+            List<OrderEventPayloads.EventLineItem> eventItems = order.getOrderLineItemsList().stream()
+                    .map(item -> new OrderEventPayloads.EventLineItem(
+                            item.getSkuCode(),
+                            item.getProductName(),
+                            item.getQuantity()
+                    ))
+                    .toList();
 
-        List<OrderEventPayloads.EventLineItem> eventItems = order.getOrderLineItemsList().stream()
-                .map(item -> new OrderEventPayloads.EventLineItem(
-                        item.getSkuCode(),
-                        item.getProductName(),
-                        item.getQuantity()
-                ))
-                .toList();
+            eventPublisher.publishDeductStockEvent(new OrderEventPayloads.DeductStockEvent(order.getOrderNumber(), eventItems));
+            eventPublisher.publishClearCartEvent(new OrderEventPayloads.ClearCartEvent(order.getUserEmail()));
+            eventPublisher.publishOrderReceiptEvent(new OrderEventPayloads.OrderReceiptEvent(order.getOrderNumber(), order.getUserEmail(), order.getTotalAmount(), eventItems));
 
-        eventPublisher.publishDeductStockEvent(new OrderEventPayloads.DeductStockEvent(order.getOrderNumber(), eventItems));
-        eventPublisher.publishClearCartEvent(new OrderEventPayloads.ClearCartEvent(order.getUserEmail()));
-        eventPublisher.publishOrderReceiptEvent(new OrderEventPayloads.OrderReceiptEvent(order.getOrderNumber(), order.getUserEmail(), order.getTotalAmount(), eventItems));
+            logger.info("Downstream events published successfully for Order {}", order.getOrderNumber());
+        } catch (Exception e) {
+            logger.error("Failed to publish downstream events for Order {}: {}", order.getOrderNumber(), e.getMessage());
+            throw e;
+        }
     }
 }

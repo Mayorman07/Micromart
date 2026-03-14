@@ -27,8 +27,6 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class Order {
 
@@ -145,5 +143,8 @@ public class Order {
         this.totalAmount = totalAmount;
         this.orderStatus = orderStatus;
         this.orderLineItemsList = orderLineItemsList;
+    }
+
+    public Order() {
     }
 }

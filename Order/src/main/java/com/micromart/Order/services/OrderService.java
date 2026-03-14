@@ -1,7 +1,7 @@
 package com.micromart.Order.services;
 
 import com.micromart.Order.enums.CancellationReason;
-import com.micromart.Order.model.OrderResponse;
+import com.micromart.Order.model.responses.OrderResponse;
 import com.micromart.Order.model.requests.OrderRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

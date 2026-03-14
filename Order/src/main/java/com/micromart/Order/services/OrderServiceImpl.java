@@ -7,11 +7,10 @@ import com.micromart.Order.exceptions.OrderAccessDeniedException;
 import com.micromart.Order.exceptions.OrderCancellationException;
 import com.micromart.Order.exceptions.OrderNotFoundException;
 import com.micromart.Order.mapper.OrderMapper;
-import com.micromart.Order.model.OrderResponse;
+import com.micromart.Order.model.responses.OrderResponse;
 import com.micromart.Order.model.requests.OrderRequest;
 import com.micromart.Order.repository.OrderRepository;
 import com.micromart.Order.utils.OrderUtils;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
@@ -84,10 +82,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse getOrderSummaryForInternalUse(String orderNumber) {
-        logger.info("Internal Sync: Processing order summary for #{}", orderNumber);
-        Order order = orderRepository.findByOrderNumber(orderNumber)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found: " + orderNumber));
+        logger.info("System Enrichment: Retrieving order {} for notification dispatch", orderNumber);
 
+        Order order = orderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new OrderNotFoundException("Registry Error: Order " + orderNumber + " not found"));
         return orderMapper.mapToResponse(order);
     }
 

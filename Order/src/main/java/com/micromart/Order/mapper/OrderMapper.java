@@ -2,7 +2,7 @@ package com.micromart.Order.mapper;
 
 import com.micromart.Order.entities.Order;
 import com.micromart.Order.entities.OrderLineItems;
-import com.micromart.Order.model.OrderResponse;
+import com.micromart.Order.model.responses.OrderResponse;
 import com.micromart.Order.model.requests.OrderItemRequest;
 import com.micromart.Order.model.responses.OrderItemResponse;
 import org.springframework.stereotype.Component;

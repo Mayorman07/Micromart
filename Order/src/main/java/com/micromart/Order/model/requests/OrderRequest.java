@@ -19,22 +19,22 @@ import java.util.List;
 @Builder
 public class OrderRequest {
 
-    @NotBlank(message = "User email is required")
-    private String userEmail;
+        @NotBlank(message = "User email is required")
+        private String userEmail;
 
-    @NotNull(message = "Total amount is required")
-    @Min(value = 0, message = "Total amount cannot be negative")
-    private BigDecimal totalAmount;
+        @NotNull(message = "Total amount is required")
+        @Min(value = 0, message = "Total amount cannot be negative")
+        private BigDecimal totalAmount;
 
-    @NotBlank(message = "Currency is required")
-    private String currency;
+        @NotBlank(message = "Currency is required")
+        private String currency;
 
-    @NotBlank(message = "Payment method is required")
-    private String paymentMethod;
+        @NotBlank(message = "Payment method is required")
+        private String paymentMethod;
 
-    @NotEmpty(message = "Order must contain at least one item")
-    @Valid
-    private List<OrderItemRequest> items;
+        @NotEmpty(message = "Order must contain at least one item")
+        @Valid
+        private List<OrderItemRequest> items;
 
     public String getUserEmail() {
         return userEmail;

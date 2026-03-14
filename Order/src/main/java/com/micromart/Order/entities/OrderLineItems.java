@@ -15,9 +15,6 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "order_line_items")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class OrderLineItems {
 
     @Id
@@ -28,6 +25,9 @@ public class OrderLineItems {
     private String imageUrl;
     private BigDecimal unitPrice;
     private Integer quantity;
+
+    public OrderLineItems() {
+    }
 
     public Long getId() {
         return id;
