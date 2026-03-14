@@ -13,11 +13,15 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class InventoryEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(InventoryEventListener.class);
     private final InventoryService inventoryService;
+
+    public InventoryEventListener(InventoryService inventoryService){
+        this.inventoryService=inventoryService;
+
+    }
 
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "inventory.deduct.queue", durable = "true"),

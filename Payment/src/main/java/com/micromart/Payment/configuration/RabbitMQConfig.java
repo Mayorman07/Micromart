@@ -12,8 +12,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    public static final String EXCHANGE = "payment_exchange";
-    public static final String ROUTING_KEY = "payment_status_key";
+    // Standardize to the common micromart exchange
+    public static final String EXCHANGE = "micromart.exchange";
+    public static final String ROUTING_KEY = "payment.status.updated";
 
     @Bean
     public TopicExchange exchange() {

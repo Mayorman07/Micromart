@@ -9,6 +9,9 @@ import com.micromart.Order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +27,11 @@ public class PaymentEventListener {
     private final OrderRepository orderRepository;
     private final OrderEventPublisher eventPublisher;
 
-    @RabbitListener(queues = "payment.success.queue")
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(value = "payment.success.queue", durable = "true"),
+            exchange = @Exchange(value = "micromart.exchange", type = "topic"),
+            key = "payment.status.updated"
+    ))
     @Transactional
     public void handlePaymentSuccess(PaymentEvent paymentEvent) {
         logger.info("Received PaymentEvent for Order ID: {} with status: {}", paymentEvent.getOrderId(), paymentEvent.getStatus());

@@ -197,8 +197,7 @@ public class EmailNotificationChannel implements NotificationChannel {
             context.setVariable("orderNumber", event.getOrderNumber());
             context.setVariable("totalAmount", event.getTotalAmount());
             context.setVariable("items", event.getItems());
-
-            String trackUrl = environment.getProperty("app.frontend.url") + "/orders/" + event.getOrderNumber();
+            String trackUrl = buildFrontendUrl("/orders/track", event.getOrderNumber());
             context.setVariable("trackUrl", trackUrl);
 
             String htmlBody = templateEngine.process("order-receipt-email", context);
