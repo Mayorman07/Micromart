@@ -154,6 +154,13 @@ public class PaymentServiceImpl implements PaymentService{
         return "Successfully approved payment for Order: " + paymentRecord.getOrderId();
     }
 
+
+    public String getStatusByReference(String reference) {
+        return paymentRecordRepository.findByExternalReference(reference)
+                .map(payment -> payment.getStatus().name())
+                .orElse("NOT_FOUND");
+    }
+
     @Override
     public List<PaymentRecord> getPendingManualPayments() {
         return paymentRecordRepository.findByStatusIn(List.of(

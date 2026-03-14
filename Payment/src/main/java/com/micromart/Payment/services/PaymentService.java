@@ -18,6 +18,8 @@ public interface PaymentService {
      */
     PaymentResponse processPayment(String userId, PaymentRequest paymentRequest);
 
+    String getStatusByReference(String reference);
+
     /**
      * Admin endpoint to manually approve Bank and Crypto payments.
      * @param reference The unique BT-REF or TxHash
