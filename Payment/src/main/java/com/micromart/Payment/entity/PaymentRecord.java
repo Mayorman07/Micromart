@@ -19,7 +19,7 @@ public class PaymentRecord {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String orderId; // Links back to Order Service
+    private String orderId;
 
     @Column(nullable = false)
     private String userId;

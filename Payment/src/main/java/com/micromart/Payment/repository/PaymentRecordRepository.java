@@ -15,8 +15,10 @@ public interface PaymentRecordRepository extends JpaRepository<PaymentRecord, Lo
     // Find by  internal Order ID (for webhook correlation)
     Optional<PaymentRecord> findByOrderId(String orderId);
 
-    // 🔍 Find by Stripe Session ID (for idempotency + webhook safety)
+    //  Find by Stripe Session ID (for idempotency + webhook safety)
     Optional<PaymentRecord> findByExternalReference(String externalReference);
+
+    List<PaymentRecord> findByStatusIn(List<Status> statuses);
 
     // Check if a payment already exists for this order + status
     boolean existsByOrderIdAndStatus(String orderId, Status status);

@@ -137,24 +137,30 @@ public class PaymentServiceImpl implements PaymentService{
     @Override
     @Transactional
     public String approveManualPayment(String reference) {
-
-        logger.info("Admin attempting to approve payment with reference: {}", reference);
-
         PaymentRecord paymentRecord = paymentRecordRepository.findByExternalReference(reference)
-                .orElseThrow(() -> new ResourceNotFoundException("Payment record not found for reference: " + reference));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment record not found"));
 
         if (paymentRecord.getStatus() != Status.AWAITING_TRANSFER &&
-                paymentRecord.getStatus() != Status.AWAITING_ADMIN_APPROVAL) {
-            logger.warn("Cannot approve payment {} - current status: {}", reference, paymentRecord.getStatus());
+                paymentRecord.getStatus() != Status.AWAITING_ADMIN_APPROVAL &&
+                paymentRecord.getStatus() != Status.PENDING) {
+
             throw new IllegalStateException("Payment is not in an approvable state: " + paymentRecord.getStatus());
         }
+
         paymentRecord.setStatus(Status.PAID);
         paymentRecordRepository.save(paymentRecord);
 
-        logger.info("Successfully approved payment for Order: {}", paymentRecord.getOrderId());
-
         sendStatusUpdate(paymentRecord);
         return "Successfully approved payment for Order: " + paymentRecord.getOrderId();
+    }
+
+    @Override
+    public List<PaymentRecord> getPendingManualPayments() {
+        return paymentRecordRepository.findByStatusIn(List.of(
+                Status.AWAITING_TRANSFER,
+                Status.AWAITING_ADMIN_APPROVAL,
+                Status.PENDING
+        ));
     }
 
     @Override

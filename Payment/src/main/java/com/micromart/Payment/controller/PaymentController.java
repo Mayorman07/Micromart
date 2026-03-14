@@ -1,5 +1,6 @@
 package com.micromart.Payment.controller;
 
+import com.micromart.Payment.entity.PaymentRecord;
 import com.micromart.Payment.model.request.PaymentRequest;
 import com.micromart.Payment.model.response.PaymentResponse;
 import com.micromart.Payment.services.PaymentService;
@@ -12,11 +13,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")
@@ -47,6 +51,14 @@ public class PaymentController {
         String result = paymentService.approveManualPayment(reference);
 
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/pending")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<PaymentRecord>> getPendingPayments() {
+        logger.info("Admin fetching pending manual payments");
+        List<PaymentRecord> pendingPayments = paymentService.getPendingManualPayments();
+        return ResponseEntity.ok(pendingPayments);
     }
 }
 
