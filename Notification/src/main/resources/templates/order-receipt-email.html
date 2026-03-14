@@ -33,9 +33,10 @@
 
                 <tr>
                     <td align="left" style="padding: 0 40px 30px 40px; border-bottom: 1px solid #f3f4f6;">
-                        <h2 style="color: #111827; margin: 0 0 8px 0; font-size: 32px; font-weight: 700; letter-spacing: -0.03em;">Order Confirmed.</h2>
+                        <h2 style="color: #111827; margin: 0 0 16px 0; font-size: 32px; font-weight: 700; letter-spacing: -0.03em;">Order Confirmed.</h2>
                         <p style="color: #4b5563; font-size: 15px; margin: 0; line-height: 1.6;">
-                            We've received your payment. Our fulfillment team has been notified and is preparing your shipment.
+                            Hi <strong th:text="${firstName != null ? firstName : 'Partner'}" style="color: #111827;">Partner</strong>,
+                            we've received your payment. Our fulfillment team has been notified and is preparing your shipment.
                         </p>
                     </td>
                 </tr>
@@ -50,7 +51,7 @@
                                 </td>
                                 <td width="50%" valign="top" align="right">
                                     <p style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 700; margin: 0 0 6px 0; letter-spacing: 1px;">Total Amount</p>
-                                    <p style="font-size: 24px; color: #00b4db; font-weight: 700; margin: 0;" th:text="'$' + ${totalAmount}">$0.00</p>
+                                    <p style="font-size: 24px; color: #00b4db; font-weight: 700; margin: 0;" th:text="'$' + ${#numbers.formatDecimal(totalAmount, 1, 2)}">$0.00</p>
                                 </td>
                             </tr>
                         </table>
