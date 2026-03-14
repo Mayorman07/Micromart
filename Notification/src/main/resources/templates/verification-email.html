@@ -2,93 +2,95 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Verify Your Account - Micromart</title>
+    <title>Verify Your Account - MicroMart</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f7f6; -webkit-font-smoothing: antialiased;">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; -webkit-font-smoothing: antialiased;">
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f4f7f6; padding: 40px 20px;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; padding: 80px 20px;">
     <tr>
         <td align="center">
 
-            <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+            <table width="560" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff;">
 
                 <tr>
-                    <td align="center" style="background: #00b4db; background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%); padding: 45px 30px;">
-                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;">Micromart</h1>
-                        <p style="color: #e0f7fa; font-size: 14px; margin: 10px 0 0 0;">Your Premium Shopping Destination</p>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td align="center" style="padding: 40px 40px 10px 40px;">
+                    <td align="left" style="padding-bottom: 40px;">
                         <table border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td align="center" valign="middle" width="70" height="70" style="background-color: #00b4db; border-radius: 50%; font-size: 35px; color: #ffffff; font-weight: bold; line-height: 70px;">
-                                    &#10003;
-                                </td>
+                                <td width="40" style="height: 2px; background: #00b4db; background: linear-gradient(90deg, #00b4db 0%, #0083b0 100%); line-height: 2px; font-size: 2px;">&nbsp;</td>
                             </tr>
                         </table>
                     </td>
                 </tr>
 
                 <tr>
-                    <td align="center" style="padding: 10px 40px 20px 40px;">
-                        <h2 style="font-size: 26px; font-weight: 700; color: #1a1a1a; margin: 0 0 15px 0;">
-                            Welcome, <span style="color: #00b4db;" th:text="${userName != null ? userName : 'Partner'}">Partner</span>!
-                        </h2>
-                        <p style="font-size: 16px; color: #666666; margin: 0 0 15px 0; line-height: 1.6;">
-                            Thank you for joining <strong>Micromart</strong>. We're excited to have you as part of our community.
-                        </p>
-                        <p style="font-size: 16px; color: #666666; margin: 0; line-height: 1.6;">
-                            To complete your registration and unlock exclusive access to premium deals, please verify your email address below.
+                    <td align="left" style="padding-bottom: 20px;">
+                        <h1 style="color: #00b4db; margin: 0; font-size: 14px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;">MICROMART</h1>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td align="left" style="padding-bottom: 50px;">
+                        <h2 style="color: #111827; margin: 0 0 16px 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2;">Verify your account.</h2>
+                        <p style="color: #4b5563; font-size: 16px; margin: 0; line-height: 1.6; max-width: 460px;">
+                            Hi <span th:text="${userName != null ? userName : 'Partner'}" style="color: #111827; font-weight: 600;">Partner</span>, we are thrilled to have you join our community. Please verify your identity to activate your premium access.
                         </p>
                     </td>
                 </tr>
 
                 <tr>
-                    <td align="center" style="padding: 20px 40px 30px 40px;">
-                        <a th:href="${verificationLink}" target="_blank" style="background-color: #00b4db; color: #ffffff; padding: 16px 45px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: bold; display: inline-block;">Verify My Account</a>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td style="padding: 0 40px 30px 40px;">
-
-                        <table width="100%" border="0" cellspacing="0" cellpadding="15" style="background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #00b4db; margin-bottom: 20px;">
+                    <td align="left" style="padding-bottom: 50px; border-top: 1px solid #f3f4f6; padding-top: 40px;">
+                        <table border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td style="font-size: 13px; color: #666666; line-height: 1.5;">
-                                    <strong style="color: #00b4db; font-size: 16px;">&#128274;</strong> This is a secure, encrypted verification link. Your information is protected.
+                                <td align="center" bgcolor="#111827" style="border-radius: 2px;">
+                                    <a th:href="${verificationLink}" target="_blank" style="font-size: 12px; font-weight: 700; color: #ffffff; text-decoration: none; padding: 18px 40px; display: inline-block; text-transform: uppercase; letter-spacing: 2px;">Verify My Account</a>
                                 </td>
                             </tr>
                         </table>
-
-                        <table width="100%" border="0" cellspacing="0" cellpadding="15" style="background-color: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 20px;">
-                            <tr>
-                                <td style="font-size: 14px; color: #856404; line-height: 1.5;">
-                                    <strong>&#9200; Link expires in 24 hours</strong><br>
-                                    For security reasons, this link will expire soon. If you didn't create this account, you can safely ignore this email.
-                                </td>
-                            </tr>
-                        </table>
-
-                        <p style="font-size: 13px; color: #999999; margin: 0 0 8px 0; text-align: center;">Can't click the button? Copy and paste this link:</p>
-                        <div style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; text-align: center;">
-                            <a th:href="${verificationLink}" style="font-size: 12px; color: #00b4db; word-break: break-all; font-family: 'Courier New', monospace; text-decoration: none;" th:text="${verificationLink}">http://link...</a>
-                        </div>
-
                     </td>
                 </tr>
 
                 <tr>
-                    <td align="center" style="background-color: #f8f9fa; padding: 30px 40px; border-top: 1px solid #e9ecef;">
-                        <p style="font-size: 12px; color: #999999; margin: 0 0 15px 0;">
-                            &copy; 2026 Micromart Inc. Lagos, Nigeria. All rights reserved.
+                    <td style="padding-bottom: 60px;">
+                        <h3 style="margin: 0 0 20px 0; font-size: 11px; color: #9ca3af; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Security Protocol</h3>
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td style="color: #4b5563; font-size: 14px; line-height: 2;">
+                                    <span style="color: #00b4db; margin-right: 12px;">&mdash;</span> Secure, encrypted one-time verification link<br>
+                                    <span style="color: #00b4db; margin-right: 12px;">&mdash;</span> Link expires automatically in <strong style="color: #111827;">24 hours</strong><br>
+                                    <span style="color: #00b4db; margin-right: 12px;">&mdash;</span> Activate your dashboard and exclusive member deals
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-bottom: 60px;">
+                        <p style="font-size: 12px; color: #9ca3af; margin: 0 0 8px 0;">Trouble with the button? Copy and paste this URL:</p>
+                        <p style="font-size: 12px; color: #00b4db; margin: 0; word-break: break-all; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;" th:text="${verificationLink}">
+                            https://micromart.com/auth/verify?token=...
                         </p>
-                        <p style="font-size: 12px; margin: 0;">
-                            <a href="#" style="color: #00b4db; text-decoration: none; font-weight: bold; margin: 0 10px;">Help Center</a>
-                            <a href="#" style="color: #00b4db; text-decoration: none; font-weight: bold; margin: 0 10px;">Privacy Policy</a>
-                            <a href="#" style="color: #00b4db; text-decoration: none; font-weight: bold; margin: 0 10px;">Terms</a>
-                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td align="left" style="border-top: 1px solid #f3f4f6; padding-top: 40px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td align="left">
+                                    <p style="font-size: 12px; color: #9ca3af; margin: 0; line-height: 1.6;">
+                                        &copy; 2026 MicroMart Inc.<br>
+                                        Lagos, Nigeria.
+                                    </p>
+                                </td>
+                                <td align="right" valign="bottom">
+                                    <p style="font-size: 12px; margin: 0;">
+                                        <a href="#" style="color: #111827; text-decoration: none; font-weight: 700; margin-left: 20px;">Support</a>
+                                        <a href="#" style="color: #111827; text-decoration: none; font-weight: 700; margin-left: 20px;">Policies</a>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
 
