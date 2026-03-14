@@ -17,16 +17,12 @@ public class CryptoPaymentStrategy implements PaymentStrategy {
         String mockTxHash = PaymentUtils.generateMockTxHash();
 
         String instructions = String.format(
-                "ORDER #%s PLACED. \n" +
-                        "Please send exactly %s %s to the wallet address below. \n" +
-                        "Wallet Address: %s \n" +
-                        "Mock System Note: Your auto-generated TxHash is %s. " +
-                        "The admin will use this to approve your order.",
-                order.getOrderId(),
-                order.getTotalAmount(),
-                order.getCurrency(),
+                "Network: USDT (ERC20)\n" +
+                        "Address: %s\n" +
+                        "Amount: %s %s",
                 walletAddress,
-                mockTxHash
+                order.getTotalAmount(),
+                order.getCurrency()
         );
 
         String qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + walletAddress;

@@ -13,20 +13,13 @@ public class BankTransferStrategy implements PaymentStrategy {
 
     @Override
     public PaymentResponse initiate(OrderDto order) {
-        String amountToPay = order.getTotalAmount().toString();
         String transferReference = PaymentUtils.generateBankTransferReference();
 
+        // We keep the instructions clean for the frontend
         String instructions = String.format(
-                "ORDER #%s PLACED. \n" +
-                        "Please transfer %s %s to: \n" +
-                        "Bank: Mayorman Microfinance Bank \n" +
-                        "Account Number: 0123456789 \n" +
-                        "CRITICAL: Use this Reference in your transfer description: %s",
-                order.getOrderId(),
-                order.getCurrency(),
-                amountToPay,
-                transferReference
-        );
+                "Bank: Mayorman Microfinance Bank\n" +
+                        "Account: 0127753007\n" +
+                        "Name: MicroMart Technologies Ltd");
 
         return new PaymentResponse(
                 null,
