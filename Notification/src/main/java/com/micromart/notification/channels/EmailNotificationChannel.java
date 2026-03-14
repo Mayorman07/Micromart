@@ -176,11 +176,9 @@ public class EmailNotificationChannel implements NotificationChannel {
             context.setVariable("firstName", summary.getCustomerFirstName());
             context.setVariable("items", summary.getItems());
             context.setVariable("totalAmount", summary.getTotalAmount());
-            context.setVariable("trackUrl", environment.getProperty("app.frontend.url") + "/orders/" + orderId);
-
+            context.setVariable("trackUrl", buildFrontendUrl("/orders/track", orderId));
             String htmlBody = templateEngine.process("payment-success-email", context);
-            sendSimpleHtmlEmail(toEmail, "Payment Received! Order #" + orderId, htmlBody);
-
+            sendSimpleHtmlEmail(toEmail, "Payment Confirmed - MicroMart", htmlBody);
             logger.info("Payment success email sent for order {}", orderId);
         } catch (Exception e) {
             logger.error("Error building payment success email: {}", e.getMessage());
@@ -223,14 +221,18 @@ public class EmailNotificationChannel implements NotificationChannel {
 
             context.setVariable("firstName", summary.getCustomerFirstName());
 
-            context.setVariable("retryUrl", environment.getProperty("app.frontend.url") + "/checkout");
-
+            context.setVariable("retryUrl", buildFrontendUrl("/checkout/retry", orderId));
             String htmlBody = templateEngine.process("payment-cancelled-email", context);
-            sendSimpleHtmlEmail(toEmail, "Action Required: Complete your order #" + orderId, htmlBody);
-
+            sendSimpleHtmlEmail(toEmail, "Items Saved - Complete Your Purchase", htmlBody);
             logger.info("Payment cancellation email sent to {} for order {}", summary.getCustomerFirstName(), orderId);
         } catch (Exception e) {
             logger.error("Error building payment cancelled email: {}", e.getMessage());
         }
+    }
+
+    private String buildFrontendUrl(String path, String id) {
+        String base = environment.getProperty("app.frontend.url");
+        String cleanBase = base.endsWith("/") ? base.substring(0, base.length()-1) : base;
+        return cleanBase + path + "/" + id;
     }
 }
