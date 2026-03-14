@@ -31,23 +31,23 @@ public class OrderMapper {
         if (order == null) return null;
 
         List<OrderItemResponse> itemResponses = order.getOrderLineItemsList().stream()
-                .map(item -> OrderItemResponse.builder()
-                        .skuCode(item.getSkuCode())
-                        .productName(item.getProductName())
-                        .imageUrl(item.getImageUrl())
-                        .unitPrice(item.getUnitPrice())
-                        .quantity(item.getQuantity())
-                        .build())
+                .map(item -> new OrderItemResponse(
+                        item.getSkuCode(),
+                        item.getProductName(),
+                        item.getImageUrl(),
+                        item.getUnitPrice(),
+                        item.getQuantity()
+                ))
                 .collect(Collectors.toList());
 
-        return OrderResponse.builder()
-                .orderNumber(order.getOrderNumber())
-                .userEmail(order.getUserEmail())
-                .totalAmount(order.getTotalAmount())
-                .orderStatus(order.getOrderStatus())
-                .cancellationReason(order.getCancellationReason())
-                .createdAt(order.getCreatedAt())
-                .items(itemResponses)
-                .build();
+        return new OrderResponse(
+                order.getOrderNumber(),
+                order.getUserEmail(),
+                order.getTotalAmount(),
+                order.getOrderStatus(),
+                order.getCancellationReason(),
+                order.getCreatedAt(),
+                itemResponses
+        );
     }
 }

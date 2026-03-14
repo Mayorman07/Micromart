@@ -138,4 +138,12 @@ public class Order {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public Order(String orderNumber, String userEmail, BigDecimal totalAmount, OrderStatus orderStatus, List<OrderLineItems> orderLineItemsList) {
+        this.orderNumber = orderNumber;
+        this.userEmail = userEmail;
+        this.totalAmount = totalAmount;
+        this.orderStatus = orderStatus;
+        this.orderLineItemsList = orderLineItemsList;
+    }
 }

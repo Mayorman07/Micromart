@@ -46,7 +46,7 @@ public class CategoryController {
         logger.info("The out going create category response {} " , returnValue);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
-    @PutMapping(path="/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path="/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_UPDATE')")
     public ResponseEntity<CategoryResponse> updateCategory( @PathVariable Long id,@Valid @RequestBody CreateCategoryRequest updateCategoryRequest){
         CategoryDto updateCategory = modelMapper.map(updateCategoryRequest,CategoryDto.class);

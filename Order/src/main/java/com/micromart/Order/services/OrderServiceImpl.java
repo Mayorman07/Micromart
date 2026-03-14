@@ -34,6 +34,11 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
 
+    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper) {
+        this.orderRepository = orderRepository;
+        this.orderMapper = orderMapper;
+    }
+
     @Override
     @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest) {
@@ -45,13 +50,14 @@ public class OrderServiceImpl implements OrderService {
                 .map(item -> item.getUnitPrice().multiply(new BigDecimal(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Order order = Order.builder()
-                .orderNumber(generatedOrderNumber)
-                .userEmail(orderRequest.getUserEmail())
-                .totalAmount(backendCalculatedTotal)
-                .orderStatus(OrderStatus.PENDING)
-                .orderLineItemsList(lineItems)
-                .build();
+        Order order = new Order(
+                generatedOrderNumber,
+                orderRequest.getUserEmail(),
+                backendCalculatedTotal,
+                OrderStatus.PENDING,
+                lineItems
+        );
+
 
         Order savedOrder = orderRepository.save(order);
         logger.info("Order {} successfully created and saved to database.", savedOrder.getOrderNumber());

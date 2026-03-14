@@ -23,13 +23,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDetails> handleOrderNotFoundException(OrderNotFoundException ex, HttpServletRequest request) {
         logger.error("OrderNotFoundException: {}", ex.getMessage());
 
-        ErrorDetails errorDetails = ErrorDetails.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.NOT_FOUND.value())
-                .error("Not Found")
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
-                .build();
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Not Found",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
 
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
@@ -38,13 +38,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDetails> handleOrderCancellationException(OrderCancellationException ex, HttpServletRequest request) {
         logger.error("OrderCancellationException: {}", ex.getMessage());
 
-        ErrorDetails errorDetails = ErrorDetails.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.CONFLICT.value())
-                .error("State Conflict")
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
-                .build();
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "State Conflict",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
 
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
@@ -60,13 +60,14 @@ public class GlobalExceptionHandler {
 
         logger.error("Validation failed: {}", errors);
 
-        ErrorDetails errorDetails = ErrorDetails.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Validation Error")
-                .message("Invalid input: " + errors.values().toString())
-                .path(request.getRequestURI())
-                .build();
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation Error",
+                ("Invalid input: " + errors.values().toString()),
+                request.getRequestURI()
+        );
+
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
@@ -75,13 +76,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDetails> handleOrderAccessDeniedException(OrderAccessDeniedException ex, HttpServletRequest request) {
         logger.error("OrderAccessDeniedException: {}", ex.getMessage());
 
-        ErrorDetails errorDetails = ErrorDetails.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.FORBIDDEN.value()) // 403 Forbidden
-                .error("Forbidden")
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
-                .build();
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                "Forbidden",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
 
         return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
     }
@@ -90,14 +91,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDetails> handleGlobalException(Exception ex, HttpServletRequest request) {
         logger.error("Unhandled Exception: ", ex);
 
-        ErrorDetails errorDetails = ErrorDetails.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error("Internal Server Error")
-                .message("An unexpected error occurred on the server.")
-                .path(request.getRequestURI())
-                .build();
-
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Internal Server Error",
+                "An unexpected error occurred on the server.",
+                request.getRequestURI()
+        );
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

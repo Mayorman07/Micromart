@@ -153,7 +153,17 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductResponse> getAllProducts(Pageable pageable) {
         Page<Product> productPage = productRepository.findAll(pageable);
-        return productPage.map(product -> modelMapper.map(product, ProductResponse.class));
+
+        return productPage.map(product -> {
+            ProductResponse response = modelMapper.map(product, ProductResponse.class);
+
+            if (product.getCategory() != null) {
+                response.setCategoryId(product.getCategory().getId());
+                response.setCategoryName(product.getCategory().getName());
+            }
+
+            return response;
+        });
     }
     @Override
     public Page<ProductResponse> getProductsByCategory(Long categoryId, Pageable pageable) {
