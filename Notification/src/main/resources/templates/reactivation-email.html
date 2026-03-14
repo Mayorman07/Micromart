@@ -1,100 +1,116 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>We Miss You</title>
-    <style>
-        /* Reset & Base Styles */
-        body { margin: 0; padding: 0; background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333333; }
-        table { border-spacing: 0; width: 100%; }
-        td { padding: 0; }
-        img { border: 0; }
-
-        /* Container */
-        .wrapper { width: 100%; table-layout: fixed; background-color: #f4f7f6; padding-bottom: 40px; }
-        .main-content { background-color: #ffffff; margin: 0 auto; max-width: 600px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-
-        /* Header Section - AQUA GRADIENT */
-        .header-banner {
-            /* Vibrant Aqua Gradient */
-            background: linear-gradient(135deg, #00C9FF 0%, #92FE9D 100%);
-            height: 120px;
-            text-align: center;
-            vertical-align: middle;
-        }
-        .header-title { color: #ffffff; font-size: 26px; font-weight: bold; margin: 0; padding-top: 40px; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-
-        /* Body Section */
-        .content-body { padding: 40px 40px 30px 40px; text-align: center; }
-        .greeting { font-size: 22px; font-weight: 700; color: #2d3748; margin-bottom: 15px; }
-        .message-text { font-size: 16px; line-height: 1.6; color: #718096; margin-bottom: 30px; }
-
-        /* CTA Button - AQUA */
-        .btn-container { margin-bottom: 35px; }
-        .btn-primary {
-            background-color: #00C9FF; /* Matching Aqua */
-            color: #ffffff;
-            text-decoration: none;
-            padding: 14px 32px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 16px;
-            display: inline-block;
-            box-shadow: 0 4px 10px rgba(0, 201, 255, 0.3); /* Aqua Shadow */
-            transition: transform 0.2s ease;
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0, 201, 255, 0.4); }
-
-        /* Footer */
-        .divider { height: 1px; background-color: #e2e8f0; margin: 20px 0; }
-        .footer { text-align: center; padding: 20px; font-size: 12px; color: #a0aec0; }
-        .footer a { color: #00C9FF; text-decoration: none; margin: 0 5px; font-weight: 600; }
-    </style>
+    <title>We Miss You - MicroMart</title>
 </head>
-<body>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f7f6; -webkit-font-smoothing: antialiased;">
 
-<div class="wrapper">
-    <br><br>
-    <div class="main-content">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f4f7f6; padding: 40px 20px;">
+    <tr>
+        <td align="center">
 
-        <div class="header-banner">
-            <h1 class="header-title">MicroMart</h1>
-        </div>
+            <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 35px rgba(0, 201, 255, 0.15);">
 
-        <div class="content-body">
+                <tr>
+                    <td align="center" style="background: #00C9FF; background: linear-gradient(135deg, #00C9FF 0%, #0083B0 100%); padding: 50px 30px;">
+                        <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.1);">MicroMart</h1>
+                        <p style="color: #e0f9ff; font-size: 14px; margin: 10px 0 0 0; font-weight: 500;">Your Premium Shopping Destination</p>
+                    </td>
+                </tr>
 
-            <h2 class="greeting">We've missed you, <span th:text="${firstName}">Friend</span>! 👋</h2>
+                <tr>
+                    <td align="center" style="padding: 40px 40px 10px 40px;">
+                        <table border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td align="center" valign="middle" width="80" height="80" style="background: linear-gradient(135deg, #00C9FF 0%, #0083B0 100%); border-radius: 50%; font-size: 40px; color: #ffffff; font-weight: 300; line-height: 80px; box-shadow: 0 10px 25px rgba(0, 201, 255, 0.3);">
+                                    &hearts;
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
 
-            <p class="message-text">
-                It’s been a while since your last visit. We have added brand new collections and special offers just waiting for you.
-                <br><br>
-                Come check out what's new on the shelf.
-            </p>
+                <tr>
+                    <td align="center" style="padding: 10px 40px 20px 40px;">
+                        <h2 style="font-size: 28px; font-weight: 700; color: #1a1a1a; margin: 0 0 20px 0; letter-spacing: -0.5px;">
+                            We've missed you, <span style="color: #00C9FF;" th:text="${firstName != null ? firstName : 'Friend'}">Friend</span>! &#128075;
+                        </h2>
 
-            <div class="btn-container">
-                <a href="${loginUrl}" class="btn-primary">Return to MicroMart</a>
-            </div>
+                        <div style="background-color: #e0f9ff; color: #0083B0; padding: 12px 25px; border-radius: 50px; display: inline-block; font-size: 15px; font-weight: 600; margin-bottom: 25px; border: 1px solid #b3efff;">
+                            &#127873; <strong style="color: #00C9FF;">Exclusive 15% OFF</strong> your next order
+                        </div>
 
-            <div class="divider"></div>
+                        <p style="font-size: 16px; color: #666666; margin: 0 0 15px 0; line-height: 1.8;">
+                            It's been a while since your last visit. We've been busy adding <strong>brand new collections</strong>, <strong>exclusive deals</strong>, and <strong>premium products</strong> just waiting for you.
+                        </p>
+                        <p style="font-size: 16px; color: #666666; margin: 0; line-height: 1.8;">
+                            Come see what's new on the shelf — your favorites are waiting.
+                        </p>
+                    </td>
+                </tr>
 
-            <p style="font-size: 14px; color: #718096; margin-top: 20px;">
-                <em>"MicroMart is better with you."</em>
-            </p>
-        </div>
+                <tr>
+                    <td style="padding: 15px 40px 35px 40px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="25" style="background-color: #f8f9fa; border-radius: 12px; border-left: 4px solid #00C9FF;">
+                            <tr>
+                                <td>
+                                    <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #1a1a1a; font-weight: 700;">&#10024; What's New at MicroMart</h3>
+                                    <p style="margin: 0 0 10px 0; color: #666666; font-size: 15px; line-height: 1.6;">&#128374; <strong>Smart Eyewear:</strong> Dive into VR headsets and vision tech.</p>
+                                    <p style="margin: 0 0 10px 0; color: #666666; font-size: 15px; line-height: 1.6;">&#128641; <strong>Aerial Drones:</strong> Upgrade your aerial photography and racing quads.</p>
+                                    <p style="margin: 0 0 10px 0; color: #666666; font-size: 15px; line-height: 1.6;">&#127919; <strong>Anime & Pokémon:</strong> New limited-edition figures and collectibles.</p>
+                                    <p style="margin: 0; color: #666666; font-size: 15px; line-height: 1.6;">&#128663; <strong>RC Hobbies:</strong> Restocked remote-controlled cars, boats, and planes.</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
 
-    </div>
+                <tr>
+                    <td align="center" style="padding: 10px 40px 30px 40px;">
+                        <a th:href="${loginUrl}" target="_blank" style="background: #00C9FF; background: linear-gradient(135deg, #00C9FF 0%, #0083B0 100%); color: #ffffff; padding: 18px 50px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: 700; display: inline-block; letter-spacing: 0.5px; text-transform: uppercase;">Return to MicroMart</a>
+                    </td>
+                </tr>
 
-    <div class="footer">
-        <p>Sent with 🩵 by the MicroMart Team</p>
-        <p>
-            <a href="#">Unsubscribe</a> •
-            <a href="#">Privacy Policy</a> •
-            <a href="#">Contact Support</a>
-        </p>
-        <p>Lagos, Nigeria</p>
-    </div>
-</div>
+                <tr>
+                    <td align="center" style="padding: 0 40px 40px 40px;">
+                        <p style="font-size: 14px; color: #888888; margin: 0;">
+                            Questions? <a href="#" style="color: #00C9FF; text-decoration: none; font-weight: 600;">Contact Support</a> or reply to this email.
+                        </p>
+                    </td>
+                </tr>
 
+                <tr>
+                    <td align="center" style="background-color: #f8f9fa; padding: 40px 30px; border-top: 1px solid #e9ecef;">
+                        <p style="font-size: 13px; color: #999999; margin: 0 0 20px 0;">
+                            &copy; 2026 MicroMart Inc. Lagos, Nigeria.<br>All rights reserved.
+                        </p>
+
+                        <table border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 20px;">
+                            <tr>
+                                <td align="center" width="40"><a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #0083B0; border-radius: 50%; line-height: 32px; color: white; text-decoration: none; font-weight: bold; font-size: 14px;">f</a></td>
+                                <td align="center" width="40"><a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #0083B0; border-radius: 50%; line-height: 32px; color: white; text-decoration: none; font-weight: bold; font-size: 14px;">t</a></td>
+                                <td align="center" width="40"><a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #0083B0; border-radius: 50%; line-height: 32px; color: white; text-decoration: none; font-weight: bold; font-size: 14px;">in</a></td>
+                                <td align="center" width="40"><a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #0083B0; border-radius: 50%; line-height: 32px; color: white; text-decoration: none; font-weight: bold; font-size: 14px;">ig</a></td>
+                            </tr>
+                        </table>
+
+                        <p style="font-size: 13px; margin: 0 0 20px 0;">
+                            <a href="#" style="color: #00C9FF; text-decoration: none; font-weight: 600; margin: 0 10px;">Help Center</a>
+                            <a href="#" style="color: #00C9FF; text-decoration: none; font-weight: 600; margin: 0 10px;">Privacy Policy</a>
+                            <a href="#" style="color: #00C9FF; text-decoration: none; font-weight: 600; margin: 0 10px;">Terms</a>
+                            <a href="#" style="color: #00C9FF; text-decoration: none; font-weight: 600; margin: 0 10px;">Unsubscribe</a>
+                        </p>
+
+                        <p style="margin: 0; font-size: 12px; color: #adb5bd;">
+                            Sent with &#128153; by the MicroMart Team
+                        </p>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+</table>
 </body>
 </html>
