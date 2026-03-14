@@ -215,15 +215,20 @@ public class EmailNotificationChannel implements NotificationChannel {
     }
 
     public void sendPaymentCancelledEmail(String toEmail, String orderId) {
+        OrderSummaryDTO summary = orderClient.getOrderSummary(orderId);
+
         try {
             Context context = new Context();
             context.setVariable("orderId", orderId);
+
+            context.setVariable("firstName", summary.getCustomerFirstName());
+
             context.setVariable("retryUrl", environment.getProperty("app.frontend.url") + "/checkout");
 
             String htmlBody = templateEngine.process("payment-cancelled-email", context);
-            sendSimpleHtmlEmail(toEmail, "Order Cancelled - #" + orderId, htmlBody);
+            sendSimpleHtmlEmail(toEmail, "Action Required: Complete your order #" + orderId, htmlBody);
 
-            logger.info("Payment cancellation email sent for order {}", orderId);
+            logger.info("Payment cancellation email sent to {} for order {}", summary.getCustomerFirstName(), orderId);
         } catch (Exception e) {
             logger.error("Error building payment cancelled email: {}", e.getMessage());
         }

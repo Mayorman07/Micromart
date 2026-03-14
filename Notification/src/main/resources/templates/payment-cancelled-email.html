@@ -2,121 +2,82 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Update</title>
-  <style>
-        /* Reset & Base Styles */
-        body { margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f9f9; }
-        table { border-collapse: collapse; width: 100%; }
-
-        /* The "Glass" Card Container */
-        .email-container {
-            max-width: 600px;
-            margin: 40px auto;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); /* Sophisticated shadow */
-            overflow: hidden;
-            border: 1px solid #eaeaea;
-        }
-
-        /* Header with a Soft Coral/Rose Gradient */
-        .header {
-            background: linear-gradient(135deg, #FF9966, #FF5E62); /* Aesthetic soft coral gradient */
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        .header h1 {
-            color: white;
-            margin: 0;
-            font-size: 26px;
-            letter-spacing: 2px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        /* Body Content */
-        .body-content {
-            padding: 40px;
-            color: #444444;
-            line-height: 1.6;
-            text-align: left;
-        }
-
-        .body-content h2 {
-            color: #333;
-            font-size: 22px;
-            margin-top: 0;
-        }
-
-        /* The Order Pill */
-        .order-pill-fail {
-            display: inline-block;
-            background-color: #fff5f5; /* Very light pink/red background */
-            color: #d11e33; /* A more subdued red for text */
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        /* The Action Button (Matches Verification Button style) */
-        .button-container {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .cta-button {
-            background: linear-gradient(135deg, #FF9966, #FF5E62); /* Coral gradient button */
-            color: #ffffff;
-            padding: 16px 32px;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.3); /* Button shadow */
-            display: inline-block;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 12px;
-            color: #999;
-        }
-
-    </style>
+  <title>Finish Your Order</title>
 </head>
-<body>
-<div class="email-container">
+<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f7f6; -webkit-font-smoothing: antialiased;">
 
-  <div class="header">
-    <h1>MICROMART</h1>
-  </div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f4f7f6; padding: 40px 20px;">
+  <tr>
+    <td align="center">
 
-  <div class="body-content">
-    <h2>We've saved your progress</h2>
+      <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.06);">
 
-    <div class="order-pill-fail">Order #<span th:text="${orderId}">12345</span></div>
+        <tr>
+          <td align="center" style="background: #ff6b6b; background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%); padding: 35px 40px;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 2px;">MICROMART</h1>
+          </td>
+        </tr>
 
-    <p>Hi Friend,</p>
+        <tr>
+          <td align="center" style="padding: 40px 40px 20px 40px;">
 
-    <p>It looks like your payment session for this order has timed out or was interrupted. Don't worry—we've saved your progress.</p>
+            <div style="background-color: #fff0ed; color: #ff6b6b; width: 64px; height: 64px; border-radius: 50%; font-size: 28px; line-height: 64px; margin: 0 auto 20px auto; font-weight: bold;">
+              🛒
+            </div>
 
-    <p>Your items are still waiting for you. Simply return to the checkout page using the link below to finalize your purchase.</p>
+            <h2 style="color: #222222; margin: 0 0 15px 0; font-size: 24px;">We've saved your progress</h2>
 
-    <div class="button-container">
-      <a th:href="${retryUrl}" class="cta-button">Complete Checkout</a>
-    </div>
+            <div style="background-color: #fff0ed; color: #e53e3e; padding: 6px 18px; border-radius: 20px; display: inline-block; font-size: 13px; font-weight: bold; letter-spacing: 1px;">
+              <span th:text="'ORDER #' + ${orderId}">ORDER #12345</span>
+            </div>
+          </td>
+        </tr>
 
-  </div>
+        <tr>
+          <td style="padding: 10px 40px 25px 40px;">
+            <p style="color: #444444; font-size: 16px; margin: 0 0 15px 0; line-height: 1.6;">
+              Hi <strong style="color: #222222;" th:text="${firstName != null ? firstName : 'Partner'}">Partner</strong>,            </p>
+            <p style="color: #555555; font-size: 16px; margin: 0 0 15px 0; line-height: 1.6;">
+              It looks like your payment session for this order timed out or was interrupted. Don't worry—we've saved your progress so you won't have to start over.
+            </p>
+            <p style="color: #555555; font-size: 16px; margin: 0; line-height: 1.6;">
+              Your items are still securely waiting for you. Simply return to the checkout page using the link below to finalize your purchase.
+            </p>
+          </td>
+        </tr>
 
-  <div class="footer">
-    © 2026 Micromart Inc. Lagos, Nigeria.
-  </div>
-</div>
+        <tr>
+          <td align="center" style="padding: 20px 40px 45px 40px;">
+            <a th:href="${retryUrl}" target="_blank" style="background-color: #ff6b6b; color: #ffffff; padding: 16px 45px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: bold; display: inline-block; box-shadow: 0 6px 15px rgba(255, 107, 107, 0.3);">Complete Checkout</a>
+
+            <p style="color: #999999; font-size: 13px; margin-top: 25px; line-height: 1.5;">
+              Link not working? Paste this into your browser:<br>
+              <a th:href="${retryUrl}" style="color: #ff6b6b; text-decoration: none; word-break: break-all;" th:text="${retryUrl}">http://link...</a>
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 0 40px;">
+            <hr style="border: none; border-top: 1px solid #eeeeee; margin: 0;" />
+          </td>
+        </tr>
+
+        <tr>
+          <td align="center" style="padding: 25px 40px 30px 40px;">
+            <p style="color: #aaaaaa; font-size: 12px; margin: 0 0 5px 0;">
+              &copy; 2026 Micromart Inc. Lagos, Nigeria.
+            </p>
+            <p style="color: #aaaaaa; font-size: 12px; margin: 0;">
+              <a href="#" style="color: #00b4db; text-decoration: none; font-weight: bold;">Help Center</a> &bull;
+              <a href="#" style="color: #00b4db; text-decoration: none; font-weight: bold;">Privacy Policy</a>
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
 </body>
 </html>
