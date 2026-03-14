@@ -16,10 +16,9 @@ public class RabbitMQConfig {
     public static final String ROUTING_KEY_RESET = "password.reset";
     public static final String USER_REACTIVATION_QUEUE = "user.reactivation.queue";
     public static final String USER_REACTIVATION_CREATED = "user.reactivation";
-
-    public static final String PAYMENT_EXCHANGE = "payment_exchange";
+    public static final String PAYMENT_EXCHANGE = "micromart.exchange";
     public static final String PAYMENT_NOTIFICATION_QUEUE = "payment.notification.queue";
-    public static final String PAYMENT_ROUTING_KEY = "payment_status_key";
+    public static final String PAYMENT_ROUTING_KEY = "payment.status.updated";
 
     // ---  Dead Letter Constants ---
     public static final String NOTIFICATION_DLX = "notification.dlx";
