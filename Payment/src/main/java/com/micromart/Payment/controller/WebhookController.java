@@ -23,7 +23,7 @@ public class WebhookController {
 
 
     @PostMapping("/webhook")
-    public ResponseEntity<String> handleStripeWebhook(@RequestBody String payload,
+    public ResponseEntity<String> processStripeWebhook(@RequestBody String payload,
                                                       @RequestHeader("Stripe-Signature") String sigHeader) throws SignatureVerificationException {
 
         logger.info("Received Stripe Webhook request");

@@ -180,18 +180,25 @@ public class PaymentServiceImpl implements PaymentService{
 
         if (stripeObject instanceof Session session) {
             String sessionId = session.getId();
-            logger.info("Processing Webhook for Stripe Session: {}", sessionId);
+            logger.info("Processing Webhook for Stripe Session: {} | Event: {}", sessionId, event.getType());
 
             PaymentRecord paymentRecord = paymentRecordRepository.findByExternalReference(sessionId)
                     .orElseThrow(() -> new ResourceNotFoundException("No internal record found for Stripe Session: " + sessionId));
 
             switch (event.getType()) {
                 case "checkout.session.completed" -> {
-                    if (paymentRecord.getStatus() == Status.PENDING) {
-                        paymentRecord.setStatus(Status.PAID);
-                        paymentRecordRepository.save(paymentRecord);
-                        logger.info("Order {} marked as COMPLETED via Webhook!", paymentRecord.getOrderId());
-                        sendStatusUpdate(paymentRecord);
+                    if ("paid".equals(session.getPaymentStatus())) {
+                        if (paymentRecord.getStatus() == Status.PENDING) {
+                            paymentRecord.setStatus(Status.PAID);
+                            paymentRecordRepository.save(paymentRecord);
+
+                            logger.info("Order {} confirmed PAID via Webhook!", paymentRecord.getOrderId());
+                            sendStatusUpdate(paymentRecord);
+                        }
+                    } else {
+                        logger.warn("Session {} completed but payment_status is: {}",
+                                sessionId, session.getPaymentStatus());
+                        // Optional: Update status to AWAITING_PAYMENT if it's a slow method
                     }
                 }
                 case "checkout.session.expired" -> {
