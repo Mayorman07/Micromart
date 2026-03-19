@@ -21,7 +21,7 @@
         </processorPath>
         <module name="Users" />
       </profile>
-      <profile name="Annotation profile for Order" enabled="true">
+      <profile name="Annotation profile for Payment" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -30,8 +30,8 @@
         </processorPath>
         <module name="Order" />
         <module name="notification" />
-        <module name="Products" />
         <module name="Payment" />
+        <module name="Products" />
         <module name="Inventory" />
         <module name="Cart" />
       </profile>

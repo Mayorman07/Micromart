@@ -37,7 +37,7 @@ public class WebSecurity {
 
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/payments/webhook").permitAll()
-                .requestMatchers(HttpMethod.GET, "/payments/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/payment/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/payments/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()

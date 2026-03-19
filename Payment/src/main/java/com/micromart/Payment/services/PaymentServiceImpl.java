@@ -13,8 +13,11 @@ import com.micromart.Payment.model.request.PaymentRequest;
 import com.micromart.Payment.model.response.PaymentResponse;
 import com.micromart.Payment.repository.PaymentRecordRepository;
 import com.micromart.Payment.strategies.PaymentStrategy;
+import com.stripe.Stripe;
+import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
+import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
@@ -170,48 +173,89 @@ public class PaymentServiceImpl implements PaymentService{
         ));
     }
 
+    /**
+     * Processes incoming webhooks from Stripe to synchronize payment states.
+     * This method handles signature verification, object deserialization,
+     * and specific event processing for Checkout Sessions.
+     *
+     * @param payload   The raw JSON request body from Stripe.
+     * @param sigHeader The Stripe-Signature header for security verification.
+     * @throws SignatureVerificationException if the signature is invalid.
+     */
     @Override
     @Transactional
-    public void processStripeWebhook(String payload, String sigHeader) throws SignatureVerificationException {
+    public void processStripeWebhook(String payload, String sigHeader) throws SignatureVerificationException, EventDataObjectDeserializationException {
 
+        // Verify webhook signature using the endpoint secret to prevent unauthorized requests
         Event event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
+        logger.info("Received Stripe webhook event: {}", event.getType());
 
-        StripeObject stripeObject = event.getDataObjectDeserializer().getObject().orElse(null);
+        EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+        StripeObject stripeObject = null;
 
-        if (stripeObject instanceof Session session) {
-            String sessionId = session.getId();
-            logger.info("Processing Webhook for Stripe Session: {} | Event: {}", sessionId, event.getType());
+        // Attempt to deserialize the Stripe object with a fallback for API version mismatches
+        if (dataObjectDeserializer.getObject().isPresent()) {
+            stripeObject = dataObjectDeserializer.getObject().get();
+        } else {
+            logger.warn("Stripe API version mismatch. Event version: {}, Library version: {}. Using unsafe deserialization.",
+                    event.getApiVersion(), Stripe.API_VERSION);
+            stripeObject = dataObjectDeserializer.deserializeUnsafe();
+        }
 
-            PaymentRecord paymentRecord = paymentRecordRepository.findByExternalReference(sessionId)
-                    .orElseThrow(() -> new ResourceNotFoundException("No internal record found for Stripe Session: " + sessionId));
+        if (stripeObject == null) {
+            logger.error("Failed to deserialize Stripe object for event ID: {}", event.getId());
+            return;
+        }
 
-            switch (event.getType()) {
-                case "checkout.session.completed" -> {
+        // Process events based on type
+        switch (event.getType()) {
+
+            case "checkout.session.completed" -> {
+                if (stripeObject instanceof Session session) {
+                    String sessionId = session.getId();
+
+                    // Locate the internal payment record associated with this Stripe Session
+                    PaymentRecord paymentRecord = paymentRecordRepository.findByExternalReference(sessionId)
+                            .orElseThrow(() -> new ResourceNotFoundException("No internal record found for session: " + sessionId));
+
+                    // Verify that the payment status is 'paid' before updating internal state
                     if ("paid".equals(session.getPaymentStatus())) {
                         if (paymentRecord.getStatus() == Status.PENDING) {
                             paymentRecord.setStatus(Status.PAID);
                             paymentRecordRepository.save(paymentRecord);
 
-                            logger.info("Order {} confirmed PAID via Webhook!", paymentRecord.getOrderId());
+                            logger.info("Successfully processed payment for Order ID: {}", paymentRecord.getOrderId());
+
+                            // Publish status update event to RabbitMQ for downstream services (Order/Email)
                             sendStatusUpdate(paymentRecord);
+                        } else {
+                            logger.info("Order ID: {} is already in status: {}. Skipping update.",
+                                    paymentRecord.getOrderId(), paymentRecord.getStatus());
                         }
                     } else {
-                        logger.warn("Session {} completed but payment_status is: {}",
-                                sessionId, session.getPaymentStatus());
-                        // Optional: Update status to AWAITING_PAYMENT if it's a slow method
+                        logger.warn("Checkout session completed but payment_status is: {}. Session ID: {}",
+                                session.getPaymentStatus(), sessionId);
                     }
                 }
-                case "checkout.session.expired" -> {
-                    if (paymentRecord.getStatus() == Status.PENDING) {
-                        paymentRecord.setStatus(Status.EXPIRED);
-                        paymentRecord.setErrorMessage("Stripe Checkout Session Expired");
-                        paymentRecordRepository.save(paymentRecord);
-                        logger.info("Order {} marked as CANCELLED via Webhook expiration.", paymentRecord.getOrderId());
-                        sendStatusUpdate(paymentRecord);
-                    }
-                }
-                default -> logger.info("Unhandled Stripe event type: {}", event.getType());
             }
+
+            case "checkout.session.expired" -> {
+                if (stripeObject instanceof Session session) {
+                    String sessionId = session.getId();
+                    paymentRecordRepository.findByExternalReference(sessionId).ifPresent(record -> {
+                        if (record.getStatus() == Status.PENDING) {
+                            record.setStatus(Status.EXPIRED);
+                            record.setErrorMessage("Stripe Checkout Session Expired");
+                            paymentRecordRepository.save(record);
+
+                            logger.info("Checkout session expired for Order ID: {}", record.getOrderId());
+                            sendStatusUpdate(record);
+                        }
+                    });
+                }
+            }
+
+            default -> logger.debug("Unhandled Stripe event type: {}", event.getType());
         }
     }
 

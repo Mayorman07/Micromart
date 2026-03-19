@@ -1,5 +1,6 @@
 package com.micromart.Payment.services;
 import com.micromart.Payment.entity.PaymentRecord;
+import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.model.EventDataObjectDeserializer;
@@ -28,5 +29,5 @@ public interface PaymentService {
     String approveManualPayment(String reference);
 
     List<PaymentRecord> getPendingManualPayments();
-    void processStripeWebhook(String payload, String sigHeader) throws SignatureVerificationException;
+    void processStripeWebhook(String payload, String sigHeader) throws SignatureVerificationException, EventDataObjectDeserializationException;
 }

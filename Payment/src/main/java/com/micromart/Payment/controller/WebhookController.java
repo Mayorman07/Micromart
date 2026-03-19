@@ -1,6 +1,7 @@
 package com.micromart.Payment.controller;
 
 import com.micromart.Payment.services.PaymentService;
+import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.exception.SignatureVerificationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class WebhookController {
 
     @PostMapping("/webhook")
     public ResponseEntity<String> processStripeWebhook(@RequestBody String payload,
-                                                      @RequestHeader("Stripe-Signature") String sigHeader) throws SignatureVerificationException {
+                                                      @RequestHeader("Stripe-Signature") String sigHeader) throws SignatureVerificationException, EventDataObjectDeserializationException {
 
         logger.info("Received Stripe Webhook request");
 
