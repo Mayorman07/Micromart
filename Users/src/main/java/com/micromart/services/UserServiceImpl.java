@@ -88,21 +88,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(UserDto userDetails) {
         User existingUser = userRepository.findByEmail(userDetails.getEmail())
                 .orElseThrow(() -> new NotFoundException("User registry entry not found"));
+
         updateIdentityFields(existingUser, userDetails);
 
         if (userDetails.getAddress() != null) {
             syncAddress(existingUser, userDetails.getAddress());
         }
-
         User updatedUser = userRepository.save(existingUser);
+
         UserDto responseDto = modelMapper.map(updatedUser, UserDto.class);
         if (updatedUser.getAddresses() != null && !updatedUser.getAddresses().isEmpty()) {
             Address primary = updatedUser.getAddresses().get(0);
-            responseDto.setAddress(modelMapper.map(primary, AddressDto.class));
-        } .
+            AddressDto mappedAddress = modelMapper.map(primary, AddressDto.class);
+            responseDto.setAddress(mappedAddress);
+        }
+
         return responseDto;
     }
 
@@ -120,14 +124,20 @@ public class UserServiceImpl implements UserService {
         if (user.getAddresses() == null) {
             user.setAddresses(new ArrayList<>());
         }
+
         Address address = user.getAddresses().stream()
                 .findFirst()
                 .orElseGet(() -> {
                     Address newAddress = new Address();
+                    newAddress.setAddressId(UUID.randomUUID().toString());
+                    newAddress.setType(AddressType.SHIPPING);
                     newAddress.setUser(user);
                     user.getAddresses().add(newAddress);
                     return newAddress;
                 });
+
+        address.setUser(user);
+
         address.setStreet(dto.getStreet());
         address.setCity(dto.getCity());
         address.setState(dto.getState());
