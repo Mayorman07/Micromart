@@ -64,7 +64,7 @@ public class OrderEventPayloads {
             this.userEmail = userEmail;
         }
     }
-
+//add first name
     public static class OrderReceiptEvent {
         private String orderNumber;
         private String userEmail;

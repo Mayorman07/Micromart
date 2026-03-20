@@ -92,6 +92,13 @@ public class ProductController {
         return ResponseEntity.ok(productService.searchProducts(keyword, pageable));
     }
 
+    @GetMapping("/sku/{skuCode}")
+    public ResponseEntity<ProductResponse> getProductBySku(@PathVariable String skuCode) {
+        logger.info("REST request to get Product by SKU: {}", skuCode);
+        ProductResponse productResponse = productService.getProductBySku(skuCode);
+        return ResponseEntity.ok(productResponse);
+    }
+
     @GetMapping("/metadata/{sku}")
     public ResponseEntity<ProductMetadata> getProductMetadata(@PathVariable String sku) {
         ProductMetadata metadata = productService.getMetadataBySku(sku);

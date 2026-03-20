@@ -165,6 +165,13 @@ public class ProductServiceImpl implements ProductService {
             return response;
         });
     }
+
+    @Override
+    public ProductResponse getProductBySku(String skuCode) {
+        Product product = productRepository.findBySkuCode(skuCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with SKU: " + skuCode));
+        return modelMapper.map(product, ProductResponse.class);
+    }
     @Override
     public Page<ProductResponse> getProductsByCategory(Long categoryId, Pageable pageable) {
         Page<Product> productPage = productRepository.findByCategoryId(categoryId,pageable);

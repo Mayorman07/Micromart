@@ -14,6 +14,7 @@ public interface ProductService {
     List<ProductMetadata> getMetadataForSkus(List<String> skuCodes);
     ProductMetadata getMetadataBySku(String sku);
     ProductResponse getProductById(Long id);
+    ProductResponse getProductBySku(String skuCode);
     Page<ProductResponse> getAllProducts(Pageable pageable);
     Page<ProductResponse> getProductsByCategory(Long categoryId, Pageable pageable);
     Page<ProductResponse> searchProducts(String keyword, Pageable pageable);
