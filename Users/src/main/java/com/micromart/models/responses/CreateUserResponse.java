@@ -1,5 +1,6 @@
 package com.micromart.models.responses;
 
+import com.micromart.models.data.AddressDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,10 @@ public class CreateUserResponse {
     private List<String> roles;
     private String userId;
     private String username;
-//    private Date lastLoggedIn;
-    private String createdAt;
+d     private String createdAt;
     private String updatedAt;
+    private AddressDto address;
+    private List<AddressDto> addresses;
 
     public CreateUserResponse(String message) {
     }
