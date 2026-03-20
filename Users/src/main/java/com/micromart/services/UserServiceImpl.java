@@ -93,7 +93,12 @@ public class UserServiceImpl implements UserService {
                     logger.info("User with email {} not found for update!", userDetails.getEmail());
                     return new NotFoundException("User not found!");
                 });
-        modelMapper.map(userDetails,existingUser);
+        existingUser.setFirstName(userDetails.getFirstName());
+        existingUser.setLastName(userDetails.getLastName());
+        existingUser.setMobileNumber(userDetails.getMobileNumber());
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+            existingUser.setEncryptedPassword(passwordEncoder.encode(userDetails.getPassword()));
+        }
         User userToBeUpdated = userRepository.save(existingUser);
         return modelMapper.map(userToBeUpdated,UserDto.class);
     }
