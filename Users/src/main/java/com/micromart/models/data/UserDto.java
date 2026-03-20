@@ -28,7 +28,6 @@ public class UserDto implements Serializable {
     private String createdAt;
     private Status status;
     private List<String> roles;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private AddressDto address;
     private List<AddressDto> addresses;
 
