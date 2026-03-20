@@ -4,6 +4,7 @@ import com.micromart.constants.AddressType;
 import com.micromart.constants.Status;
 import com.micromart.entities.Address;
 import com.micromart.entities.Authority;
+import com.micromart.models.data.AddressDto;
 import com.micromart.entities.RefreshToken;
 import com.micromart.entities.Role;
 import com.micromart.entities.User;
@@ -89,18 +90,43 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto userDetails) {
         User existingUser = userRepository.findByEmail(userDetails.getEmail())
-                .orElseThrow(() -> {
-                    logger.info("User with email {} not found for update!", userDetails.getEmail());
-                    return new NotFoundException("User not found!");
-                });
+                .orElseThrow(() -> new NotFoundException("User registry entry not found"));
+
+        updateIdentityFields(existingUser, userDetails);
+        Optional.ofNullable(userDetails.getAddress())
+                .ifPresent(addressDto -> syncAddress(existingUser, addressDto));
+
+        User updatedUser = userRepository.save(existingUser);
+        return modelMapper.map(updatedUser, UserDto.class);
+    }
+
+    private void updateIdentityFields(User existingUser, UserDto userDetails) {
         existingUser.setFirstName(userDetails.getFirstName());
         existingUser.setLastName(userDetails.getLastName());
         existingUser.setMobileNumber(userDetails.getMobileNumber());
-        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isBlank()) {
             existingUser.setEncryptedPassword(passwordEncoder.encode(userDetails.getPassword()));
         }
-        User userToBeUpdated = userRepository.save(existingUser);
-        return modelMapper.map(userToBeUpdated,UserDto.class);
+    }
+
+    private void syncAddress(User user, AddressDto dto) {
+        if (user.getAddresses() == null) {
+            user.setAddresses(new ArrayList<>());
+        }
+        Address address = user.getAddresses().stream()
+                .findFirst()
+                .orElseGet(() -> {
+                    Address newAddress = new Address();
+                    newAddress.setUser(user);
+                    user.getAddresses().add(newAddress);
+                    return newAddress;
+                });
+        address.setStreet(dto.getStreet());
+        address.setCity(dto.getCity());
+        address.setState(dto.getState());
+        address.setCountry(dto.getCountry());
+        address.setZipCode(dto.getZipCode());
     }
 
     @Override
