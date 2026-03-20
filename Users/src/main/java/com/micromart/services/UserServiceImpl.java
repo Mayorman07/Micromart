@@ -90,7 +90,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto userDetails) {
         User existingUser = userRepository.findByEmail(userDetails.getEmail())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User registry entry not found"));
+        updateIdentityFields(existingUser, userDetails);
 
         if (userDetails.getAddress() != null) {
             syncAddress(existingUser, userDetails.getAddress());
@@ -98,11 +99,10 @@ public class UserServiceImpl implements UserService {
 
         User updatedUser = userRepository.save(existingUser);
         UserDto responseDto = modelMapper.map(updatedUser, UserDto.class);
-        if (!updatedUser.getAddresses().isEmpty()) {
+        if (updatedUser.getAddresses() != null && !updatedUser.getAddresses().isEmpty()) {
             Address primary = updatedUser.getAddresses().get(0);
             responseDto.setAddress(modelMapper.map(primary, AddressDto.class));
-        }
-
+        } .
         return responseDto;
     }
 
