@@ -4,6 +4,7 @@ import com.micromart.models.data.UserDto;
 import com.micromart.models.data.UserProfileDto;
 import com.micromart.models.requests.CreateUserRequest;
 import com.micromart.models.requests.TokenRefreshRequest;
+import com.micromart.models.requests.UpdateUserRequest;
 import com.micromart.models.responses.CreateUserResponse;
 import com.micromart.models.responses.TokenRefreshResponse;
 import com.micromart.models.responses.UserProfileResponse;
@@ -57,7 +58,7 @@ public class UsersController{
     }
 
     @PutMapping(path ="/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CreateUserResponse> updateUser(@Valid @RequestBody CreateUserRequest updateUserRequest){
+    public ResponseEntity<CreateUserResponse> updateUser(@Valid @RequestBody UpdateUserRequest updateUserRequest){
         logger.info("The incoming update user request {} " , updateUserRequest);
     UserDto userDto = modelMapper.map(updateUserRequest, UserDto.class);
     UserDto userToBeUpdated = userService.updateUser(userDto);
