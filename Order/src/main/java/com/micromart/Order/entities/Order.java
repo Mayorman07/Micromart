@@ -28,6 +28,7 @@ import java.util.List;
 @Table(name = "orders")
 @Data
 @Builder
+@AllArgsConstructor
 public class Order {
 
     @Id
