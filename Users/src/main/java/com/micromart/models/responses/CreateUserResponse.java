@@ -19,7 +19,7 @@ public class CreateUserResponse {
     private List<String> roles;
     private String userId;
     private String username;
-d     private String createdAt;
+     private String createdAt;
     private String updatedAt;
     private AddressDto address;
     private List<AddressDto> addresses;

@@ -1,8 +1,12 @@
 package com.micromart.models.requests;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.micromart.validation.SafeText;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,23 +18,32 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateUserRequest {
-    @NotNull(message = "First name cannot be null")
-    @Size(min = 2, message = "First name cant be less than two characters")
-    @NotNull(message = "First name cannot be null")
+    @NotBlank(message = "First name cannot be empty")
+    @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
+    @SafeText(message = "First name contains invalid or malicious characters")
     private String firstName;
-    @NotNull(message = "Last name cannot be null")
-    @Size(min = 2, message = "Last name cant be less than two characters")
+
+    @NotBlank(message = "Last name cannot be empty")
+    @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters")
+    @SafeText(message = "Last name contains invalid or malicious characters")
     private String lastName;
-    @Email
+
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Must be a well-formed email address")
     private String email;
-    @NotNull(message = "Password cannot be null")
-    @Size(min = 3, max = 12, message = "Password must be between 3 and 12 characters!")
+
+    @NotBlank(message = "Password cannot be empty")
+    @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters")
     private String password;
-    @NotNull(message = "Gender field cannot be null")
-    @NotEmpty(message = "Gender field cannot be empty")
+
+    @NotBlank(message = "Gender cannot be empty")
+    @Pattern(regexp = "^(MALE|FEMALE|OTHER|PREFER_NOT_TO_SAY)$", flags = Pattern.Flag.CASE_INSENSITIVE, message = "Invalid gender selection")
     private String gender;
-    @NotNull(message = "mobileNumber cannot be null")
-    @Size(min = 11,max = 15, message = "mobileNumber must be between 11 and 15 numbers")
+
+    @NotBlank(message = "Mobile number cannot be empty")
+    @Pattern(regexp = "^\\+?[0-9]{11,15}$", message = "Mobile number must be between 11 and 15 digits")
     private String mobileNumber;
+
+    @Valid
     private AddressRequest address;
 }
