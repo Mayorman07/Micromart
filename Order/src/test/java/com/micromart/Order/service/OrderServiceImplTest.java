@@ -1,4 +1,4 @@
-package com.micromart.Order;
+package com.micromart.Order.service;
 
 import com.micromart.Order.entities.Order;
 import com.micromart.Order.entities.OrderLineItems;

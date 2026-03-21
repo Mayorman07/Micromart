@@ -1,4 +1,4 @@
-package com.micromart.Products;
+package com.micromart.Products.service;
 
 import com.micromart.products.client.InventoryClient;
 import com.micromart.products.entity.Category;

@@ -1,4 +1,4 @@
-package com.micromart.Users;
+package com.micromart.Users.service;
 
 import com.micromart.constants.Status;
 import com.micromart.entities.User;

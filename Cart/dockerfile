@@ -1,0 +1,13 @@
+FROM eclipse-temurin:17-jre-alpine
+
+RUN addgroup -S micromart && adduser -S micromartuser -G micromart
+
+WORKDIR /app
+
+COPY target/*.jar app.jar
+
+RUN chown -R micromartuser:micromart /app
+
+USER micromartuser
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

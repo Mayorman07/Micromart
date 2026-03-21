@@ -1,4 +1,4 @@
-package com.micromart.Payment;
+package com.micromart.Payment.service;
 
 import com.micromart.Payment.entity.PaymentRecord;
 import com.micromart.Payment.enums.PaymentMethod;
