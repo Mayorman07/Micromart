@@ -17,7 +17,7 @@ jobs:
         service: ['Cart', 'ConfigServer', 'EurekaServer', 'Gateway', 'Inventory', 'Notification', 'Order', 'Payment', 'Products', 'Users']
 
     steps:
-      - name:  Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
       - name: ☕ Set up JDK 17 (Temurin)
@@ -32,10 +32,10 @@ jobs:
         working-directory: ./JwtAuthorities
         run: mvn clean install -DskipTests
 
-      - name:  Build and Run Unit Tests [${{ matrix.service }}]
+      - name: Build and Run Unit Tests [${{ matrix.service }}]
         working-directory: ./${{ matrix.service }}
         run: mvn clean package
 
       - name: Verify Docker Image Build [${{ matrix.service }}]
         working-directory: ./${{ matrix.service }}
-        run: docker build -t micromart/${{ matrix.service }}:test .
+        run: docker build -t test-app .
