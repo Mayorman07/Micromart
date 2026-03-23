@@ -69,4 +69,5 @@ sequenceDiagram
         Rabbit-->>Order: Update Status to PAID
         Rabbit-->>Inventory: Deduct Stock
         Rabbit-->>Notify: Send Confirmation Email
-    end
+    end 
+   ```
