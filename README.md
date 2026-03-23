@@ -15,59 +15,32 @@ This ecosystem follows the **API Gateway Pattern** and **Service Discovery Patte
 
 ```mermaid
 graph TD
-    Client((Customer App)) --> Gateway[API Gateway: 8080]
-    
-    subgraph "Infrastructure"
-        Config[Config Server: 8888]
-        Eureka[Eureka Discovery: 8761]
-        Rabbit[RabbitMQ Broker]
-    end
+Client((Customer App)) --> Gateway[API Gateway: 7070]
 
-    subgraph "Business Logic Services"
-        Users[Users Service]
-        Products[Products Service]
-        Cart[Cart Service]
-        Order[Order Service]
-        Inventory[Inventory Service]
-        Payment[Payment Service]
-        Notification[Notification Service]
-    end
+subgraph "Infrastructure"
+    Config[Config Server: 8888]
+    Eureka[Eureka Discovery: 8761]
+    Rabbit[RabbitMQ Broker]
+end
 
-    subgraph "Shared Core"
-        JWT[[JwtAuthorities Library]]
-    end
+subgraph "Business Logic Services"
+    Users[Users Service]
+    Products[Products Service]
+    Cart[Cart Service]
+    Order[Order Service]
+    Inventory[Inventory Service]
+    Payment[Payment Service]
+    Notification[Notification Service]
+end
 
-    %% Relations
-    Gateway -.-> Eureka
-    Users & Products & Order & Payment -.-> JWT
-    Order -- "OrderPlaced Event" --> Rabbit
-    Rabbit -- "Consume" --> Notification
+subgraph "Shared Core"
+    JWT[[JwtAuthorities Library]]
+end
 
+%% Relations
+Gateway -.-> Eureka
+Users & Products & Order & Payment -.-> JWT
+Order -- "OrderPlaced Event" --> Rabbit
+Rabbit -- "Consume" --> Notification
 
-sequenceDiagram
-    participant User
-    participant Gateway
-    participant Auth as Users (JWT)
-    participant Order
-    participant Payment
-    participant Rabbit as RabbitMQ (Broker)
-    participant Inventory
-    participant Notify as Notification
-
-    User->>Gateway: POST /api/v1/orders/checkout
-    Gateway->>Auth: Validate JWT Token
-    Auth-->>Gateway: Token Valid (Role: USER)
-    Gateway->>Order: Create Order #99 (Status: PENDING)
-    Order->>Payment: Request Payment Session
-    Payment-->>User: Redirect to Payment Gateway
-    
-    Note over Payment: User completes transaction
-    
-    Payment->>Rabbit: Publish: PaymentSuccessEvent
-    
-    par Async Consumers
-        Rabbit-->>Order: Update Status to PAID
-        Rabbit-->>Inventory: Deduct Stock
-        Rabbit-->>Notify: Send Confirmation Email
-    end 
-   ```
+```
