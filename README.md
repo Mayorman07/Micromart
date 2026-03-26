@@ -15,22 +15,22 @@ This ecosystem follows the **API Gateway Pattern** and **Service Discovery Patte
 
 ```mermaid
 graph TD
-Client((Customer App)) --> Gateway[API Gateway: 7070]
+Client((Customer App)) --> Gateway[API Gateway: 7082]
 
 subgraph "Infrastructure"
-    Config[Config Server: 8888]
-    Eureka[Eureka Discovery: 8761]
-    Rabbit[RabbitMQ Broker]
+    Config[Config Server: 7012]
+    Eureka[Eureka Discovery: 7010]
+    Rabbit[RabbitMQ Messaging Broker]
 end
 
 subgraph "Business Logic Services"
-    Users[Users Service]
-    Products[Products Service]
-    Cart[Cart Service]
-    Order[Order Service]
-    Inventory[Inventory Service]
-    Payment[Payment Service]
-    Notification[Notification Service]
+    Users[Users Service : 0]
+    Products[Products Service : 7016]
+    Cart[Cart Service : 7041]
+    Order[Order Service : 7063]
+    Inventory[Inventory Service : 7061]
+    Payment[Payment Service: 7007]
+    Notification[Notification Service : 7050]
 end
 
 subgraph "Shared Core"
@@ -39,7 +39,8 @@ end
 
 %% Relations
 Gateway -.-> Eureka
-Users & Products & Order & Payment -.-> JWT
+Users & Products & Order & Payment & Inventory & Cart -.-> JWT
+Payment - Order -- "OrderPlaced Event" --> Rabbit --> Notification --> Customer Email
 Order -- "OrderPlaced Event" --> Rabbit
 Rabbit -- "Consume" --> Notification
 
