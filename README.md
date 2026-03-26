@@ -13,6 +13,10 @@ MicroMart is a high-availability, event-driven e-commerce backend built on a **M
 
 This ecosystem follows the **API Gateway Pattern** and **Service Discovery Pattern** to ensure high scalability and loose coupling.
 
+## 🏗️ System Architecture
+
+This ecosystem follows the **API Gateway Pattern**, **Service Discovery Pattern**, and the **Database-per-Service Pattern** to ensure high scalability and loose coupling.
+
 ```mermaid
 graph LR
     %% Color Styling Definitions
@@ -20,8 +24,10 @@ graph LR
     classDef infra fill:#198754,color:#fff,stroke:#146c43,stroke-width:2px;
     classDef database fill:#ffc107,color:#000,stroke:#cc9a06,stroke-width:2px;
     classDef shared fill:#6f42c1,color:#fff,stroke:#59339d,stroke-width:2px;
+    classDef external fill:#ffffff,color:#000,stroke:#cccccc,stroke-width:2px;
 
     Client((Customer App)) --> Gateway[API Gateway: 7082]
+    class Client external
     class Gateway business
     
     subgraph "🟩 Infrastructure"
@@ -51,14 +57,13 @@ graph LR
     end
     class UsersDB,ProductsDB,OrderDB,PaymentDB,InventoryDB database
 
-    subgraph "🟪 Shared Core"
-        JWT[[JwtAuthorities Library]]
+    subgraph "🟪 Cross-Cutting Concerns"
+        JWT[[📦 JwtAuthorities.jar <br/> (Embedded in Services)]]
     end
     class JWT shared
 
     %% Network & Sync Routing
     Gateway -.-> Eureka
-    Gateway --> Users & Products & Cart & Order
     Cart -->|Sync: Check Stock| Inventory
     Order -->|Sync: Request Link| Payment
 
@@ -75,3 +80,17 @@ graph LR
     Inventory --> InventoryDB
     Cart --> OrderDB
 ```
+
+### 📊 Diagram Legend
+
+| Shape & Color | Node Type | Description |
+| :--- | :--- | :--- |
+| ⚪ **White Circle** | **External Actor** | The end-user client (Mobile/Web App). |
+| 🟦 **Blue Rectangle** | **Business Service** | Independent microservices handling core domain logic. |
+| 🟩 **Green Rectangle** | **Infrastructure** | Backbone services supporting the ecosystem (Routing, Messaging). |
+| 🟨 **Yellow Cylinder** | **Database** | Isolated persistence layers (Database-per-Service pattern). |
+| 🟪 **Purple Box** | **Shared Library** | Reusable `.jar` dependencies embedded at compile-time. |
+
+**Communication Lines:**
+* `───>` **Solid Line:** Synchronous HTTP/REST Call (Blocking)
+* `- - ->` **Dotted Line:** Asynchronous Message / Event-Driven Flow (Non-Blocking)
