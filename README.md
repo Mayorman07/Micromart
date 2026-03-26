@@ -5,13 +5,9 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green)
 ![Docker](https://img.shields.io/badge/Docker-Enabled-blue)
 
-MicroMart is a high-availability, event-driven e-commerce backend built on a **Microservices Architecture**. It features 9 independent services orchestrated via Spring Cloud, synchronized through a shared security library, and integrated via RabbitMQ.
+MicroMart is a high-availability, event-driven e-commerce backend built on a **Microservices Architecture**. It features 10 independent services orchestrated via Spring Cloud, synchronized through a shared security library, and integrated via RabbitMQ.
 
 ---
-
-## 🏗️ System Architecture
-
-This ecosystem follows the **API Gateway Pattern** and **Service Discovery Pattern** to ensure high scalability and loose coupling.
 
 ## 🏗️ System Architecture
 
@@ -58,7 +54,7 @@ graph LR
     class UsersDB,ProductsDB,OrderDB,PaymentDB,InventoryDB database
 
     subgraph "🟪 Cross-Cutting Concerns"
-        JWT[[📦 JwtAuthorities.jar <br/> (Embedded in Services)]]
+        JWT[["📦 JwtAuthorities.jar <br/> (Embedded in Services)"]]
     end
     class JWT shared
 
@@ -83,14 +79,100 @@ graph LR
 
 ### 📊 Diagram Legend
 
-| Shape & Color | Node Type | Description |
-| :--- | :--- | :--- |
-| ⚪ **White Circle** | **External Actor** | The end-user client (Mobile/Web App). |
-| 🟦 **Blue Rectangle** | **Business Service** | Independent microservices handling core domain logic. |
-| 🟩 **Green Rectangle** | **Infrastructure** | Backbone services supporting the ecosystem (Routing, Messaging). |
-| 🟨 **Yellow Cylinder** | **Database** | Isolated persistence layers (Database-per-Service pattern). |
-| 🟪 **Purple Box** | **Shared Library** | Reusable `.jar` dependencies embedded at compile-time. |
+| Shape & Color          | Node Type            | Description                                                        |
+| :--------------------- | :------------------- | :----------------------------------------------------------------- |
+| ⚪ **White Circle** | **External Actor** | The end-user client (Mobile/Web App).                              |
+| 🟦 **Blue Rectangle** | **Business Service** | Independent microservices handling core domain logic.              |
+| 🟩 **Green Rectangle** | **Infrastructure** | Backbone services supporting the ecosystem (Routing, Messaging).   |
+| 🟨 **Yellow Cylinder** | **Database** | Isolated persistence layers (Database-per-Service pattern).        |
+| 🟪 **Purple Box** | **Shared Library** | Reusable `.jar` dependencies embedded at compile-time.             |
 
 **Communication Lines:**
 * `───>` **Solid Line:** Synchronous HTTP/REST Call (Blocking)
 * `- - ->` **Dotted Line:** Asynchronous Message / Event-Driven Flow (Non-Blocking)
+
+---
+
+## 🔄 The Transaction Lifecycle
+
+When a user places an order, the following distributed transaction occurs across the ecosystem:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Gateway
+    participant Auth as Users (JWT)
+    participant Order
+    participant Payment
+    participant Rabbit as RabbitMQ (Broker)
+    participant Inventory
+    participant Notify as Notification
+
+    User->>Gateway: POST /api/v1/orders/checkout
+    Gateway->>Auth: Validate JWT Token
+    Auth-->>Gateway: Token Valid (Role: USER)
+    Gateway->>Order: Create Order #99 (Status: PENDING)
+    Order->>Payment: Request Payment Session
+    Payment-->>User: Redirect to Payment Gateway
+    
+    Note over Payment: User completes transaction
+    
+    Payment->>Rabbit: Publish: PaymentSuccessEvent
+    
+    par Async Consumers
+        Rabbit-->>Order: Update Status to PAID
+        Rabbit-->>Inventory: Deduct Stock
+        Rabbit-->>Notify: Send Confirmation Email
+    end
+```
+
+---
+
+## 🛡️ Resilience & Observability
+
+MicroMart is built with a **"Design for Failure"** mindset. The API Gateway serves as a resilient entry point using:
+
+* **Circuit Breakers (Resilience4J):** Configured with a state-machine for high-risk routes (like `Users`).
+    * **Trip Logic:** If the failure rate hits **50%** over a rolling window of **10 calls**, the circuit opens to halt traffic.
+    * **Self-Healing (Half-Open):** After a **10-second wait time**, the Gateway allows exactly **3 test requests** through. If they succeed, the circuit closes and normal traffic resumes; if they fail, it trips open again.
+* **Time Limiting:** Strict **5-second timeouts** ensure that a hanging downstream service doesn't exhaust the Gateway's thread pool.
+* **Global CORS:** Securely configured for modern frontend integration (e.g., React/Next.js on port 3000).
+* **Observability:** Integrated with **Spring Boot Actuator** for real-time health checks and metric gathering.
+
+---
+
+## 📦 Service Registry
+
+| Service | Primary Responsibility | Port |
+| :--- | :--- | :--- |
+| **Gateway** | Unified entry point, routing, and load balancing | `8080` |
+| **ConfigServer** | Centralized configuration management | `8888` |
+| **EurekaServer** | Service registration and dynamic discovery | `8761` |
+| **Users** | Identity management and RBAC (Role-Based Access Control) | `8081` |
+| **Products** | Catalog management and product metadata | `8082` |
+| **Cart** | Real-time shopping cart persistence | `8083` |
+| **Order** | Transaction orchestration and checkout flow | `8084` |
+| **Inventory** | Stock tracking and safety-stock logic | `8085` |
+| **Payment** | Transaction processing and billing history | `8086` |
+| **Notification** | Multi-channel messaging (Email/SMS) via RabbitMQ | `8087` |
+| **JwtAuthorities** | **[Library]** Reusable security filters and token logic | `N/A` |
+
+---
+
+## 🚀 Local Development Setup
+
+### 1. Install Shared Library
+Because `JwtAuthorities` is a custom internal library, it must be installed to your local `.m2` repository first:
+```bash
+cd JwtAuthorities && mvn clean install
+```
+
+### 2. Build All Services
+```bash
+mvn clean package -DskipTests
+```
+
+### 3. Run via Docker Compose
+```bash
+docker-compose up --build
+```
