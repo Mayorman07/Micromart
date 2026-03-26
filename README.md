@@ -4,6 +4,10 @@
 ![Java](https://img.shields.io/badge/Java-17-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green)
 ![Docker](https://img.shields.io/badge/Docker-Enabled-blue)
+![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
+![Coverage](https://img.shields.io/badge/Coverage-85%25-brightgreen)
+![Microservices](https://img.shields.io/badge/Architecture-Microservices-purple)
+![Event-Driven](https://img.shields.io/badge/Pattern-Event%20Driven-yellow)
 
 MicroMart is a high-availability, event-driven e-commerce backend built on a **Microservices Architecture**. It features 10 independent services orchestrated via Spring Cloud, synchronized through a shared security library, and integrated via RabbitMQ.
 
@@ -135,27 +139,27 @@ MicroMart is built with a **"Design for Failure"** mindset. The API Gateway serv
 * **Circuit Breakers (Resilience4J):** Configured with a state-machine for high-risk routes (like `Users`).
     * **Trip Logic:** If the failure rate hits **50%** over a rolling window of **10 calls**, the circuit opens to halt traffic.
     * **Self-Healing (Half-Open):** After a **10-second wait time**, the Gateway allows exactly **3 test requests** through. If they succeed, the circuit closes and normal traffic resumes; if they fail, it trips open again.
-* **Time Limiting:** Strict **5-second timeouts** ensure that a hanging downstream service doesn't exhaust the Gateway's thread pool.
-* **Global CORS:** Securely configured for modern frontend integration (e.g., React/Next.js on port 3000).
+* **Time Limiting:** Strict **5-second timeouts** ensure that a hanging downstream service does not exhaust the Gateway's thread pool.
+* **Global CORS:** Securely configured for modern frontend integration (e.g., React on port 3000).
 * **Observability:** Integrated with **Spring Boot Actuator** for real-time health checks and metric gathering.
 
 ---
 
 ## 📦 Service Registry
 
-| Service | Primary Responsibility | Port |
-| :--- | :--- | :--- |
-| **Gateway** | Unified entry point, routing, and load balancing | `8080` |
-| **ConfigServer** | Centralized configuration management | `8888` |
-| **EurekaServer** | Service registration and dynamic discovery | `8761` |
-| **Users** | Identity management and RBAC (Role-Based Access Control) | `8081` |
-| **Products** | Catalog management and product metadata | `8082` |
-| **Cart** | Real-time shopping cart persistence | `8083` |
-| **Order** | Transaction orchestration and checkout flow | `8084` |
-| **Inventory** | Stock tracking and safety-stock logic | `8085` |
-| **Payment** | Transaction processing and billing history | `8086` |
-| **Notification** | Multi-channel messaging (Email/SMS) via RabbitMQ | `8087` |
-| **JwtAuthorities** | **[Library]** Reusable security filters and token logic | `N/A` |
+| Service | Primary Responsibility | Port   |
+| :--- | :--- |:-------|
+| **Gateway** | Unified entry point, routing, and load balancing | `7082` |
+| **ConfigServer** | Centralized configuration management | `7012` |
+| **EurekaServer** | Service registration and dynamic discovery | `7010` |
+| **Users** | Identity management and RBAC (Role-Based Access Control) | `0`    |
+| **Products** | Catalog management and product metadata | `7016` |
+| **Cart** | Real-time shopping cart persistence | `7041` |
+| **Order** | Transaction orchestration and checkout flow | `7063` |
+| **Inventory** | Stock tracking and safety-stock logic | `7061` |
+| **Payment** | Transaction processing and billing history | `7007` |
+| **Notification** | Multi-channel messaging (Email/SMS) via RabbitMQ | `7050` |
+| **JwtAuthorities** | **[Library]** Reusable security filters and token logic | `N/A`  |
 
 ---
 
