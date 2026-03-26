@@ -15,40 +15,6 @@ This ecosystem follows the **API Gateway Pattern** and **Service Discovery Patte
 
 ```mermaid
 graph TD
-Client((Customer App)) --> Gateway[API Gateway: 7082]
-
-subgraph "Infrastructure"
-    Config[Config Server: 7012]
-    Eureka[Eureka Discovery: 7010]
-    Rabbit[RabbitMQ Messaging Broker]
-end
-
-subgraph "Business Logic Services"
-    Users[Users Service : 0]
-    Products[Products Service : 7016]
-    Cart[Cart Service : 7041]
-    Order[Order Service : 7063]
-    Inventory[Inventory Service : 7061]
-    Payment[Payment Service: 7007]
-    Notification[Notification Service : 7050]
-end
-
-subgraph "Shared Core"
-    JWT[[JwtAuthorities Library]]
-end
-
-%% Relations
-Gateway -.-> Eureka
-Users & Products & Order & Payment & Inventory & Cart -.-> JWT
-Payment -- Order -- "OrderPlaced Event" --> Rabbit
-Order -- "OrderPlaced Event" --> Rabbit
-Rabbit -- "Consume" --> Notification --> Customer Email [Order status]
-Rabbit -- "Consume" --> Notification --> Cart & Inventory [Update status]
-Payment -- "Payment Status Event" --> Rabbit
-Rabbit -- "Consume" --> Notification --> Customer Email [Payment status]
-
-``````mermaid
-graph TD
     Client((Customer App)) --> Gateway[API Gateway: 7082]
     
     subgraph "Infrastructure"
@@ -67,6 +33,14 @@ graph TD
         Notification[Notification Service: 7050]
     end
 
+    subgraph "Databases (Persistence Layer)"
+        UsersDB[(Users DB)]
+        ProductsDB[(Products DB)]
+        OrderDB[(Order DB)]
+        PaymentDB[(Payment DB)]
+        InventoryDB[(Inventory DB)]
+    end
+
     subgraph "Shared Core"
         JWT[[JwtAuthorities Library]]
     end
@@ -75,12 +49,12 @@ graph TD
     Gateway -.-> Eureka
     Users & Products & Order & Payment & Inventory & Cart -.-> JWT
 
-    %% Synchronous REST Flow (The Setup)
+    %% Synchronous REST Flow
     Gateway --> Users & Products & Cart & Order
     Cart -- "Sync: Check Stock" --> Inventory
     Order -- "Sync: Request Link" --> Payment
 
-    %% Asynchronous RabbitMQ Flow (The Ripple Effect)
+    %% Asynchronous RabbitMQ Flow
     Order -- "Pub: OrderPlaced" --> Rabbit
     Payment -- "Pub: PaymentSuccess" --> Rabbit
     
@@ -88,5 +62,12 @@ graph TD
     Rabbit -. "Sub: Deduct Stock" .-> Inventory
     Rabbit -. "Sub: Clear Basket" .-> Cart
     Rabbit -. "Sub: Send Email" .-> Notification
-    
+
+    %% Database Connections
+    Users --> UsersDB
+    Products --> ProductsDB
+    Order --> OrderDB
+    Payment --> PaymentDB
+    Inventory --> InventoryDB
+    Cart --> OrderDB
 ```
