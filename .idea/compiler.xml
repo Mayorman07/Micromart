@@ -21,7 +21,7 @@
         </processorPath>
         <module name="Users" />
       </profile>
-      <profile name="Annotation profile for Products" enabled="true">
+      <profile name="Annotation profile for Order" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />

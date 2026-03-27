@@ -156,6 +156,16 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.11</version>
+				<configuration>
+					<excludes>
+						<exclude>com/micromart/Order/model/**</exclude>
+						<exclude>com/micromart/Order/entities/**</exclude>
+						<exclude>com/micromart/Order/security/**</exclude>
+						<exclude>com/micromart/Order/configuration/**</exclude>
+						<exclude>com/micromart/Order/exceptions/**</exclude>
+						<exclude>com/micromart/Order/utils/**</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
