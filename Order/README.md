@@ -1,4 +1,4 @@
-# 📦 Order Service (MicroMart)
+# 📦 Order Service
 
 The **Order Service** is the central orchestrator of the MicroMart ecosystem. It manages the entire lifecycle of a customer's purchase—from initial checkout to final fulfillment or cancellation. It is designed to be **event-aware**, reacting to payment successes and inventory shifts asynchronously.
 

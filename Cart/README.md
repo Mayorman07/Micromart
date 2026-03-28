@@ -1,4 +1,4 @@
-# 🛒 Cart Service (MicroMart)
+# 🛒 Cart Service 
 
 The **Cart Service** acts as the temporary staging area for user purchases. It is a highly interactive service that strictly enforces business rules by synchronously verifying stock levels with the Inventory Service before allowing a user to reserve an item. It also features automated housekeeping to purge abandoned carts.
 
