@@ -73,15 +73,49 @@ classDiagram
     PaymentStrategy <|.. CryptoPaymentStrategy
     PaymentStrategy <|.. BankTransferStrategy
 ```
+
 ---
-🔄 Asynchronous Verification (Webhook Flow)
+
+## 🏗️ System Context
+
+```mermaid
+C4Context
+    title Payment Service - System Context Diagram
+
+    Person(customer, "Customer", "End-user making purchases")
+    Person(admin, "Operations Admin", "Manual payment approval")
+
+    System_Boundary(micromart, "MicroMart Platform") {
+        System(payment_service, "Payment Service", "Payment orchestration and processing")
+        System(order_service, "Order Service", "Order lifecycle management")
+        System(inventory_service, "Inventory Service", "Stock management")
+        SystemDb(payment_db, "Payment Database", "Payment records and audit logs")
+    }
+
+    System_Ext(stripe, "Stripe API", "Payment processor (PCI-compliant)")
+    System_Ext(rabbitmq, "RabbitMQ", "Event bus for async messaging")
+
+    Rel(customer, payment_service, "Initiates payment", "HTTPS/REST")
+    Rel(admin, payment_service, "Approves manual payments", "HTTPS/REST")
+    Rel(payment_service, stripe, "Creates checkout sessions & receives webhooks", "HTTPS")
+    Rel(payment_service, rabbitmq, "Publishes payment events", "AMQP")
+    Rel(rabbitmq, order_service, "Consumes payment events", "AMQP")
+    Rel(payment_service, payment_db, "Reads/writes payment records", "JDBC")
+    Rel(payment_service, order_service, "Validates order details", "gRPC/REST")
+```
+
+---
+
+## 🔄 Asynchronous Verification (Webhook Flow)
+
 For security, the frontend never dictates the payment status. If a user pays via Stripe, the system waits for Stripe's secure webhook to confirm the transaction before broadcasting the success event to the MicroMart ecosystem.
 
+```mermaid
 sequenceDiagram
-participant User
-participant Payment Service
-participant Stripe API
-participant RabbitMQ
+    participant User
+    participant Payment Service
+    participant Stripe API
+    participant RabbitMQ
 
     User->>Payment Service: POST /api/payments/initiate (STRIPE)
     Payment Service->>Stripe API: Create Checkout Session
@@ -94,21 +128,27 @@ participant RabbitMQ
     Note over Payment Service: Verify Cryptographic Signature
     Payment Service->>Payment Service: Update DB Status to PAID
     Payment Service->>RabbitMQ: Publish PaymentEvent (PAID)
+```
 
 ---
-📨 Event-Driven Integration (RabbitMQ)
+
+## 📨 Event-Driven Integration (RabbitMQ)
+
 Once a payment is definitively verified (either via Webhook or Admin Manual Approval), this service broadcasts the final state.
 
-📤 Published Events (Producer)ExchangeRouting KeyPayloadDescriptionmicromart.exchangepayment.status.updatedPaymentEventTriggers the Order Service to update the final Order Status to PAID, CANCELLED, or FAILED.
+### 📤 Published Events (Producer)
+
+| Exchange | Routing Key | Payload | Description |
+| :--- | :--- | :--- | :--- |
+| `micromart.exchange` | `payment.status.updated` | `PaymentEvent` | Triggers the Order Service to update the final Order Status to `PAID`, `CANCELLED`, or `FAILED`. |
 
 ---
-⏱️ Scheduled Background Jobs
+
+## ⏱️ Scheduled Background Jobs
+
 To ensure that unpaid orders don't hold up inventory indefinitely, a sweeper job constantly monitors the database.
 
-Job: PaymentSweeperService.sweepAbandonedPayments()
-
-Schedule: Runs every 30 minutes (fixedRate = 1800000).
-
-Action: Queries the database for any payment stuck in the PENDING state for more than 120 minutes.
-
-Result: Automatically updates the status to CANCELLED and fires a PaymentEvent to RabbitMQ, instructing the Order Service to cancel the order and release the reserved inventory.
+* **Job:** `PaymentSweeperService.sweepAbandonedPayments()`
+* **Schedule:** Runs every 30 minutes (`fixedRate = 1800000`).
+* **Action:** Queries the database for any payment stuck in the `PENDING` state for more than 120 minutes.
+* **Result:** Automatically updates the status to `CANCELLED` and fires a `PaymentEvent` to RabbitMQ, instructing the Order Service to cancel the order and release the reserved inventory.
