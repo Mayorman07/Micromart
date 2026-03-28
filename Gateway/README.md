@@ -23,25 +23,36 @@ The **API Gateway** is the single entry point for all client requests in the Mic
 
 ## 🏗️ Gateway Architecture
 
-The Gateway intercepts every request, applies filters (Header removal, Path rewriting), and routes the traffic.
+The Gateway intercepts every request, applies filters (Header removal, Path rewriting), and routes the traffic through a resilience layer.
 
 ```mermaid
 graph TD
+    %% Global Styles
+    classDef business fill:#0d6efd,color:#fff,stroke:#0a58ca,stroke-width:2px;
+    classDef infra fill:#198754,color:#fff,stroke:#146c43,stroke-width:2px;
+    classDef external fill:#ffffff,color:#000,stroke:#cccccc,stroke-width:2px;
+    classDef resilience fill:#fff3cd,color:#856404,stroke:#ffeeba,stroke-width:2px;
+
     Client((Customer App)) -->|7082| Gateway[API Gateway]
-    
+    class Client external
+    class Gateway business
+
     subgraph "Resilience Layer"
         CB[Circuit Breaker]
         FB[Fallback Controller]
     end
-    
+    class CB,FB resilience
+
     Gateway --> CB
     CB -->|Success| LB[Load Balancer]
-    CB -->|Failure/Timeout| FB
-    
+    CB -->|Failure or Timeout| FB
+    class LB infra
+
     LB -->|lb://users| Users[Users Service]
     LB -->|lb://products| Products[Products Service]
     LB -->|lb://order| Orders[Order Service]
     LB -->|lb://...| Others[...]
+    class Users,Products,Orders,Others business
 ```
 
 ---
@@ -74,8 +85,8 @@ The Gateway is configured with a **sliding window** strategy to monitor service 
 ```java
 @RequestMapping("/fallback/users")
 public Mono<String> userServiceFallback() {
-    return Mono.just("⚠️ Users Service is taking too long or is down. Please try again later.");
-}
+        return Mono.just("⚠️ Users Service is taking too long or is down. Please try again later.");
+        }
 ```
 
 ---
