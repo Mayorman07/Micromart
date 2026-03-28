@@ -85,6 +85,7 @@ sequenceDiagram
     
     User Event Listener->>RabbitMQ (Email Queue): 4. Publish PasswordResetEventDto (with Token)
     Note over RabbitMQ (Email Queue): Notification Service consumes this to send the actual email.
+  ```
 
 ## ⏱️ Scheduled Background Jobs
 
@@ -94,7 +95,7 @@ To drive user engagement, the service analyzes login patterns in the background:
 * **Schedule:** Every day at `10:00 AM` (`cron = "0 0 10 * * ?"`).
 * **Action:** Queries the database for users who have been inactive between 30 and 60 days.
 * **Result:** Generates a list of dormant users and publishes a `ReactivationEvent` to RabbitMQ for the Notification Service to process.
-```
+
 
 ## 📨 Event-Driven Integration (RabbitMQ)
 
