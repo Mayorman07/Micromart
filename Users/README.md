@@ -61,6 +61,41 @@ To protect against hijacked sessions, this service implements a **Refresh Token 
 
 ---
 
+## 🔄 Asynchronous Architecture: Password Reset Flow
+
+Instead of blocking the user's HTTP request while generating tokens and sending emails, this service uses an event-driven choreography to handle password resets instantly and securely.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Auth Controller
+    participant RabbitMQ (Attempt Queue)
+    participant User Event Listener
+    participant Database
+    participant RabbitMQ (Email Queue)
+
+    User->>Auth Controller: POST /password-reset/request (email)
+    Auth Controller->>RabbitMQ (Attempt Queue): 1. Publish PasswordResetRequestEvent
+    Auth Controller-->>User: 200 OK (Instant Response)
+    
+    RabbitMQ (Attempt Queue)->>User Event Listener: 2. Consume Event
+    Note over User Event Listener: Verify User Exists
+    User Event Listener->>User Event Listener: Generate Secure Token (15m expiry)
+    User Event Listener->>Database: 3. Save Token to User Record
+    
+    User Event Listener->>RabbitMQ (Email Queue): 4. Publish PasswordResetEventDto (with Token)
+    Note over RabbitMQ (Email Queue): Notification Service consumes this to send the actual email.
+
+## ⏱️ Scheduled Background Jobs
+
+To drive user engagement, the service analyzes login patterns in the background:
+
+* **Job:** `ReactivationScheduler.sendWeMissYouEmails()`
+* **Schedule:** Every day at `10:00 AM` (`cron = "0 0 10 * * ?"`).
+* **Action:** Queries the database for users who have been inactive between 30 and 60 days.
+* **Result:** Generates a list of dormant users and publishes a `ReactivationEvent` to RabbitMQ for the Notification Service to process.
+```
+
 ## 📨 Event-Driven Integration (RabbitMQ)
 
 The User Service is the primary source of identity events. It utilizes a `TopicExchange` (`user.exchange`) to broadcast state changes.
@@ -78,11 +113,3 @@ The User Service is the primary source of identity events. It utilizes a `TopicE
 
 ---
 
-## ⏱️ Scheduled Background Jobs
-
-To drive user engagement, the service analyzes login patterns in the background:
-
-* **Job:** `ReactivationScheduler.sendWeMissYouEmails()`
-* **Schedule:** Every day at `10:00 AM` (`cron = "0 0 10 * * ?"`).
-* **Action:** Queries the database for users who have been inactive between 30 and 60 days.
-* **Result:** Generates a list of dormant users and publishes a `ReactivationEvent` to RabbitMQ for the Notification Service to process.
