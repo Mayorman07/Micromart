@@ -5,7 +5,6 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green)
 ![Docker](https://img.shields.io/badge/Docker-Enabled-blue)
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
-![Coverage](https://img.shields.io/badge/Coverage-85%25-brightgreen)
 ![Microservices](https://img.shields.io/badge/Architecture-Microservices-purple)
 ![Event-Driven](https://img.shields.io/badge/Pattern-Event%20Driven-yellow)
 
