@@ -8,10 +8,10 @@
 ![Microservices](https://img.shields.io/badge/Architecture-Microservices-purple)
 ![Event-Driven](https://img.shields.io/badge/Pattern-Event%20Driven-yellow)
 
-MicroMart is a high-availability, event-driven e-commerce backend built on a **Microservices Architecture**. It features 10 independent services orchestrated via Spring Cloud, synchronized through a shared security library, and integrated via RabbitMQ.
-
+MicroMart is an enterprise-grade, distributed e-commerce ecosystem built on a reactive, event-driven architecture. Designed for high availability and elastic scalability, the platform demonstrates sophisticated patterns including distributed transactions (Saga), reactive data streams, and automated resilience.
 ---
-
+> **🏆 Roadmap.sh Project:** This repository is my official solution for the [Scalable E-Commerce Platform](https://roadmap.sh/projects/scalable-ecommerce-platform) architecture challenge.
+---
 ## 🏗️ System Architecture
 
 This ecosystem follows the **API Gateway Pattern**, **Service Discovery Pattern**, and the **Database-per-Service Pattern** to ensure high scalability and loose coupling.
