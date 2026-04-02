@@ -1,11 +1,13 @@
 package com.micromart.models.requests;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.micromart.validation.SafeText;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AddressRequest {
     @NotBlank(message = "Street cannot be empty")
     @SafeText(message = "Street contains invalid or malicious characters")
